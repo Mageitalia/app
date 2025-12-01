@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mage Italia v2.0 - Supabase Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #8B2635;
+            --accent: #FFD700;
+            --light: #f5f5f5;
+            --border: #e0e0e0;
+            --success: #27ae60;
+            --warning: #e74c3c;
+            --info: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #2d2d2d 100%);
+            color: var(--primary);
+            min-height: 100vh;
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            text-align: center;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LAYOUT */
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo img {
+            max-width: 120px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin: 10px 0;
+        }
+
+        .sidebar-menu button {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu button:hover {
+            background: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu button.active {
+            background: var(--secondary);
+            border-left: 3px solid var(--accent);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: var(--warning);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: var(--light);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, #2d2d2d 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(139, 38, 53, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            background: #6b1a26;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 38, 53, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* TABLES */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        /* FORMS */
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .drag-drop-area {
+            border: 2px dashed var(--border);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .drag-drop-area:hover {
+            border-color: var(--secondary);
+            background: rgba(139, 38, 53, 0.05);
+        }
+
+        .drag-drop-area.dragover {
+            border-color: var(--secondary);
+            background: rgba(139, 38, 53, 0.1);
+        }
+
+        .drag-drop-area input[type="file"] {
+            display: none;
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 12px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: #2980b9;
+        }
+
+        .btn-small.danger {
+            background: var(--warning);
+        }
+
+        .btn-small.danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-small.success {
+            background: var(--success);
+        }
+
+        .btn-small.success:hover {
+            background: #229954;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* ALERTS */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert.success {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+        }
+
+        .alert.error {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border-left: 4px solid #e74c3c;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* OPERATORE FORM */
+        .operator-form {
+            max-width: 600px;
+        }
+
+        .product-input-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .product-input-group h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .product-input-group .form-row {
+            margin-bottom: 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                gap: 10px;
+            }
+
+            .sidebar-menu li {
+                margin: 0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .logo-preview {
+            max-width: 100px;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.online {
+            background: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+        }
+
+        .status-badge.offline {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOADING SPINNER -->
+<div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner"></div>
+    <p>Caricamento...</p>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwUAxMTAxMTAxMTAwwTDAwMEwwTDAwMEwwTDAwMEwwTDAwMEwwTDAwMEwwT/2wBDAQICAgMDAwYDAwYMCAcIDAwYDAwYGBAMDAwYDBgYEAwMDAwMEBAMDAwMDAwQEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD/wAARCAByAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlbaWmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="Mage Italia">
+            </div>
+
+            <div class="alert" id="loginAlert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="tuo@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Accedi</button>
+            </form>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #666;">
+                <p>Versione 2.0 - Supabase Edition</p>
+                <p id="connectionStatus" class="status-badge offline">🔌 Offline</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appPage" class="page">
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwwUAxMTAxMTAxMTAwwTDAwMEwwTDAwMEwwTDAwMEwwTDAwMEwwTDAwMEwwT/2wBDAQICAgMDAwYDAwYMCAcIDAwYDAwYGBAMDAwYDBgYEAwMDAwMEBAMDAwMDAwQEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD/wAARCAByAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlbaWmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="Mage Italia">
+            </div>
+
+            <ul class="sidebar-menu" id="sidebarMenu">
+                <li><button class="menu-btn active" data-page="dashboard">Dashboard</button></li>
+                <li><button class="menu-btn" data-page="form">Compila Scarti</button></li>
+                <li><button class="menu-btn" data-page="admin" id="adminMenuBtn" style="display: none;">Amministrazione</button></li>
+                <li><button class="logout-btn" id="logoutBtn">Esci</button></li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <span id="userInfo"></span>
+                    <span id="appStatus" class="status-badge online">🟢 Online</span>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- DASHBOARD PAGE -->
+                <div id="dashboard" class="page active">
+                    <div class="alert" id="dashboardAlert"></div>
+                    
+                    <div class="form-section">
+                        <h2>📊 Dashboard Scarti</h2>
+                        <p style="color: #666; margin-top: 10px;">Benvenuto in Mage Italia v2.0 - Powered by Supabase ☁️</p>
+                        
+                        <div class="form-row" style="margin-top: 30px;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <h3 style="font-size: 32px; margin-bottom: 10px;" id="todayEntries">0</h3>
+                                <p>Inserimenti Oggi</p>
+                            </div>
+                            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <h3 style="font-size: 32px; margin-bottom: 10px;" id="totalProducts">0</h3>
+                                <p>Prodotti Registrati</p>
+                            </div>
+                            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                                <h3 style="font-size: 32px; margin-bottom: 10px;" id="totalOperators">0</h3>
+                                <p>Operatori Attivi</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 8px; border-left: 4px solid #3498db;">
+                            <h4>✨ Novità v2.0</h4>
+                            <ul style="margin-top: 10px; margin-left: 20px; color: #2c3e50;">
+                                <li>☁️ Database nel cloud (Supabase)</li>
+                                <li>🔄 Sincronizzazione real-time</li>
+                                <li>📱 Accesso da qualsiasi dispositivo</li>
+                                <li>🔐 Backup automatico</li>
+                                <li>👥 Autenticazione robusta</li>
+                                <li>📊 Report ancora più veloci</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPERATOR FORM -->
+                <div id="form" class="page">
+                    <div class="alert" id="formAlert"></div>
+                    
+                    <div class="form-section operator-form">
+                        <h2>📝 Compila Scarti Giornalieri</h2>
+                        
+                        <form id="operatorForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Data</label>
+                                    <input type="date" id="formData" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Operatore</label>
+                                    <input type="text" id="formOperatore" readonly>
+                                </div>
+                            </div>
+
+                            <div id="productsContainer"></div>
+
+                            <div style="margin-top: 30px;">
+                                <button type="submit" class="btn-primary">Salva Registrazioni</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ADMIN PAGE -->
+                <div id="admin" class="page">
+                    <div class="alert" id="adminAlert"></div>
+
+                    <!-- TABS -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border);">
+                        <button class="btn-secondary" onclick="switchAdminTab('dipendenti')" style="border-bottom: 3px solid var(--secondary);">👥 Dipendenti</button>
+                        <button class="btn-secondary" onclick="switchAdminTab('prodotti')">🍽️ Prodotti</button>
+                        <button class="btn-secondary" onclick="switchAdminTab('report')">📊 Genera Report</button>
+                    </div>
+
+                    <!-- DIPENDENTI TAB -->
+                    <div id="dipendenziTab" class="admin-tab">
+                        <div class="form-section">
+                            <h2>Gestisci Dipendenti</h2>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome</label>
+                                    <input type="text" id="dipName" placeholder="Nome dipendente">
+                                </div>
+                                <div class="form-group">
+                                    <label>Cognome</label>
+                                    <input type="text" id="dipCognome" placeholder="Cognome dipendente">
+                                </div>
+                                <div class="form-group">
+                                    <label>Punto Vendita</label>
+                                    <select id="dipPunto">
+                                        <option value="">Seleziona</option>
+                                        <option value="pisa">Pisa</option>
+                                        <option value="sesto">Sesto Fiorentino</option>
+                                        <option value="cosenza">Cosenza</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn-primary" onclick="addDipendente()" style="margin-bottom: 20px;">Aggiungi Dipendente</button>
+
+                            <div class="table-container">
+                                <table id="dipendenziTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Cognome</th>
+                                            <th>Punto</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODOTTI TAB -->
+                    <div id="prodottiTab" class="admin-tab" style="display: none;">
+                        <div class="form-section">
+                            <h2>Gestisci Prodotti</h2>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome Prodotto</label>
+                                    <input type="text" id="prodNome" placeholder="Nome prodotto">
+                                </div>
+                                <div class="form-group">
+                                    <label>Codice Prodotto</label>
+                                    <input type="text" id="prodCodice" placeholder="Codice">
+                                </div>
+                                <div class="form-group">
+                                    <label>Categoria</label>
+                                    <select id="prodCategoria">
+                                        <option value="">Seleziona</option>
+                                        <option value="dolce">Dolce</option>
+                                        <option value="salato">Salato</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Produzione</label>
+                                    <input type="number" id="prodProduzione" placeholder="Numero produzione" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Punto Vendita</label>
+                                    <select id="prodPunto">
+                                        <option value="">Seleziona</option>
+                                        <option value="pisa">Pisa</option>
+                                        <option value="sesto">Sesto Fiorentino</option>
+                                        <option value="cosenza">Cosenza</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button class="btn-primary" onclick="addProdotto()" style="margin-bottom: 20px;">Aggiungi Prodotto</button>
+
+                            <div class="table-container">
+                                <table id="prodottiTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Codice</th>
+                                            <th>Categoria</th>
+                                            <th>Produzione</th>
+                                            <th>Punto</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REPORT TAB -->
+                    <div id="reportTab" class="admin-tab" style="display: none;">
+                        <div class="form-section">
+                            <h2>📊 Genera Report Excel</h2>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Tipo Report</label>
+                                    <select id="reportType">
+                                        <option value="giornaliero">Giornaliero</option>
+                                        <option value="riepilogo">Riepilogo</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data Inizio</label>
+                                    <input type="date" id="reportDataInizio">
+                                </div>
+                                <div class="form-group">
+                                    <label>Data Fine</label>
+                                    <input type="date" id="reportDataFine">
+                                </div>
+                            </div>
+
+                            <button class="btn-primary" onclick="generateReport()">Genera Report Excel</button>
+
+                            <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                                <h4>💡 Info Report</h4>
+                                <p style="margin-top: 10px; font-size: 13px;">
+                                    <strong>Giornaliero:</strong> Un file Excel per ogni giorno, una riga per inserimento.<br>
+                                    <strong>Riepilogo:</strong> Un Excel con sommatoria per prodotto, indipendentemente dall'operatore.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // =====================================================
+    // CONFIGURAZIONE SUPABASE
+    // =====================================================
+    const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+    let currentAdmin = null;
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        showLoading(true);
+
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) throw error;
+
+            currentUser = data.user;
+
+            // Verifica se è admin
+            const { data: adminData, error: adminError } = await supabase
+                .from('utenti_admin')
+                .select('*')
+                .eq('id', data.user.id)
+                .maybeSingle();
+
+            if (!adminError && adminData) {
+                currentAdmin = adminData;
+            }
+
+            loginSuccess();
+        } catch (error) {
+            showAlert('loginAlert', 'Errore: ' + error.message, 'error');
+            console.error('Login error:', error);
+        } finally {
+            showLoading(false);
+        }
+    });
+
+    function loginSuccess() {
+        document.getElementById('loginPage').classList.remove('active');
+        document.getElementById('appPage').classList.add('active');
+        
+        document.getElementById('userInfo').textContent = 
+            `${currentAdmin ? '🔐' : '👤'} ${currentUser.email}`;
+        
+        if (currentAdmin) {
+            document.getElementById('adminMenuBtn').style.display = 'block';
+        }
+
+        setupRealtimeListeners();
+        loadFormData();
+        updateDashboard();
+    }
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+        await supabase.auth.signOut();
+        currentUser = null;
+        currentAdmin = null;
+        document.getElementById('appPage').classList.remove('active');
+        document.getElementById('loginPage').classList.add('active');
+        document.getElementById('loginForm').reset();
+        document.getElementById('adminMenuBtn').style.display = 'none';
+    });
+
+    // =====================================================
+    // NAVIGAZIONE
+    // =====================================================
+
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const pageName = this.dataset.page;
+            switchPage(pageName);
+        });
+    });
+
+    function switchPage(pageName) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageName).classList.add('active');
+        
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.page === pageName) {
+                btn.classList.add('active');
+            }
+        });
+
+        const titles = {
+            'dashboard': 'Dashboard',
+            'form': 'Compila Scarti',
+            'admin': 'Amministrazione'
+        };
+        document.getElementById('pageTitle').textContent = titles[pageName];
+
+        if (pageName === 'form') {
+            loadFormData();
+        }
+    }
+
+    function switchAdminTab(tabName) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+        document.getElementById(tabName + 'Tab').style.display = 'block';
+        
+        if (tabName === 'dipendenti') {
+            renderDipendenti();
+        } else if (tabName === 'prodotti') {
+            renderProdotti();
+        }
+    }
+
+    // =====================================================
+    // DIPENDENTI (CRUD)
+    // =====================================================
+
+    async function addDipendente() {
+        const nome = document.getElementById('dipName').value;
+        const cognome = document.getElementById('dipCognome').value;
+        const punto = document.getElementById('dipPunto').value;
+
+        if (!nome || !cognome || !punto) {
+            showAlert('adminAlert', 'Compila tutti i campi', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('dipendenti')
+                .insert([{
+                    nome,
+                    cognome,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }])
+                .select();
+
+            if (error) throw error;
+
+            showAlert('adminAlert', 'Dipendente aggiunto', 'success');
+            document.getElementById('dipName').value = '';
+            document.getElementById('dipCognome').value = '';
+            document.getElementById('dipPunto').value = '';
+            renderDipendenti();
+        } catch (error) {
+            showAlert('adminAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function renderDipendenti() {
+        showLoading(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('dipendenti')
+                .select('*')
+                .eq('attivo', true)
+                .order('nome', { ascending: true });
+
+            if (error) throw error;
+
+            const tbody = document.querySelector('#dipendenziTable tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${d.nome}</td>
+                    <td>${d.cognome}</td>
+                    <td>${d.punto_vendita_id}</td>
+                    <td>
+                        <button class="btn-small danger" onclick="deleteDipendente(${d.id})">Elimina</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            showAlert('adminAlert', 'Errore nel caricamento: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function deleteDipendente(id) {
+        if (!confirm('Eliminare questo dipendente?')) return;
+
+        showLoading(true);
+
+        try {
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showAlert('adminAlert', 'Dipendente eliminato', 'success');
+            renderDipendenti();
+        } catch (error) {
+            showAlert('adminAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // =====================================================
+    // PRODOTTI (CRUD)
+    // =====================================================
+
+    async function addProdotto() {
+        const nome = document.getElementById('prodNome').value;
+        const codice = document.getElementById('prodCodice').value;
+        const categoria = document.getElementById('prodCategoria').value;
+        const produzione = document.getElementById('prodProduzione').value;
+        const punto = document.getElementById('prodPunto').value;
+
+        if (!nome || !codice || !categoria || !punto) {
+            showAlert('adminAlert', 'Compila tutti i campi obbligatori', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('prodotti')
+                .insert([{
+                    nome,
+                    codice_prodotto: codice,
+                    categoria,
+                    produzione: parseInt(produzione) || 0,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }])
+                .select();
+
+            if (error) throw error;
+
+            showAlert('adminAlert', 'Prodotto aggiunto', 'success');
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodCodice').value = '';
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodProduzione').value = '';
+            document.getElementById('prodPunto').value = '';
+            renderProdotti();
+        } catch (error) {
+            showAlert('adminAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function renderProdotti() {
+        showLoading(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('prodotti')
+                .select('*')
+                .eq('attivo', true)
+                .order('categoria', { ascending: true })
+                .order('nome', { ascending: true });
+
+            if (error) throw error;
+
+            const tbody = document.querySelector('#prodottiTable tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.nome}</td>
+                    <td>${p.codice_prodotto}</td>
+                    <td>${p.categoria}</td>
+                    <td>${p.produzione}</td>
+                    <td>${p.punto_vendita_id}</td>
+                    <td>
+                        <button class="btn-small danger" onclick="deleteProdotto(${p.id})">Elimina</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            showAlert('adminAlert', 'Errore nel caricamento: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function deleteProdotto(id) {
+        if (!confirm('Eliminare questo prodotto?')) return;
+
+        showLoading(true);
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showAlert('adminAlert', 'Prodotto eliminato', 'success');
+            renderProdotti();
+        } catch (error) {
+            showAlert('adminAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // =====================================================
+    // FORM OPERATORE
+    // =====================================================
+
+    async function loadFormData() {
+        showLoading(true);
+
+        try {
+            // Carica i prodotti
+            const { data: prodotti, error: prodError } = await supabase
+                .from('prodotti')
+                .select('*')
+                .eq('attivo', true)
+                .order('categoria', { ascending: true })
+                .order('nome', { ascending: true });
+
+            if (prodError) throw prodError;
+
+            // Carica il dipendente
+            const { data: dipendenti, error: dipError } = await supabase
+                .from('dipendenti')
+                .select('*')
+                .eq('attivo', true)
+                .eq('id', parseInt(currentUser.user_metadata?.dipendente_id || 0));
+
+            if (!dipError && dipendenti.length > 0) {
+                const dip = dipendenti[0];
+                document.getElementById('formOperatore').value = `${dip.nome} ${dip.cognome}`;
+            }
+
+            // Imposta la data odierna
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('formData').value = today;
+
+            // Renderizza i prodotti
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+
+            const dolci = prodotti.filter(p => p.categoria === 'dolce');
+            const salati = prodotti.filter(p => p.categoria === 'salato');
+
+            if (dolci.length > 0) {
+                container.innerHTML += '<h3 style="margin-top: 20px; margin-bottom: 10px;">🍰 Dolci</h3>';
+                dolci.forEach(p => addProductInput(container, p));
+            }
+
+            if (salati.length > 0) {
+                container.innerHTML += '<h3 style="margin-top: 20px; margin-bottom: 10px;">🥐 Salati</h3>';
+                salati.forEach(p => addProductInput(container, p));
+            }
+        } catch (error) {
+            showAlert('formAlert', 'Errore nel caricamento: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function addProductInput(container, product) {
+        const div = document.createElement('div');
+        div.className = 'product-input-group';
+        div.innerHTML = `
+            <h4>${product.nome} <span style="color: #999; font-size: 12px;">[${product.codice_prodotto}]</span></h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Recuperati</label>
+                    <input type="number" class="product-recuperati" data-product-id="${product.id}" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Buttati</label>
+                    <input type="number" class="product-buttati" data-product-id="${product.id}" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Produzione</label>
+                    <input type="number" disabled value="${product.produzione}" style="background: #f9f9f9;">
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    document.getElementById('operatorForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const data_form = document.getElementById('formData').value;
+        const operatore = document.getElementById('formOperatore').value;
+
+        if (!data_form || !operatore) {
+            showAlert('formAlert', 'Compila data e operatore', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            // Raccogli le registrazioni
+            const registrazioni = [];
+
+            document.querySelectorAll('.product-recuperati').forEach(input => {
+                const productId = parseInt(input.dataset.productId);
+                const recuperati = parseInt(input.value) || 0;
+                const buttati = parseInt(document.querySelector(`.product-buttati[data-product-id="${productId}"]`).value) || 0;
+
+                if (recuperati > 0 || buttati > 0) {
+                    registrazioni.push({
+                        data_registrazione: data_form,
+                        punto_vendita_id: currentUser.user_metadata?.punto || 'pisa',
+                        dipendente_id: parseInt(currentUser.user_metadata?.dipendente_id || 0),
+                        prodotto_id: productId,
+                        recuperati: recuperati,
+                        buttati: buttati
+                    });
+                }
+            });
+
+            if (registrazioni.length === 0) {
+                showAlert('formAlert', 'Inserisci almeno un dato', 'error');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('registrazioni_giornaliere')
+                .insert(registrazioni);
+
+            if (error) throw error;
+
+            showAlert('formAlert', 'Dati salvati con successo!', 'success');
+            this.reset();
+            loadFormData();
+            updateDashboard();
+        } catch (error) {
+            showAlert('formAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    });
+
+    // =====================================================
+    // REPORT GENERATION
+    // =====================================================
+
+    async function generateReport() {
+        const tipo = document.getElementById('reportType').value;
+        const dataInizio = document.getElementById('reportDataInizio').value;
+        const dataFine = document.getElementById('reportDataFine').value;
+
+        if (!dataInizio || !dataFine) {
+            showAlert('adminAlert', 'Seleziona le date', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('registrazioni_giornaliere')
+                .select(`
+                    *,
+                    dipendenti(nome, cognome),
+                    prodotti(nome, codice_prodotto, categoria, produzione),
+                    punti_vendita(nome)
+                `)
+                .gte('data_registrazione', dataInizio)
+                .lte('data_registrazione', dataFine)
+                .order('data_registrazione', { ascending: false });
+
+            if (error) throw error;
+
+            if (tipo === 'giornaliero') {
+                generateGiornalieroReport(data);
+            } else {
+                generateRiepilogoReport(data);
+            }
+
+            showAlert('adminAlert', 'Report generato e scaricato', 'success');
+        } catch (error) {
+            showAlert('adminAlert', 'Errore: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function generateGiornalieroReport(registrazioni) {
+        const byDate = {};
+
+        registrazioni.forEach(r => {
+            if (!byDate[r.data_registrazione]) byDate[r.data_registrazione] = [];
+            byDate[r.data_registrazione].push(r);
+        });
+
+        const wb = XLSX.utils.book_new();
+
+        Object.entries(byDate).forEach(([data_registro, regs]) => {
+            const wsData = [];
+            wsData.push(['DATA', 'OPERATORE', 'PRODOTTO', 'CODICE', 'CATEGORIA', 'PRODUZIONE', 'RECUPERATI', 'BUTTATI']);
+
+            regs.forEach(r => {
+                wsData.push([
+                    data_registro,
+                    `${r.dipendenti.nome} ${r.dipendenti.cognome}`,
+                    r.prodotti.nome,
+                    r.prodotti.codice_prodotto,
+                    r.prodotti.categoria,
+                    r.prodotti.produzione,
+                    r.recuperati,
+                    r.buttati
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, data_registro.substring(5));
+        });
+
+        const dataInizio = document.getElementById('reportDataInizio').value;
+        const dataFine = document.getElementById('reportDataFine').value;
+        XLSX.writeFile(wb, `Report_Giornaliero_${dataInizio}_${dataFine}.xlsx`);
+    }
+
+    function generateRiepilogoReport(registrazioni) {
+        const byProduct = {};
+
+        registrazioni.forEach(r => {
+            const key = r.prodotto_id;
+            if (!byProduct[key]) {
+                byProduct[key] = {
+                    nome: r.prodotti.nome,
+                    codice: r.prodotti.codice_prodotto,
+                    categoria: r.prodotti.categoria,
+                    produzione: r.prodotti.produzione,
+                    punto: r.punti_vendita.nome,
+                    recuperati: 0,
+                    buttati: 0
+                };
+            }
+            byProduct[key].recuperati += r.recuperati;
+            byProduct[key].buttati += r.buttati;
+        });
+
+        const wsData = [];
+        wsData.push(['PRODOTTO', 'CODICE', 'CATEGORIA', 'PRODUZIONE', 'PUNTO', 'RECUPERATI TOTALI', 'BUTTATI TOTALI']);
+
+        Object.values(byProduct).forEach(p => {
+            wsData.push([
+                p.nome,
+                p.codice,
+                p.categoria,
+                p.produzione,
+                p.punto,
+                p.recuperati,
+                p.buttati
+            ]);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Riepilogo');
+
+        const dataInizio = document.getElementById('reportDataInizio').value;
+        const dataFine = document.getElementById('reportDataFine').value;
+        XLSX.writeFile(wb, `Riepilogo_${dataInizio}_${dataFine}.xlsx`);
+    }
+
+    // =====================================================
+    // DASHBOARD
+    // =====================================================
+
+    async function updateDashboard() {
+        try {
+            const today = new Date().toISOString().split('T')[0];
+
+            // Conteggi giornalieri
+            const { count: todayCount, error: todayError } = await supabase
+                .from('registrazioni_giornaliere')
+                .select('*', { count: 'exact', head: true })
+                .eq('data_registrazione', today);
+
+            // Conteggi prodotti
+            const { count: prodCount, error: prodError } = await supabase
+                .from('prodotti')
+                .select('*', { count: 'exact', head: true })
+                .eq('attivo', true);
+
+            // Conteggi operatori
+            const { count: opCount, error: opError } = await supabase
+                .from('dipendenti')
+                .select('*', { count: 'exact', head: true })
+                .eq('attivo', true);
+
+            document.getElementById('todayEntries').textContent = todayCount || 0;
+            document.getElementById('totalProducts').textContent = prodCount || 0;
+            document.getElementById('totalOperators').textContent = opCount || 0;
+        } catch (error) {
+            console.error('Dashboard update error:', error);
+        }
+    }
+
+    // =====================================================
+    // REAL-TIME LISTENERS
+    // =====================================================
+
+    function setupRealtimeListeners() {
+        // Ascolta nuove registrazioni
+        supabase
+            .channel('registrazioni')
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'registrazioni_giornaliere' },
+                (payload) => {
+                    updateDashboard();
+                }
+            )
+            .subscribe();
+    }
+
+    // =====================================================
+    // UTILITY
+    // =====================================================
+
+    function showAlert(elementId, message, type) {
+        const alert = document.getElementById(elementId);
+        alert.textContent = message;
+        alert.className = `alert show ${type}`;
+        setTimeout(() => alert.classList.remove('show'), 3000);
+    }
+
+    function showLoading(show) {
+        document.getElementById('loadingSpinner').classList.toggle('show', show);
+    }
+
+    // =====================================================
+    // INIT
+    // =====================================================
+
+    document.getElementById('reportDataInizio').valueAsDate = new Date(Date.now() - 7*24*60*60*1000);
+    document.getElementById('reportDataFine').valueAsDate = new Date();
+
+    // Verifica connessione
+    function checkConnection() {
+        const isOnline = navigator.onLine;
+        const status = document.getElementById('appStatus');
+        const loginStatus = document.getElementById('connectionStatus');
+        
+        if (isOnline) {
+            status?.classList.add('online');
+            status?.classList.remove('offline');
+            status?.textContent = '🟢 Online';
+            loginStatus?.classList.add('online');
+            loginStatus?.classList.remove('offline');
+            loginStatus?.textContent = '🟢 Online';
+        } else {
+            status?.classList.remove('online');
+            status?.classList.add('offline');
+            status?.textContent = '🔴 Offline';
+            loginStatus?.classList.remove('online');
+            loginStatus?.classList.add('offline');
+            loginStatus?.textContent = '🔴 Offline';
+        }
+    }
+
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    checkConnection();
+</script>
+
+</body>
+</html>
