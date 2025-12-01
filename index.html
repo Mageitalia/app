@@ -1194,7 +1194,7 @@
                 .from('dipendenti')
                 .select('*')
                 .eq('attivo', true)
-                .eq('id', parseInt(currentUser.user_metadata?.dipendente_id || 0));
+                .eq('id', parseInt((currentUser.user_metadata && currentUser.user_metadata.dipendente_id) || 0));
 
             if (!dipError && dipendenti.length > 0) {
                 const dip = dipendenti[0];
@@ -1274,10 +1274,11 @@
                 const buttati = parseInt(document.querySelector(`.product-buttati[data-product-id="${productId}"]`).value) || 0;
 
                 if (recuperati > 0 || buttati > 0) {
+                    const metadata = currentUser.user_metadata || {};
                     registrazioni.push({
                         data_registrazione: data_form,
-                        punto_vendita_id: currentUser.user_metadata?.punto || 'pisa',
-                        dipendente_id: parseInt(currentUser.user_metadata?.dipendente_id || 0),
+                        punto_vendita_id: metadata.punto || 'pisa',
+                        dipendente_id: parseInt(metadata.dipendente_id || 0),
                         prodotto_id: productId,
                         recuperati: recuperati,
                         buttati: buttati
@@ -1512,19 +1513,27 @@
         const loginStatus = document.getElementById('connectionStatus');
         
         if (isOnline) {
-            status?.classList.add('online');
-            status?.classList.remove('offline');
-            status?.textContent = '🟢 Online';
-            loginStatus?.classList.add('online');
-            loginStatus?.classList.remove('offline');
-            loginStatus?.textContent = '🟢 Online';
+            if (status) {
+                status.classList.add('online');
+                status.classList.remove('offline');
+                status.textContent = '🟢 Online';
+            }
+            if (loginStatus) {
+                loginStatus.classList.add('online');
+                loginStatus.classList.remove('offline');
+                loginStatus.textContent = '🟢 Online';
+            }
         } else {
-            status?.classList.remove('online');
-            status?.classList.add('offline');
-            status?.textContent = '🔴 Offline';
-            loginStatus?.classList.remove('online');
-            loginStatus?.classList.add('offline');
-            loginStatus?.textContent = '🔴 Offline';
+            if (status) {
+                status.classList.remove('online');
+                status.classList.add('offline');
+                status.textContent = '🔴 Offline';
+            }
+            if (loginStatus) {
+                loginStatus.classList.remove('online');
+                loginStatus.classList.add('offline');
+                loginStatus.textContent = '🔴 Offline';
+            }
         }
     }
 
