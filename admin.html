@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mage Italia - Amministrazione</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <div class="header-logo">
+                <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
+            </div>
+            <div>
+                <h1>Mage Italia - Amministrazione ⚙️</h1>
+            </div>
+        </div>
+        <div class="welcome-box">
+            <div class="welcome-text">Benvenuto</div>
+            <div class="welcome-name" id="welcomeName">Antonio</div>
+            <div class="welcome-role" id="welcomeRole">👨‍💼 Amministratore</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 Esci</button>
+    </header>
+
+    <div class="page">
+        <h2>⚙️ Amministrazione</h2>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('utenti')">👤 Gestione Utenti</button>
+            <button class="tab-btn" onclick="switchTab('dipendenti')">👥 Dipendenti</button>
+            <button class="tab-btn" onclick="switchTab('prodotti')">🍕 Prodotti</button>
+            <button class="tab-btn" onclick="switchTab('report')">📄 Report</button>
+            <button class="tab-btn" onclick="switchTab('logo')">🖼️ Logo</button>
+        </div>
+
+        <!-- TAB: GESTIONE UTENTI -->
+        <div id="tabUtenti" class="admin-tab active">
+            <h3>➕ Crea Nuovo Operatore</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="opNome" placeholder="Marco">
+                </div>
+                <div class="form-group">
+                    <label>Cognome</label>
+                    <input type="text" id="opCognome" placeholder="Rossi">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="opEmail" placeholder="marco.rossi@mageitalita.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="opPassword" placeholder="Password123!">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="opPunto">
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="creaOperatore()">➕ Crea Operatore</button>
+
+            <h3 style="margin-top: 40px;">👥 Operatori Attuali</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Punto</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoOperatori"></tbody>
+            </table>
+
+            <div id="utentiMessage"></div>
+        </div>
+
+        <!-- TAB: DIPENDENTI -->
+        <div id="tabDipendenti" class="admin-tab" style="display: none;">
+            <h3>➕ Aggiungi Dipendente</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="dipNome" placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label>Cognome</label>
+                    <input type="text" id="dipCognome" placeholder="Cognome">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="dipPunto">
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="aggiungiDipendente()">➕ Aggiungi Dipendente</button>
+
+            <h3 style="margin-top: 40px;">Dipendenti Attuali</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                        <th>Punto</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoDipendenti"></tbody>
+            </table>
+
+            <div id="dipendentiMessage"></div>
+        </div>
+
+        <!-- TAB: PRODOTTI -->
+        <div id="tabProdotti" class="admin-tab" style="display: none;">
+            <h3>➕ Aggiungi Prodotto</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome Prodotto</label>
+                    <input type="text" id="prodNome" placeholder="Es: Cornetto">
+                </div>
+                <div class="form-group">
+                    <label>Codice Prodotto</label>
+                    <input type="text" id="prodCodice" placeholder="Es: 6387">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="prodCategoria">
+                        <option value="dolce">🍰 Dolce</option>
+                        <option value="salato">🥖 Salato</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="prodPunto">
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="aggiungiProdotto()">➕ Aggiungi Prodotto</button>
+
+            <h3 style="margin-top: 40px;">Prodotti Attuali</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Codice</th>
+                        <th>Categoria</th>
+                        <th>Punto</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoProdotti"></tbody>
+            </table>
+
+            <div id="prodottiMessage"></div>
+        </div>
+
+        <!-- TAB: REPORT -->
+        <div id="tabReport" class="admin-tab" style="display: none;">
+            <h3>📊 Genera Report Excel</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="reportPunto">
+                        <option value="">✅ TUTTI I PUNTI</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data Inizio</label>
+                    <input type="date" id="reportDataInizio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fine</label>
+                    <input type="date" id="reportDataFine">
+                </div>
+                <div class="form-group">
+                    <label>Tipo Report</label>
+                    <select id="reportTipo">
+                        <option value="completo">📋 Completo (Dolci + Salati)</option>
+                        <option value="dolce">🍰 Solo Dolci</option>
+                        <option value="salato">🥖 Solo Salati</option>
+                        <option value="riepilogo">📊 Riepilogo Prodotto</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="generaReportAdmin()">📥 Genera Report Excel</button>
+
+            <div id="reportMessage"></div>
+        </div>
+
+        <!-- TAB: LOGO -->
+        <div id="tabLogo" class="admin-tab" style="display: none;">
+            <h3>🖼️ Carica Logo Azienda</h3>
+            <p style="color: #666; margin-bottom: 20px;">Carica un'immagine per il logo (PNG, JPG). Dimensione consigliata: 200x200px</p>
+            
+            <div class="form-group">
+                <label>Seleziona Immagine</label>
+                <input type="file" id="logoUpload" accept="image/*">
+            </div>
+            
+            <button onclick="salvaLogo()">💾 Salva Logo</button>
+            
+            <h3 style="margin-top: 40px;">Anteprima Logo</h3>
+            <div style="border: 2px dashed #ccc; padding: 20px; border-radius: 8px; text-align: center;">
+                <img id="logoPreview" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo Preview" style="max-width: 150px; height: auto;">
+            </div>
+
+            <div id="logoMessage"></div>
+        </div>
+    </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+
+<script>
+    let operatoriCreati = [];
+
+    // ===== INIT =====
+    window.addEventListener('load', async () => {
+        await redirectIntelligente();
+        
+        const nomeCapitalizzato = capitalizeNome(currentNome);
+        document.getElementById('welcomeName').textContent = nomeCapitalizzato;
+        
+        const today = new Date();
+        document.getElementById('reportDataInizio').valueAsDate = new Date(today.setDate(today.getDate() - 7));
+        document.getElementById('reportDataFine').valueAsDate = new Date();
+        
+        await loadAdminData();
+    });
+
+    // ===== SWITCH TABS =====
+    function switchTab(tabName) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+        document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).style.display = 'block';
+        
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // ===== GESTIONE UTENTI =====
+    async function creaOperatore() {
+        try {
+            const nome = document.getElementById('opNome').value;
+            const cognome = document.getElementById('opCognome').value;
+            const email = document.getElementById('opEmail').value;
+            const password = document.getElementById('opPassword').value;
+            const punto = document.getElementById('opPunto').value;
+
+            if (!nome || !cognome || !email || !password) {
+                showMessage('utentiMessage', '⚠️ Compila tutti i campi', 'error');
+                return;
+            }
+
+            const operatore = {
+                id: Date.now().toString(),
+                nome,
+                cognome,
+                email,
+                password,
+                punto,
+                createdAt: new Date().toISOString()
+            };
+
+            operatoriCreati.push(operatore);
+            localStorage.setItem('mageitaliaOperatori', JSON.stringify(operatoriCreati));
+
+            // Crea dipendente in DB
+            await supabase.from('dipendenti').insert([{
+                nome,
+                cognome,
+                punto_vendita_id: punto,
+                attivo: true
+            }]);
+
+            document.getElementById('opNome').value = '';
+            document.getElementById('opCognome').value = '';
+            document.getElementById('opEmail').value = '';
+            document.getElementById('opPassword').value = '';
+
+            showMessage('utentiMessage', '✅ Operatore creato! (Credenziali salvate localmente)', 'success');
+            await loadOperatoriAdmin();
+
+        } catch (err) {
+            showMessage('utentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function loadOperatoriAdmin() {
+        try {
+            operatoriCreati = JSON.parse(localStorage.getItem('mageitaliaOperatori')) || [];
+
+            const tbody = document.getElementById('corpoOperatori');
+            tbody.innerHTML = '';
+
+            if (operatoriCreati.length > 0) {
+                operatoriCreati.forEach(op => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${op.nome}</td>
+                        <td>${op.email}</td>
+                        <td>${getNomePunto(op.punto)}</td>
+                        <td><button class="btn-danger" onclick="eliminaOperatore('${op.id}')" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
+                    `;
+                });
+            } else {
+                const row = tbody.insertRow();
+                row.innerHTML = '<td colspan="4" style="text-align: center; color: #999;">Nessun operatore creato</td>';
+            }
+
+        } catch (err) {
+            console.error('Load operatori error:', err);
+        }
+    }
+
+    async function eliminaOperatore(opId) {
+        if (!confirm('Sei sicuro?')) return;
+        try {
+            operatoriCreati = operatoriCreati.filter(op => op.id !== opId);
+            localStorage.setItem('mageitaliaOperatori', JSON.stringify(operatoriCreati));
+            
+            showMessage('utentiMessage', '✅ Operatore eliminato!', 'success');
+            await loadOperatoriAdmin();
+        } catch (err) {
+            showMessage('utentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== DIPENDENTI =====
+    async function loadDipendentiAdmin() {
+        try {
+            const { data: dipendenti } = await supabase
+                .from('dipendenti')
+                .select('*')
+                .order('nome');
+
+            const tbody = document.getElementById('corpoDipendenti');
+            tbody.innerHTML = '';
+
+            if (dipendenti) {
+                dipendenti.forEach(d => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${d.nome}</td>
+                        <td>${d.cognome}</td>
+                        <td>${getNomePunto(d.punto_vendita_id)}</td>
+                        <td><button class="btn-danger" onclick="eliminaDipendente(${d.id})" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
+                    `;
+                });
+            }
+
+        } catch (err) {
+            console.error('Load dipendenti error:', err);
+        }
+    }
+
+    async function aggiungiDipendente() {
+        try {
+            const nome = document.getElementById('dipNome').value;
+            const cognome = document.getElementById('dipCognome').value;
+            const punto = document.getElementById('dipPunto').value;
+
+            if (!nome || !cognome) {
+                showMessage('dipendentiMessage', '⚠️ Compila nome e cognome', 'error');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('dipendenti')
+                .insert([{ nome, cognome, punto_vendita_id: punto, attivo: true }]);
+
+            if (error) throw error;
+
+            document.getElementById('dipNome').value = '';
+            document.getElementById('dipCognome').value = '';
+            showMessage('dipendentiMessage', '✅ Dipendente aggiunto!', 'success');
+            await loadDipendentiAdmin();
+
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function eliminaDipendente(id) {
+        if (!confirm('Sei sicuro?')) return;
+        try {
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+            showMessage('dipendentiMessage', '✅ Dipendente eliminato!', 'success');
+            await loadDipendentiAdmin();
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== PRODOTTI =====
+    async function loadProdottiAdmin() {
+        try {
+            const { data: prodotti } = await supabase
+                .from('prodotti')
+                .select('*')
+                .order('nome');
+
+            const tbody = document.getElementById('corpoProdotti');
+            tbody.innerHTML = '';
+
+            if (prodotti) {
+                prodotti.forEach(p => {
+                    const row = tbody.insertRow();
+                    const emoji = p.categoria === 'dolce' ? '🍰' : '🥖';
+                    row.innerHTML = `
+                        <td>${p.nome}</td>
+                        <td><span class="prodotto-code">${p.codice_prodotto}</span></td>
+                        <td>${emoji} ${p.categoria}</td>
+                        <td>${getNomePunto(p.punto_vendita_id)}</td>
+                        <td><button class="btn-danger" onclick="eliminaProdotto(${p.id})" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
+                    `;
+                });
+            }
+
+        } catch (err) {
+            console.error('Load prodotti error:', err);
+        }
+    }
+
+    async function aggiungiProdotto() {
+        try {
+            const nome = document.getElementById('prodNome').value;
+            const codice = document.getElementById('prodCodice').value;
+            const categoria = document.getElementById('prodCategoria').value;
+            const punto = document.getElementById('prodPunto').value;
+
+            if (!nome || !codice) {
+                showMessage('prodottiMessage', '⚠️ Compila nome e codice', 'error');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('prodotti')
+                .insert([{
+                    nome,
+                    codice_prodotto: codice,
+                    categoria,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }]);
+
+            if (error) throw error;
+
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodCodice').value = '';
+            showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
+            await loadProdottiAdmin();
+
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function eliminaProdotto(id) {
+        if (!confirm('Sei sicuro?')) return;
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+            showMessage('prodottiMessage', '✅ Prodotto eliminato!', 'success');
+            await loadProdottiAdmin();
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== REPORT =====
+    async function generaReportAdmin() {
+        const filtri = {
+            punto: document.getElementById('reportPunto').value,
+            dataInizio: document.getElementById('reportDataInizio').value,
+            dataFine: document.getElementById('reportDataFine').value,
+            tipo: document.getElementById('reportTipo').value
+        };
+        await generaReport(filtri);
+    }
+
+    // ===== LOGO =====
+    document.getElementById('logoUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            logoBase64 = event.target.result;
+            document.getElementById('logoPreview').src = logoBase64;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function salvaLogo() {
+        if (!logoBase64) {
+            showMessage('logoMessage', '⚠️ Seleziona un\'immagine', 'error');
+            return;
+        }
+
+        localStorage.setItem('mageitaliaLogo', logoBase64);
+        document.getElementById('appLogo').src = logoBase64;
+        showMessage('logoMessage', '✅ Logo salvato!', 'success');
+    }
+
+    // ===== LOAD ALL DATA =====
+    async function loadAdminData() {
+        await loadOperatoriAdmin();
+        await loadDipendentiAdmin();
+        await loadProdottiAdmin();
+    }
+</script>
+
+</body>
+</html>
