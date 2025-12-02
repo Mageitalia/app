@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mage Italia - Admin Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -118,7 +119,7 @@
         .page {
             flex: 1;
             padding: 20px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             width: 100%;
         }
@@ -186,7 +187,7 @@
 
         .btn-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -222,42 +223,63 @@
             border-color: #999;
         }
 
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .admin-item {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-item-name {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .admin-item-action {
+        .btn-small {
             padding: 6px 12px;
+            font-size: 12px;
             background: #dc3545;
             color: white;
-            font-size: 12px;
+            border: none;
             border-radius: 4px;
             cursor: pointer;
-            border: none;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
-        .admin-item-action:hover {
+        .btn-small:hover {
             background: #c82333;
+        }
+
+        .btn-edit {
+            background: #28a745;
+        }
+
+        .btn-edit:hover {
+            background: #218838;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .admin-table thead {
+            background: #f9f9f9;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .admin-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #A01E4E;
+            font-size: 14px;
+        }
+
+        .admin-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .admin-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .admin-table .actions {
+            display: flex;
+            gap: 8px;
         }
 
         .message {
@@ -278,6 +300,132 @@
             background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            color: #A01E4E;
+            font-size: 18px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-footer .btn-save {
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            color: white;
+        }
+
+        .modal-footer .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(160, 30, 78, 0.3);
+        }
+
+        .modal-footer .btn-cancel {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .modal-footer .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #A01E4E;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
         }
 
         @media (max-width: 768px) {
@@ -303,12 +451,22 @@
                 padding: 15px;
             }
 
-            .admin-grid {
-                grid-template-columns: 1fr;
+            .admin-table {
+                font-size: 12px;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 8px 10px;
             }
 
             .btn-group {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 50% auto;
             }
         }
     </style>
@@ -336,47 +494,90 @@
     <div class="page">
         <h2>⚙️ Pannello Amministrazione</h2>
         
-        <!-- SEZIONE OPERATORI -->
+        <!-- SEZIONE DIPENDENTI/OPERATORI -->
         <div class="admin-section">
-            <h3>👥 Gestione Operatori</h3>
-            <div class="btn-group">
-                <button>➕ Nuovo Operatore</button>
-                <button class="btn-secondary">🔄 Ricarica</button>
+            <h3>👥 Gestione Dipendenti/Operatori</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="dipNome" placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label>Cognome</label>
+                    <input type="text" id="dipCognome" placeholder="Cognome">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="dipPunto">
+                        <option value="">-- Seleziona --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
             </div>
-            <div id="operatoriContainer" class="admin-grid"></div>
-            <div id="operatoriMessage"></div>
-        </div>
-
-        <!-- SEZIONE DIPENDENTI -->
-        <div class="admin-section">
-            <h3>👨‍💼 Gestione Dipendenti</h3>
             <div class="btn-group">
-                <button>➕ Nuovo Dipendente</button>
-                <button class="btn-secondary">🔄 Ricarica</button>
+                <button onclick="aggiungiDipendente()">➕ Aggiungi Dipendente</button>
+                <button class="btn-secondary" onclick="ricaricaDipendenti()">🔄 Ricarica</button>
             </div>
-            <div id="dipendentiContainer" class="admin-grid"></div>
+            <div id="dipendentiContainer"></div>
             <div id="dipendentiMessage"></div>
         </div>
 
         <!-- SEZIONE PRODOTTI -->
         <div class="admin-section">
             <h3>📦 Gestione Prodotti</h3>
-            <div class="btn-group">
-                <button>➕ Nuovo Prodotto</button>
-                <button class="btn-secondary">🔄 Ricarica</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome Prodotto</label>
+                    <input type="text" id="prodNome" placeholder="Nome prodotto">
+                </div>
+                <div class="form-group">
+                    <label>Codice</label>
+                    <input type="text" id="prodCodice" placeholder="Codice prodotto">
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="prodCategoria">
+                        <option value="">-- Seleziona --</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita (lascia vuoto per globale)</label>
+                    <select id="prodPunto">
+                        <option value="">-- Globale --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
             </div>
-            <div id="prodottiContainer" class="admin-grid"></div>
+            <div class="btn-group">
+                <button onclick="aggiungiProdotto()">➕ Aggiungi Prodotto</button>
+                <button class="btn-secondary" onclick="ricaricaProdotti()">🔄 Ricarica</button>
+            </div>
+            <div id="prodottiContainer"></div>
             <div id="prodottiMessage"></div>
         </div>
 
-        <!-- SEZIONE REPORT -->
+        <!-- SEZIONE REPORT EXCEL -->
         <div class="admin-section">
-            <h3>📊 Generazione Report</h3>
+            <h3>📊 Generazione Report Excel</h3>
             <div class="form-row">
+                <div class="form-group">
+                    <label>Data Inizio</label>
+                    <input type="date" id="reportDataInizio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fine</label>
+                    <input type="date" id="reportDataFine">
+                </div>
                 <div class="form-group">
                     <label>Punto Vendita</label>
                     <select id="reportPunto">
-                        <option value="">-- Tutti --</option>
+                        <option value="">-- Cumulativo (Tutti) --</option>
                         <option value="pisa">Pisa</option>
                         <option value="sesto">Sesto Fiorentino</option>
                         <option value="cosenza">Cosenza</option>
@@ -386,28 +587,89 @@
                     <label>Categoria</label>
                     <select id="reportCategoria">
                         <option value="">-- Tutte --</option>
-                        <option value="dolce">Dolci</option>
-                        <option value="salato">Salati</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
                     </select>
                 </div>
             </div>
             <div class="btn-group">
-                <button>📥 Scarica Excel</button>
+                <button onclick="generaReportExcel()">📥 Scarica Excel</button>
             </div>
             <div id="reportMessage"></div>
         </div>
+    </div>
+</div>
 
-        <!-- SEZIONE LOGO -->
-        <div class="admin-section">
-            <h3>🖼️ Upload Logo</h3>
+<!-- MODAL MODIFICA DIPENDENTE -->
+<div id="dipModalModifica" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Modifica Dipendente</h3>
+            <button class="close-btn" onclick="chiudiModalDip()">&times;</button>
+        </div>
+        <div class="modal-body">
             <div class="form-group">
-                <label>Seleziona Logo</label>
-                <input type="file" id="logoInput" accept="image/*">
+                <label>Nome</label>
+                <input type="text" id="dipModNome">
             </div>
-            <div class="btn-group">
-                <button onclick="uploadLogo()">📤 Carica Logo</button>
+            <div class="form-group">
+                <label>Cognome</label>
+                <input type="text" id="dipModCognome">
             </div>
-            <div id="logoMessage"></div>
+            <div class="form-group">
+                <label>Punto Vendita</label>
+                <select id="dipModPunto">
+                    <option value="">-- Seleziona --</option>
+                    <option value="pisa">Pisa</option>
+                    <option value="sesto">Sesto Fiorentino</option>
+                    <option value="cosenza">Cosenza</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="chiudiModalDip()">Annulla</button>
+            <button class="btn-save" onclick="salvaDipendenteModificato()">Salva</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MODIFICA PRODOTTO -->
+<div id="prodModalModifica" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Modifica Prodotto</h3>
+            <button class="close-btn" onclick="chiudiModalProd()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Nome Prodotto</label>
+                <input type="text" id="prodModNome">
+            </div>
+            <div class="form-group">
+                <label>Codice</label>
+                <input type="text" id="prodModCodice">
+            </div>
+            <div class="form-group">
+                <label>Categoria</label>
+                <select id="prodModCategoria">
+                    <option value="">-- Seleziona --</option>
+                    <option value="dolce">Dolce</option>
+                    <option value="salato">Salato</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Punto Vendita (lascia vuoto per globale)</label>
+                <select id="prodModPunto">
+                    <option value="">-- Globale --</option>
+                    <option value="pisa">Pisa</option>
+                    <option value="sesto">Sesto Fiorentino</option>
+                    <option value="cosenza">Cosenza</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="chiudiModalProd()">Annulla</button>
+            <button class="btn-save" onclick="salvaProdottoModificato()">Salva</button>
         </div>
     </div>
 </div>
@@ -421,6 +683,10 @@
     let currentNome = null;
     let supabase = null;
     let isLoggingOut = false;
+    let dipendentiData = [];
+    let prodottiData = [];
+    let dipIdModifica = null;
+    let prodIdModifica = null;
 
     function initSupabase() {
         if (window.supabase && !supabase) {
@@ -513,24 +779,424 @@
 
         const nomeCapitalizzato = capitalizeNome(currentNome);
         document.getElementById('welcomeName').textContent = nomeCapitalizzato;
+        
+        // Carica dati iniziali
+        await ricaricaDipendenti();
+        await ricaricaProdotti();
+        
+        // Imposta date report (ultimi 30 giorni)
+        const oggi = new Date();
+        const trenta = new Date(oggi.getTime() - 30 * 24 * 60 * 60 * 1000);
+        document.getElementById('reportDataFine').valueAsDate = oggi;
+        document.getElementById('reportDataInizio').valueAsDate = trenta;
     });
 
-    function uploadLogo() {
-        const input = document.getElementById('logoInput');
-        if (!input.files.length) {
-            showMessage('logoMessage', '⚠️ Seleziona un file', 'error');
+    // ===== DIPENDENTI =====
+
+    async function ricaricaDipendenti() {
+        try {
+            const container = document.getElementById('dipendentiContainer');
+            container.innerHTML = '<div class="loading">⏳ Caricamento dipendenti...</div>';
+
+            const { data, error } = await supabase
+                .from('dipendenti')
+                .select('*')
+                .eq('attivo', true)
+                .order('nome', { ascending: true });
+
+            if (error) throw error;
+
+            dipendentiData = data || [];
+
+            if (dipendentiData.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><p>Nessun dipendente trovato</p></div>';
+                return;
+            }
+
+            let html = '<table class="admin-table"><thead><tr><th>Nome</th><th>Cognome</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
+            
+            dipendentiData.forEach(dip => {
+                const punto = dip.punto_vendita_id === 'pisa' ? 'Pisa' : 
+                             dip.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' : 
+                             dip.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—';
+                
+                html += `<tr>
+                    <td>${dip.nome}</td>
+                    <td>${dip.cognome}</td>
+                    <td>${punto}</td>
+                    <td class="actions">
+                        <button class="btn-small btn-edit" onclick="apertaModalDipModifica(${dip.id})">✏️ Modifica</button>
+                        <button class="btn-small" onclick="eliminaDipendente(${dip.id})">❌ Elimina</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function aggiungiDipendente() {
+        const nome = document.getElementById('dipNome').value.trim();
+        const cognome = document.getElementById('dipCognome').value.trim();
+        const punto = document.getElementById('dipPunto').value;
+
+        if (!nome || !cognome || !punto) {
+            showMessage('dipendentiMessage', '⚠️ Compila tutti i campi', 'error');
             return;
         }
 
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const base64 = e.target.result;
-            localStorage.setItem('mageitaliaLogo', base64);
-            showMessage('logoMessage', '✅ Logo caricato con successo!', 'success');
-            input.value = '';
-        };
-        reader.readAsDataURL(file);
+        try {
+            const { data, error } = await supabase
+                .from('dipendenti')
+                .insert([{ nome, cognome, punto_vendita_id: punto }])
+                .select();
+
+            if (error) throw error;
+
+            showMessage('dipendentiMessage', '✅ Dipendente aggiunto!', 'success');
+            document.getElementById('dipNome').value = '';
+            document.getElementById('dipCognome').value = '';
+            document.getElementById('dipPunto').value = '';
+            await ricaricaDipendenti();
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    function apertaModalDipModifica(id) {
+        const dip = dipendentiData.find(d => d.id === id);
+        if (!dip) return;
+
+        dipIdModifica = id;
+        document.getElementById('dipModNome').value = dip.nome;
+        document.getElementById('dipModCognome').value = dip.cognome;
+        document.getElementById('dipModPunto').value = dip.punto_vendita_id || '';
+        document.getElementById('dipModalModifica').style.display = 'block';
+    }
+
+    function chiudiModalDip() {
+        document.getElementById('dipModalModifica').style.display = 'none';
+        dipIdModifica = null;
+    }
+
+    async function salvaDipendenteModificato() {
+        const nome = document.getElementById('dipModNome').value.trim();
+        const cognome = document.getElementById('dipModCognome').value.trim();
+        const punto = document.getElementById('dipModPunto').value;
+
+        if (!nome || !cognome || !punto) {
+            showMessage('dipendentiMessage', '⚠️ Compila tutti i campi', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ nome, cognome, punto_vendita_id: punto })
+                .eq('id', dipIdModifica);
+
+            if (error) throw error;
+
+            showMessage('dipendentiMessage', '✅ Dipendente modificato!', 'success');
+            chiudiModalDip();
+            await ricaricaDipendenti();
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function eliminaDipendente(id) {
+        if (!confirm('Sei sicuro di voler eliminare questo dipendente?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMessage('dipendentiMessage', '✅ Dipendente eliminato!', 'success');
+            await ricaricaDipendenti();
+        } catch (err) {
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== PRODOTTI =====
+
+    async function ricaricaProdotti() {
+        try {
+            const container = document.getElementById('prodottiContainer');
+            container.innerHTML = '<div class="loading">⏳ Caricamento prodotti...</div>';
+
+            const { data, error } = await supabase
+                .from('prodotti')
+                .select('*')
+                .eq('attivo', true)
+                .order('nome', { ascending: true });
+
+            if (error) throw error;
+
+            prodottiData = data || [];
+
+            if (prodottiData.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><p>Nessun prodotto trovato</p></div>';
+                return;
+            }
+
+            let html = '<table class="admin-table"><thead><tr><th>Nome</th><th>Codice</th><th>Categoria</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
+            
+            prodottiData.forEach(prod => {
+                const punto = prod.punto_vendita_id === 'pisa' ? 'Pisa' : 
+                             prod.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' : 
+                             prod.punto_vendita_id === 'cosenza' ? 'Cosenza' : 'Globale';
+                const categoria = prod.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato';
+                
+                html += `<tr>
+                    <td>${prod.nome}</td>
+                    <td>${prod.codice_prodotto || '—'}</td>
+                    <td>${categoria}</td>
+                    <td>${punto}</td>
+                    <td class="actions">
+                        <button class="btn-small btn-edit" onclick="apertaModalProdModifica(${prod.id})">✏️ Modifica</button>
+                        <button class="btn-small" onclick="eliminaProdotto(${prod.id})">❌ Elimina</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function aggiungiProdotto() {
+        const nome = document.getElementById('prodNome').value.trim();
+        const codice = document.getElementById('prodCodice').value.trim();
+        const categoria = document.getElementById('prodCategoria').value;
+        const punto = document.getElementById('prodPunto').value;
+
+        if (!nome || !categoria) {
+            showMessage('prodottiMessage', '⚠️ Compila nome e categoria', 'error');
+            return;
+        }
+
+        try {
+            const { data, error } = await supabase
+                .from('prodotti')
+                .insert([{ 
+                    nome, 
+                    codice_prodotto: codice || null, 
+                    categoria,
+                    punto_vendita_id: punto || null
+                }])
+                .select();
+
+            if (error) throw error;
+
+            showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodCodice').value = '';
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodPunto').value = '';
+            await ricaricaProdotti();
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    function apertaModalProdModifica(id) {
+        const prod = prodottiData.find(p => p.id === id);
+        if (!prod) return;
+
+        prodIdModifica = id;
+        document.getElementById('prodModNome').value = prod.nome;
+        document.getElementById('prodModCodice').value = prod.codice_prodotto || '';
+        document.getElementById('prodModCategoria').value = prod.categoria || '';
+        document.getElementById('prodModPunto').value = prod.punto_vendita_id || '';
+        document.getElementById('prodModalModifica').style.display = 'block';
+    }
+
+    function chiudiModalProd() {
+        document.getElementById('prodModalModifica').style.display = 'none';
+        prodIdModifica = null;
+    }
+
+    async function salvaProdottoModificato() {
+        const nome = document.getElementById('prodModNome').value.trim();
+        const codice = document.getElementById('prodModCodice').value.trim();
+        const categoria = document.getElementById('prodModCategoria').value;
+        const punto = document.getElementById('prodModPunto').value;
+
+        if (!nome || !categoria) {
+            showMessage('prodottiMessage', '⚠️ Compila nome e categoria', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ 
+                    nome, 
+                    codice_prodotto: codice || null, 
+                    categoria,
+                    punto_vendita_id: punto || null
+                })
+                .eq('id', prodIdModifica);
+
+            if (error) throw error;
+
+            showMessage('prodottiMessage', '✅ Prodotto modificato!', 'success');
+            chiudiModalProd();
+            await ricaricaProdotti();
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function eliminaProdotto(id) {
+        if (!confirm('Sei sicuro di voler eliminare questo prodotto?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMessage('prodottiMessage', '✅ Prodotto eliminato!', 'success');
+            await ricaricaProdotti();
+        } catch (err) {
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== REPORT EXCEL =====
+
+    async function generaReportExcel() {
+        try {
+            const dataInizio = document.getElementById('reportDataInizio').value;
+            const dataFine = document.getElementById('reportDataFine').value;
+            const punto = document.getElementById('reportPunto').value;
+            const categoria = document.getElementById('reportCategoria').value;
+
+            if (!dataInizio || !dataFine) {
+                showMessage('reportMessage', '⚠️ Seleziona date valide', 'error');
+                return;
+            }
+
+            showMessage('reportMessage', '⏳ Generazione report in corso...', 'success');
+
+            // Query base
+            let query = supabase
+                .from('registrazioni_giornaliere')
+                .select(`
+                    id,
+                    data_registrazione,
+                    punto_vendita_id,
+                    recuperati,
+                    buttati,
+                    dipendenti(nome, cognome),
+                    prodotti(nome, categoria)
+                `)
+                .gte('data_registrazione', dataInizio)
+                .lte('data_registrazione', dataFine);
+
+            if (punto) {
+                query = query.eq('punto_vendita_id', punto);
+            }
+
+            const { data, error } = await query;
+
+            if (error) throw error;
+
+            // Filtra per categoria se necessario
+            let datiFiltratti = data || [];
+            if (categoria) {
+                datiFiltratti = datiFiltratti.filter(r => r.prodotti && r.prodotti.categoria === categoria);
+            }
+
+            if (datiFiltratti.length === 0) {
+                showMessage('reportMessage', '⚠️ Nessun dato trovato per il periodo selezionato', 'error');
+                return;
+            }
+
+            // Crea workbook
+            const workbook = XLSX.utils.book_new();
+
+            // SHEET 1: Dettagli
+            const sheetDettagli = datiFiltratti.map(r => ({
+                'Data': r.data_registrazione,
+                'Punto Vendita': r.punto_vendita_id,
+                'Operatore': (r.dipendenti?.nome || '') + ' ' + (r.dipendenti?.cognome || ''),
+                'Prodotto': r.prodotti?.nome || '—',
+                'Categoria': r.prodotti?.categoria || '—',
+                'Recuperati': r.recuperati || 0,
+                'Buttati': r.buttati || 0,
+                'Totale Scarto': (r.recuperati || 0) + (r.buttati || 0)
+            }));
+
+            const wsDettagli = XLSX.utils.json_to_sheet(sheetDettagli);
+            XLSX.utils.book_append_sheet(workbook, wsDettagli, 'Dettagli');
+
+            // SHEET 2: Riepilogo per prodotto
+            const riepilogo = {};
+            datiFiltratti.forEach(r => {
+                const prodNome = r.prodotti?.nome || 'Sconosciuto';
+                if (!riepilogo[prodNome]) {
+                    riepilogo[prodNome] = { recuperati: 0, buttati: 0 };
+                }
+                riepilogo[prodNome].recuperati += r.recuperati || 0;
+                riepilogo[prodNome].buttati += r.buttati || 0;
+            });
+
+            const sheetRiepilogo = Object.entries(riepilogo).map(([prod, val]) => ({
+                'Prodotto': prod,
+                'Recuperati': val.recuperati,
+                'Buttati': val.buttati,
+                'Totale': val.recuperati + val.buttati
+            }));
+
+            const wsRiepilogo = XLSX.utils.json_to_sheet(sheetRiepilogo);
+            XLSX.utils.book_append_sheet(workbook, wsRiepilogo, 'Riepilogo');
+
+            // SHEET 3: Totali cumulativi
+            const totalRecuperati = datiFiltratti.reduce((sum, r) => sum + (r.recuperati || 0), 0);
+            const totalButtati = datiFiltratti.reduce((sum, r) => sum + (r.buttati || 0), 0);
+            const sheetTotali = [
+                { Descrizione: 'Totale Recuperati', Valore: totalRecuperati },
+                { Descrizione: 'Totale Buttati', Valore: totalButtati },
+                { Descrizione: 'Totale Scarti', Valore: totalRecuperati + totalButtati },
+                { Descrizione: 'Periodo', Valore: `${dataInizio} a ${dataFine}` },
+                { Descrizione: 'Punto Vendita', Valore: punto || 'Cumulativo' }
+            ];
+
+            const wsTotali = XLSX.utils.json_to_sheet(sheetTotali);
+            XLSX.utils.book_append_sheet(workbook, wsTotali, 'Totali');
+
+            // Scarica file
+            const nomeFile = `Mage_Italia_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(workbook, nomeFile);
+
+            showMessage('reportMessage', `✅ Report scaricato: ${nomeFile}`, 'success');
+        } catch (err) {
+            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // Chiudi modal se clicchi fuori
+    window.onclick = function(event) {
+        const dipModal = document.getElementById('dipModalModifica');
+        const prodModal = document.getElementById('prodModalModifica');
+        
+        if (event.target === dipModal) dipModal.style.display = 'none';
+        if (event.target === prodModal) prodModal.style.display = 'none';
     }
 </script>
 
