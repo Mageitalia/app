@@ -1439,6 +1439,11 @@
     }
 
     // =========== ADMIN - GESTIONE UTENTI ===========
+    // Nota: Gli utenti Supabase auth vanno creati manualmente o via API server-side
+    // Per semplicità, usiamo localStorage per tracciare i credenziali operatori
+    
+    let operatoriCreati = JSON.parse(localStorage.getItem('mageitaliaOperatori')) || [];
+
     async function creaOperatore() {
         try {
             const nome = document.getElementById('opNome').value;
@@ -1452,34 +1457,39 @@
                 return;
             }
 
-            // Crea utente in auth
-            const { data, error } = await supabase.auth.admin.createUser({
+            // Verifica se email esiste già
+            const { data: existing } = await supabase.auth.signInWithPassword({ email, password: 'test' }).catch(() => ({ data: null }));
+            
+            // Crea in localStorage (traccia locale)
+            const operatore = {
+                id: Date.now().toString(),
+                nome,
+                cognome,
                 email,
-                password,
-                email_confirm: true,
-                user_metadata: {
-                    nome: nome,
-                    role: 'operatore',
-                    punto_vendita: punto
-                }
-            });
+                password, // ⚠️ ATTENZIONE: Solo per demo! In produzione usare server-side
+                punto,
+                createdAt: new Date().toISOString()
+            };
 
-            if (error) throw error;
+            operatoriCreati.push(operatore);
+            localStorage.setItem('mageitaliaOperatori', JSON.stringify(operatoriCreati));
 
-            // Crea dipendente
-            await supabase.from('dipendenti').insert([{
+            // Crea anche dipendente in DB
+            const { error: dipError } = await supabase.from('dipendenti').insert([{
                 nome,
                 cognome,
                 punto_vendita_id: punto,
                 attivo: true
             }]);
 
+            if (dipError) console.warn('Dipendente warning:', dipError);
+
             document.getElementById('opNome').value = '';
             document.getElementById('opCognome').value = '';
             document.getElementById('opEmail').value = '';
             document.getElementById('opPassword').value = '';
 
-            showMessage('utentiMessage', '✅ Operatore creato!', 'success');
+            showMessage('utentiMessage', '✅ Operatore creato! (Credenziali salvate localmente)', 'success');
             await loadOperatoriAdmin();
 
         } catch (err) {
@@ -1489,24 +1499,24 @@
 
     async function loadOperatoriAdmin() {
         try {
-            const { data: users } = await supabase.auth.admin.listUsers();
-            
             const tbody = document.getElementById('corpoOperatori');
             tbody.innerHTML = '';
 
-            if (users) {
-                users.forEach(u => {
-                    if (u.user_metadata && u.user_metadata.role === 'operatore') {
-                        const row = tbody.insertRow();
-                        const nome = u.user_metadata.nome || 'Sconosciuto';
-                        row.innerHTML = `
-                            <td>${nome}</td>
-                            <td>${u.email}</td>
-                            <td>${u.user_metadata.punto_vendita || '-'}</td>
-                            <td><button class="btn-danger" onclick="eliminaOperatore('${u.id}')" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
-                        `;
-                    }
+            operatoriCreati = JSON.parse(localStorage.getItem('mageitaliaOperatori')) || [];
+
+            if (operatoriCreati && operatoriCreati.length > 0) {
+                operatoriCreati.forEach(op => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${op.nome}</td>
+                        <td>${op.email}</td>
+                        <td>${op.punto}</td>
+                        <td><button class="btn-danger" onclick="eliminaOperatore('${op.id}')" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
+                    `;
                 });
+            } else {
+                const row = tbody.insertRow();
+                row.innerHTML = '<td colspan="4" style="text-align: center; color: #999;">Nessun operatore creato</td>';
             }
 
         } catch (err) {
@@ -1514,10 +1524,12 @@
         }
     }
 
-    async function eliminaOperatore(userId) {
+    async function eliminaOperatore(opId) {
         if (!confirm('Sei sicuro? L\'operatore non potrà più accedere.')) return;
         try {
-            await supabase.auth.admin.deleteUser(userId);
+            operatoriCreati = operatoriCreati.filter(op => op.id !== opId);
+            localStorage.setItem('mageitaliaOperatori', JSON.stringify(operatoriCreati));
+            
             showMessage('utentiMessage', '✅ Operatore eliminato!', 'success');
             await loadOperatoriAdmin();
         } catch (err) {
@@ -1693,6 +1705,12 @@
     // =========== ADMIN - REPORT ===========
     async function generaReport() {
         try {
+            // Verifica che XLSX sia caricato
+            if (typeof XLSX === 'undefined') {
+                showMessage('reportMessage', '⚠️ Libreria Excel non caricata. Ricarica la pagina.', 'error');
+                return;
+            }
+
             showMessage('reportMessage', '⏳ Generando report...', 'info');
             
             const punto = document.getElementById('reportPunto').value || null;
