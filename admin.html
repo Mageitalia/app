@@ -98,7 +98,7 @@
             padding: 0;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             display: flex;
-            gap: 0;
+            justify-content: center;
             border-bottom: 2px solid #e0e0e0;
             overflow-x: auto;
             position: sticky;
@@ -107,26 +107,31 @@
         }
 
         .tab-button {
-            padding: 15px 30px;
+            padding: 15px 40px;
             background: white;
             border: none;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             color: #666;
-            border-bottom: 3px solid transparent;
+            border-bottom: 4px solid transparent;
             transition: all 0.3s ease;
             white-space: nowrap;
+            min-width: 150px;
+            text-align: center;
         }
 
         .tab-button:hover {
             color: #A01E4E;
             background: #f9f9f9;
+            border-bottom-color: #ddd;
         }
 
         .tab-button.active {
             color: #A01E4E;
             border-bottom-color: #A01E4E;
+            background: #fff;
+            box-shadow: inset 0 -2px 0 0 #A01E4E;
         }
 
         /* ===== PAGE ===== */
@@ -455,9 +460,11 @@
 
     <!-- TABS -->
     <div class="tabs-container">
-        <button class="tab-button active" onclick="switchTab('dipendenti')">👥 Dipendenti</button>
-        <button class="tab-button" onclick="switchTab('prodotti')">📦 Prodotti</button>
-        <button class="tab-button" onclick="switchTab('report')">📊 Report</button>
+        <div style="display: flex; justify-content: center; width: 100%; gap: 0;">
+            <button class="tab-button active" onclick="switchTab('dipendenti')">👥 Dipendenti</button>
+            <button class="tab-button" onclick="switchTab('prodotti')">📦 Prodotti</button>
+            <button class="tab-button" onclick="switchTab('report')">📊 Report</button>
+        </div>
     </div>
 
     <!-- ===== TAB 1: DIPENDENTI ===== -->
@@ -801,6 +808,7 @@
                 .from('dipendenti')
                 .select('*')
                 .eq('attivo', true)
+                .order('punto_vendita_id', { ascending: true })
                 .order('nome', { ascending: true });
 
             if (error) throw error;
@@ -812,17 +820,22 @@
                 return;
             }
 
-            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
+            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto Vendita</th><th>Username</th><th>Password</th><th>Azioni</th></tr></thead><tbody>';
             
             dipendenti.forEach(dip => {
                 const punto = dip.punto_vendita_id === 'pisa' ? '📍 Pisa' : 
                              dip.punto_vendita_id === 'sesto' ? '📍 Sesto Fiorentino' :
                              dip.punto_vendita_id === 'cosenza' ? '📍 Cosenza' : '—';
                 
+                const username = `${dip.nome.toLowerCase()}.${dip.cognome.toLowerCase()}`;
+                const password = username;
+                
                 html += `<tr>
                     <td>${dip.nome}</td>
                     <td>${dip.cognome}</td>
                     <td>${punto}</td>
+                    <td><code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;font-size:12px;">${username}</code></td>
+                    <td><code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;font-size:12px;">${password}</code></td>
                     <td>
                         <button class="btn-small btn-delete" onclick="eliminaDipendente(${dip.id})">🗑️ Elimina</button>
                     </td>
@@ -1072,83 +1085,162 @@
                 return;
             }
 
-            const dateStart = new Date(dataInizio);
-            const dateEnd = new Date(dataFine);
-            dateEnd.setDate(dateEnd.getDate() + 1);
-
             showMessage('reportMessage', '⏳ Generazione report...', 'info');
+            console.log('📊 Parametri report:', { dataInizio, dataFine, punto, categoria });
 
+            // Converti date correttamente
+            const dateStart = new Date(dataInizio + 'T00:00:00Z');
+            const dateEnd = new Date(dataFine + 'T23:59:59Z');
+
+            console.log('📅 Date:', {
+                dataInizio,
+                dataFine,
+                dateStartISO: dateStart.toISOString(),
+                dateEndISO: dateEnd.toISOString()
+            });
+
+            // Query con logging
             let query = supabase
                 .from('registrazioni_giornaliere')
                 .select(`
-                    *,
-                    prodotti(nome, categoria, punto_vendita_id),
-                    dipendenti(nome, cognome, punto_vendita_id)
+                    id,
+                    created_at,
+                    recuperati,
+                    buttati,
+                    prodotti:prodotti_id(nome, categoria, punto_vendita_id),
+                    dipendenti:dipendenti_id(nome, cognome)
                 `)
                 .gte('created_at', dateStart.toISOString())
                 .lte('created_at', dateEnd.toISOString());
 
-            if (punto) query = query.eq('prodotti.punto_vendita_id', punto);
-            if (categoria) query = query.eq('prodotti.categoria', categoria);
-
             const { data: registrazioni, error } = await query;
-            
+
             if (error) {
-                showMessage('reportMessage', '❌ Errore: ' + error.message, 'error');
+                console.error('❌ Errore query:', error);
+                showMessage('reportMessage', '❌ Errore query: ' + error.message, 'error');
+                return;
+            }
+
+            console.log('📋 Registrazioni trovate:', registrazioni?.length || 0);
+            console.log('Dati:', registrazioni);
+
+            // Se non ci sono registrazioni, avvisa
+            if (!registrazioni || registrazioni.length === 0) {
+                showMessage('reportMessage', '⚠️ Nessuna registrazione trovata nel periodo selezionato', 'error');
+                return;
+            }
+
+            // Filtra manualmente se necessario
+            let filtered = registrazioni;
+            if (punto) {
+                filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
+            }
+            if (categoria) {
+                filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
+            }
+
+            console.log('📋 Registrazioni dopo filtri:', filtered.length);
+
+            if (filtered.length === 0) {
+                showMessage('reportMessage', '⚠️ Nessuna registrazione corrispondente ai filtri', 'error');
                 return;
             }
 
             const wb = XLSX.utils.book_new();
 
             // Sheet 1: Dettagli
-            const dettagli = (registrazioni || []).map(r => ({
+            const dettagli = filtered.map(r => ({
                 'Data': new Date(r.created_at).toLocaleDateString('it-IT'),
+                'Ora': new Date(r.created_at).toLocaleTimeString('it-IT'),
                 'Prodotto': r.prodotti?.nome || '—',
                 'Categoria': r.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
                 'Punto': r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
                         r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
                         r.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
                 'Recuperati (kg)': r.recuperati || 0,
-                'Buttati (kg)': r.buttati || 0
+                'Buttati (kg)': r.buttati || 0,
+                'Operatore': r.dipendenti ? `${r.dipendenti.nome} ${r.dipendenti.cognome}` : '—'
             }));
 
             const ws1 = XLSX.utils.json_to_sheet(dettagli);
+            ws1['!cols'] = [
+                { wch: 12 },
+                { wch: 10 },
+                { wch: 20 },
+                { wch: 12 },
+                { wch: 18 },
+                { wch: 14 },
+                { wch: 14 },
+                { wch: 20 }
+            ];
             XLSX.utils.book_append_sheet(wb, ws1, 'Dettagli');
+
+            console.log('✅ Sheet 1 (Dettagli) creato:', dettagli.length, 'righe');
 
             // Sheet 2: Riepilogo
             const riepilogo = {};
-            (registrazioni || []).forEach(r => {
+            filtered.forEach(r => {
                 const key = r.prodotti?.nome || 'Sconosciuto';
                 if (!riepilogo[key]) {
                     riepilogo[key] = {
                         'Prodotto': key,
                         'Categoria': r.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
+                        'Punto': r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                                r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
+                                r.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
                         'Recuperati': 0,
-                        'Buttati': 0
+                        'Buttati': 0,
+                        'Registrazioni': 0
                     };
                 }
                 riepilogo[key]['Recuperati'] += r.recuperati || 0;
                 riepilogo[key]['Buttati'] += r.buttati || 0;
+                riepilogo[key]['Registrazioni'] += 1;
             });
 
-            const ws2 = XLSX.utils.json_to_sheet(Object.values(riepilogo));
+            const riepilogoData = Object.values(riepilogo);
+            const ws2 = XLSX.utils.json_to_sheet(riepilogoData);
+            ws2['!cols'] = [
+                { wch: 20 },
+                { wch: 12 },
+                { wch: 18 },
+                { wch: 14 },
+                { wch: 14 },
+                { wch: 14 }
+            ];
             XLSX.utils.book_append_sheet(wb, ws2, 'Riepilogo');
 
+            console.log('✅ Sheet 2 (Riepilogo) creato');
+
             // Sheet 3: Totali
-            const tot_rec = (registrazioni || []).reduce((s, r) => s + (r.recuperati || 0), 0);
-            const tot_but = (registrazioni || []).reduce((s, r) => s + (r.buttati || 0), 0);
+            const tot_rec = filtered.reduce((s, r) => s + (r.recuperati || 0), 0);
+            const tot_but = filtered.reduce((s, r) => s + (r.buttati || 0), 0);
             const totali = [
+                { 'Metrica': 'Totale Registrazioni', 'Valore': filtered.length },
                 { 'Metrica': 'Totale Recuperati (kg)', 'Valore': tot_rec.toFixed(2) },
                 { 'Metrica': 'Totale Buttati (kg)', 'Valore': tot_but.toFixed(2) },
                 { 'Metrica': 'Totale Scarto (kg)', 'Valore': (tot_rec + tot_but).toFixed(2) }
             ];
 
             const ws3 = XLSX.utils.json_to_sheet(totali);
+            ws3['!cols'] = [
+                { wch: 30 },
+                { wch: 20 }
+            ];
             XLSX.utils.book_append_sheet(wb, ws3, 'Totali');
 
-            XLSX.writeFile(wb, `Mage-Report-${dataInizio}-a-${dataFine}.xlsx`);
-            showMessage('reportMessage', '✅ Report scaricato!', 'success');
+            console.log('✅ Sheet 3 (Totali) creato');
+            console.log('📊 Totali:', { tot_rec, tot_but });
+
+            // Salva file
+            const filename = `Mage-Report-${dataInizio}-a-${dataFine}.xlsx`;
+            XLSX.writeFile(wb, filename);
+
+            showMessage('reportMessage', `✅ Report generato e scaricato: ${filename}`, 'success');
+            console.log('✅ File Excel generato:', filename);
+
         } catch (err) {
+            console.error('❌ Errore generazione report:', err);
             showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
