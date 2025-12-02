@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mage Italia - Cosenza</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <div class="header-logo">
+                <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
+            </div>
+            <div>
+                <h1>Mage Italia - Cosenza 🏪</h1>
+            </div>
+        </div>
+        <div class="welcome-box">
+            <div class="welcome-text">Benvenuto</div>
+            <div class="welcome-name" id="welcomeName">Antonio</div>
+            <div class="welcome-role" id="welcomeRole">👤 Operatore</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 Esci</button>
+    </header>
+
+    <div class="page">
+        <h2>✏️ Compila Scarti - Cosenza</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>📅 Data</label>
+                <input type="date" id="dataScarti" required>
+            </div>
+        </div>
+
+        <!-- SEARCH & PREFERITI -->
+        <div class="search-container">
+            <input type="text" id="searchProdotto" class="search-box" placeholder="🔍 Cerca per nome o codice...">
+            
+            <div class="preferiti-section">
+                <div class="preferiti-title">⭐ PREFERITI (I Più Usati)</div>
+                <div class="preferiti-grid" id="preferitiGrid"></div>
+            </div>
+        </div>
+
+        <!-- DOLCI -->
+        <div class="categoria-section">
+            <div class="categoria-title">
+                <span>🍰</span>
+                <span>DOLCI</span>
+            </div>
+            <div class="prodotti-grid" id="prodottiDolci"></div>
+        </div>
+
+        <!-- SALATI -->
+        <div class="categoria-section">
+            <div class="categoria-title">
+                <span>🥖</span>
+                <span>SALATI</span>
+            </div>
+            <div class="prodotti-grid" id="prodottiSalati"></div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="salvaaScarti()">💾 Salva Scarti</button>
+            <button class="btn-secondary" onclick="resettaScarti()">🔄 Azzera Tutto</button>
+        </div>
+
+        <div id="scartiMessage"></div>
+    </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+
+<script>
+    let scartiForm = {};
+    let tuttiProdotti = [];
+    let preferitiUsati = [];
+
+    // ===== INIT =====
+    window.addEventListener('load', async () => {
+        await redirectIntelligente();
+        
+        const nomeCapitalizzato = capitalizeNome(currentNome);
+        document.getElementById('welcomeName').textContent = nomeCapitalizzato;
+        
+        document.getElementById('dataScarti').valueAsDate = new Date();
+        
+        await loadProdottiScarti();
+        
+        const saved = localStorage.getItem('preferitiMageItalia');
+        if (saved) preferitiUsati = JSON.parse(saved);
+        
+        document.getElementById('searchProdotto').addEventListener('input', filterProdotti);
+    });
+
+    // ===== LOAD PRODOTTI =====
+    async function loadProdottiScarti() {
+        try {
+            const { data: prodotti } = await supabase
+                .from('prodotti')
+                .select('*')
+                .eq('punto_vendita_id', 'cosenza')
+                .eq('attivo', true)
+                .order('categoria', { ascending: true })
+                .order('nome', { ascending: true });
+
+            tuttiProdotti = prodotti || [];
+            renderProdotti(tuttiProdotti);
+            renderPreferiti();
+
+        } catch (err) {
+            console.error('Load prodotti error:', err);
+        }
+    }
+
+    // ===== RENDER PRODOTTI =====
+    function renderProdotti(prodotti) {
+        const gridDolci = document.getElementById('prodottiDolci');
+        const gridSalati = document.getElementById('prodottiSalati');
+        gridDolci.innerHTML = '';
+        gridSalati.innerHTML = '';
+        scartiForm = {};
+
+        prodotti.forEach(p => {
+            scartiForm[p.id] = { recuperati: 0, buttati: 0 };
+            
+            const card = document.createElement('div');
+            card.className = 'prodotto-card';
+            card.innerHTML = `
+                <div class="prodotto-header">
+                    <h4>${p.nome}</h4>
+                    <div class="prodotto-code">${p.codice_prodotto}</div>
+                </div>
+                <div class="input-row">
+                    <div>
+                        <label>✅ Recuperati</label>
+                        <input type="number" min="0" placeholder="0" 
+                               onchange="scartiForm[${p.id}].recuperati = parseInt(this.value || 0); salvaPreferiti(${p.id});">
+                    </div>
+                    <div>
+                        <label>❌ Buttati</label>
+                        <input type="number" min="0" placeholder="0"
+                               onchange="scartiForm[${p.id}].buttati = parseInt(this.value || 0); salvaPreferiti(${p.id});">
+                    </div>
+                </div>
+            `;
+            
+            if (p.categoria === 'dolce') {
+                gridDolci.appendChild(card);
+            } else {
+                gridSalati.appendChild(card);
+            }
+        });
+    }
+
+    // ===== FILTER PRODOTTI =====
+    function filterProdotti() {
+        const search = document.getElementById('searchProdotto').value.toLowerCase();
+        const filtered = tuttiProdotti.filter(p => 
+            p.nome.toLowerCase().includes(search) || 
+            p.codice_prodotto.toLowerCase().includes(search)
+        );
+        renderProdotti(filtered);
+    }
+
+    // ===== PREFERITI =====
+    function renderPreferiti() {
+        const grid = document.getElementById('preferitiGrid');
+        grid.innerHTML = '';
+
+        const preferiti = tuttiProdotti
+            .filter(p => preferitiUsati.includes(p.id))
+            .slice(0, 6);
+
+        if (preferiti.length === 0) {
+            grid.innerHTML = '<p style="color: #999; grid-column: 1/-1;">Nessun preferito ancora. Aggiungi durante la compilazione!</p>';
+            return;
+        }
+
+        preferiti.forEach(p => {
+            const btn = document.createElement('button');
+            btn.className = 'preferito-btn';
+            btn.textContent = `${p.nome.substring(0, 15)}... [${p.codice_prodotto}]`;
+            btn.onclick = () => {
+                const inputs = document.querySelectorAll('.prodotto-card input');
+                inputs.forEach(inp => inp.value = '');
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    function salvaPreferiti(prodId) {
+        if (!preferitiUsati.includes(prodId)) {
+            preferitiUsati.push(prodId);
+            if (preferitiUsati.length > 10) preferitiUsati.shift();
+            localStorage.setItem('preferitiMageItalia', JSON.stringify(preferitiUsati));
+            renderPreferiti();
+        }
+    }
+
+    // ===== SALVA SCARTI =====
+    async function salvaaScarti() {
+        try {
+            const data = document.getElementById('dataScarti').value;
+
+            if (!data) {
+                showMessage('scartiMessage', '⚠️ Seleziona la data', 'error');
+                return;
+            }
+
+            // Trova dipendente
+            const { data: dip } = await supabase
+                .from('dipendenti')
+                .select('id')
+                .eq('nome', currentNome)
+                .eq('punto_vendita_id', 'cosenza')
+                .limit(1);
+            
+            if (!dip || dip.length === 0) {
+                showMessage('scartiMessage', '⚠️ Operatore non trovato nel sistema', 'error');
+                return;
+            }
+
+            const dipId = dip[0].id;
+            const registrazioni = [];
+
+            for (const [prodId, valori] of Object.entries(scartiForm)) {
+                if (valori.recuperati > 0 || valori.buttati > 0) {
+                    registrazioni.push({
+                        data_registrazione: data,
+                        punto_vendita_id: 'cosenza',
+                        dipendente_id: dipId,
+                        prodotto_id: parseInt(prodId),
+                        recuperati: valori.recuperati,
+                        buttati: valori.buttati
+                    });
+                }
+            }
+
+            if (registrazioni.length === 0) {
+                showMessage('scartiMessage', '⚠️ Aggiungi almeno uno scarto', 'error');
+                return;
+            }
+
+            const { error } = await supabase
+                .from('registrazioni_giornaliere')
+                .insert(registrazioni);
+
+            if (error) throw error;
+
+            showMessage('scartiMessage', '✅ Scarti salvati con successo!', 'success');
+            resettaScarti();
+
+        } catch (err) {
+            showMessage('scartiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== RESET =====
+    function resettaScarti() {
+        document.getElementById('dataScarti').valueAsDate = new Date();
+        document.querySelectorAll('.prodotto-card input').forEach(input => input.value = '');
+        scartiForm = {};
+    }
+</script>
+
+</body>
+</html>
