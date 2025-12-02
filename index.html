@@ -1033,6 +1033,49 @@
 
     loadLogo();
 
+    // =========== AUTOLOAD SESSIONE ===========
+    window.addEventListener('load', async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (data.session && data.session.user) {
+            await handleLoginSuccess(data.session.user);
+        }
+    });
+
+    async function handleLoginSuccess(user) {
+        currentUser = user;
+        const metadata = user.user_metadata || {};
+        currentRole = metadata.role || 'operatore';
+        currentNome = metadata.nome || 'Utente';
+
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainApp').classList.add('active');
+
+        const emoji = currentRole === 'admin' ? '👨‍💼' : '👤';
+        const roleText = currentRole === 'admin' ? 'Amministratore' : 'Operatore';
+        const nomeCapitalizzato = currentNome.charAt(0).toUpperCase() + currentNome.slice(1).toLowerCase();
+        
+        document.getElementById('welcomeName').textContent = nomeCapitalizzato;
+        document.getElementById('welcomeRole').textContent = `${emoji} ${roleText}`;
+
+        if (currentRole === 'admin') {
+            document.querySelectorAll('.admin-only').forEach(el => el.classList.add('show'));
+            document.querySelectorAll('.operatore-only').forEach(el => el.classList.remove('show'));
+        } else {
+            document.querySelectorAll('.operatore-only').forEach(el => el.classList.add('show'));
+            document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('show'));
+        }
+
+        await loadDashboard();
+        await loadScartiForm();
+        if (currentRole === 'admin') {
+            await loadAdminData();
+        }
+
+        document.getElementById('dataScarti').valueAsDate = new Date();
+        document.getElementById('reportDataInizio').valueAsDate = new Date(new Date().setDate(new Date().getDate() - 7));
+        document.getElementById('reportDataFine').valueAsDate = new Date();
+    }
+
     // =========== LOGIN ===========
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1049,38 +1092,7 @@
 
             if (error) throw error;
 
-            currentUser = data.user;
-            const metadata = currentUser.user_metadata || {};
-            currentRole = metadata.role || 'operatore';
-            currentNome = metadata.nome || 'Utente';
-
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainApp').classList.add('active');
-
-            const emoji = currentRole === 'admin' ? '👨‍💼' : '👤';
-            const roleText = currentRole === 'admin' ? 'Amministratore' : 'Operatore';
-            const nomeCapitalizzato = currentNome.charAt(0).toUpperCase() + currentNome.slice(1).toLowerCase();
-            
-            document.getElementById('welcomeName').textContent = nomeCapitalizzato;
-            document.getElementById('welcomeRole').textContent = `${emoji} ${roleText}`;
-
-            if (currentRole === 'admin') {
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('show'));
-                document.querySelectorAll('.operatore-only').forEach(el => el.classList.remove('show'));
-            } else {
-                document.querySelectorAll('.operatore-only').forEach(el => el.classList.add('show'));
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('show'));
-            }
-
-            await loadDashboard();
-            await loadScartiForm();
-            if (currentRole === 'admin') {
-                await loadAdminData();
-            }
-
-            document.getElementById('dataScarti').valueAsDate = new Date();
-            document.getElementById('reportDataInizio').valueAsDate = new Date(new Date().setDate(new Date().getDate() - 7));
-            document.getElementById('reportDataFine').valueAsDate = new Date();
+            await handleLoginSuccess(data.user);
 
         } catch (err) {
             errorDiv.textContent = '❌ Errore: ' + err.message;
@@ -1569,17 +1581,25 @@
     }
 
     async function eliminaDipendente(id) {
-        if (!confirm('Sei sicuro?')) return;
+        if (!confirm('Sei sicuro di voler eliminare questo dipendente?')) return;
         try {
             const { error } = await supabase
                 .from('dipendenti')
                 .update({ attivo: false })
                 .eq('id', id);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Eliminate error:', error);
+                throw error;
+            }
+            
+            showMessage('dipendentiMessage', '✅ Dipendente eliminato!', 'success');
+            await new Promise(r => setTimeout(r, 500));
             await loadDipendentiAdmin();
+            
         } catch (err) {
-            alert('❌ Errore: ' + err.message);
+            console.error('Error:', err);
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 
@@ -1648,24 +1668,34 @@
     }
 
     async function eliminaProdotto(id) {
-        if (!confirm('Sei sicuro?')) return;
+        if (!confirm('Sei sicuro di voler eliminare questo prodotto?')) return;
         try {
             const { error } = await supabase
                 .from('prodotti')
                 .update({ attivo: false })
                 .eq('id', id);
 
-            if (error) throw error;
+            if (error) {
+                console.error('Eliminate error:', error);
+                throw error;
+            }
+            
+            showMessage('prodottiMessage', '✅ Prodotto eliminato!', 'success');
+            await new Promise(r => setTimeout(r, 500));
             await loadProdottiAdmin();
+            
         } catch (err) {
-            alert('❌ Errore: ' + err.message);
+            console.error('Error:', err);
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 
     // =========== ADMIN - REPORT ===========
     async function generaReport() {
         try {
-            const punto = document.getElementById('reportPunto').value;
+            showMessage('reportMessage', '⏳ Generando report...', 'info');
+            
+            const punto = document.getElementById('reportPunto').value || null;
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
             const tipo = document.getElementById('reportTipo').value;
@@ -1690,7 +1720,12 @@
                 query = query.eq('punto_vendita_id', punto);
             }
 
-            const { data: registrazioni } = await query.order('data_registrazione');
+            const { data: registrazioni, error } = await query.order('data_registrazione');
+
+            if (error) {
+                console.error('Query error:', error);
+                throw error;
+            }
 
             if (!registrazioni || registrazioni.length === 0) {
                 showMessage('reportMessage', 'ℹ️ Nessun dato nel periodo selezionato', 'info');
@@ -1700,43 +1735,40 @@
             const wb = XLSX.utils.book_new();
 
             if (tipo === 'completo') {
-                const wsData = [
-                    ['Data', 'Operatore', 'Prodotto', 'Codice', 'Categoria', 'Recuperati', 'Buttati']
-                ];
+                const wsData = [['Data', 'Operatore', 'Prodotto', 'Codice', 'Categoria', 'Recuperati', 'Buttati']];
                 
                 registrazioni.forEach(r => {
                     wsData.push([
-                        r.data_registrazione,
-                        r.dipendenti ? r.dipendenti.nome + ' ' + r.dipendenti.cognome : '',
+                        r.data_registrazione || '',
+                        r.dipendenti ? (r.dipendenti.nome + ' ' + r.dipendenti.cognome) : '',
                         r.prodotti ? r.prodotti.nome : '',
                         r.prodotti ? r.prodotti.codice_prodotto : '',
                         r.prodotti ? r.prodotti.categoria : '',
-                        r.recuperati,
-                        r.buttati
+                        r.recuperati || 0,
+                        r.buttati || 0
                     ]);
                 });
 
                 const ws = XLSX.utils.aoa_to_sheet(wsData);
-                XLSX.utils.book_append_sheet(wb, ws, 'Report Completo');
+                XLSX.utils.book_append_sheet(wb, ws, 'Report');
 
             } else if (tipo === 'riepilogo') {
                 const byProd = {};
                 registrazioni.forEach(r => {
                     const key = r.prodotto_id;
-                    if (!byProd[key]) byProd[key] = { nome: '', codice: '', categoria: '', recuperati: 0, buttati: 0 };
+                    if (!byProd[key]) {
+                        byProd[key] = { nome: '', codice: '', categoria: '', recuperati: 0, buttati: 0 };
+                    }
                     if (r.prodotti) {
                         byProd[key].nome = r.prodotti.nome;
                         byProd[key].codice = r.prodotti.codice_prodotto;
                         byProd[key].categoria = r.prodotti.categoria;
                     }
-                    byProd[key].recuperati += r.recuperati;
-                    byProd[key].buttati += r.buttati;
+                    byProd[key].recuperati += r.recuperati || 0;
+                    byProd[key].buttati += r.buttati || 0;
                 });
 
-                const wsData = [
-                    ['Prodotto', 'Codice', 'Categoria', 'Recuperati Totali', 'Buttati Totali']
-                ];
-
+                const wsData = [['Prodotto', 'Codice', 'Categoria', 'Recuperati', 'Buttati']];
                 Object.values(byProd).forEach(p => {
                     wsData.push([p.nome, p.codice, p.categoria, p.recuperati, p.buttati]);
                 });
@@ -1745,21 +1777,17 @@
                 XLSX.utils.book_append_sheet(wb, ws, 'Riepilogo');
 
             } else {
-                // Solo dolce o salato
-                const filtered = registrazioni.filter(r => !r.prodotti || r.prodotti.categoria === tipo);
-                
-                const wsData = [
-                    ['Data', 'Operatore', 'Prodotto', 'Codice', 'Recuperati', 'Buttati']
-                ];
+                const filtered = registrazioni.filter(r => r.prodotti && r.prodotti.categoria === tipo);
+                const wsData = [['Data', 'Operatore', 'Prodotto', 'Codice', 'Recuperati', 'Buttati']];
                 
                 filtered.forEach(r => {
                     wsData.push([
-                        r.data_registrazione,
-                        r.dipendenti ? r.dipendenti.nome + ' ' + r.dipendenti.cognome : '',
+                        r.data_registrazione || '',
+                        r.dipendenti ? (r.dipendenti.nome + ' ' + r.dipendenti.cognome) : '',
                         r.prodotti ? r.prodotti.nome : '',
                         r.prodotti ? r.prodotti.codice_prodotto : '',
-                        r.recuperati,
-                        r.buttati
+                        r.recuperati || 0,
+                        r.buttati || 0
                     ]);
                 });
 
@@ -1768,11 +1796,13 @@
                 XLSX.utils.book_append_sheet(wb, ws, label);
             }
 
-            XLSX.writeFile(wb, `Mage-Italia-Report-${dataInizio}.xlsx`);
-            showMessage('reportMessage', '✅ Report scaricato!', 'success');
+            const fileName = `Mage-Italia-Report-${dataInizio}-${dataFine}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showMessage('reportMessage', '✅ Report scaricato con successo!', 'success');
 
         } catch (err) {
-            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
+            console.error('Report error:', err);
+            showMessage('reportMessage', '❌ Errore: ' + (err.message || 'Errore sconosciuto'), 'error');
         }
     }
 
