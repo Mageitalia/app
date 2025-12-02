@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mage Italia - Admin Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -1075,6 +1075,21 @@
 
     async function generaReportExcel() {
         try {
+            // Verifica che XLSX sia caricato
+            if (typeof XLSX === 'undefined') {
+                showMessage('reportMessage', '⚠️ Libreria Excel non caricata. Attendi 2 secondi e riprova.', 'error');
+                console.error('❌ XLSX non è caricato');
+                
+                // Tenta di caricare XLSX
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js';
+                script.onload = () => {
+                    showMessage('reportMessage', '✅ Libreria caricata. Prova di nuovo.', 'success');
+                };
+                document.head.appendChild(script);
+                return;
+            }
+
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
             const punto = document.getElementById('reportPunto').value;
@@ -1145,6 +1160,8 @@
                 showMessage('reportMessage', '⚠️ Nessuna registrazione corrispondente ai filtri', 'error');
                 return;
             }
+
+            console.log('📊 Inizio creazione Excel...');
 
             const wb = XLSX.utils.book_new();
 
@@ -1230,7 +1247,7 @@
             XLSX.utils.book_append_sheet(wb, ws3, 'Totali');
 
             console.log('✅ Sheet 3 (Totali) creato');
-            console.log('📊 Totali:', { tot_rec, tot_but });
+            console.log('📊 Totali:', { tot_rec, tot_but, tot_registrazioni: filtered.length });
 
             // Salva file
             const filename = `Mage-Report-${dataInizio}-a-${dataFine}.xlsx`;
