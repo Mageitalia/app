@@ -15,27 +15,24 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ffffff;
+            background: #f5f5f5;
             color: #333;
         }
 
         .container {
             width: 100%;
             min-height: 100vh;
-            background: #ffffff;
             display: flex;
             flex-direction: column;
         }
 
         header {
             background: white;
-            padding: 15px 20px;
+            padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
             border-bottom: 3px solid #A01E4E;
         }
 
@@ -43,8 +40,6 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            flex: 1;
-            min-width: 200px;
         }
 
         .header-logo {
@@ -55,7 +50,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
         .header-logo img {
@@ -71,31 +65,16 @@
             font-weight: 700;
         }
 
-        .welcome-box {
+        .header-right {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 5px;
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .welcome-text {
-            font-size: 12px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            gap: 10px;
         }
 
         .welcome-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #A01E4E;
-        }
-
-        .welcome-role {
-            font-size: 12px;
+            font-size: 14px;
             color: #666;
+            font-weight: 600;
         }
 
         .logout-btn {
@@ -106,7 +85,6 @@
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            white-space: nowrap;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -118,8 +96,8 @@
 
         .page {
             flex: 1;
-            padding: 20px;
-            max-width: 1400px;
+            padding: 30px 20px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
@@ -127,7 +105,7 @@
         .page h2 {
             font-size: 24px;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .admin-section {
@@ -142,7 +120,7 @@
         .admin-section h3 {
             font-size: 18px;
             color: #A01E4E;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #f0f0f0;
         }
@@ -150,7 +128,7 @@
         .form-row {
             display: flex;
             gap: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
@@ -176,6 +154,7 @@
             font-size: 14px;
             background: white;
             transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .form-group input:focus,
@@ -223,69 +202,10 @@
             border-color: #999;
         }
 
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-small:hover {
-            background: #c82333;
-        }
-
-        .btn-edit {
-            background: #28a745;
-        }
-
-        .btn-edit:hover {
-            background: #218838;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background: white;
-        }
-
-        .admin-table thead {
-            background: #f9f9f9;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .admin-table th {
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #A01E4E;
-            font-size: 14px;
-        }
-
-        .admin-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 14px;
-        }
-
-        .admin-table tbody tr:hover {
-            background: #f9f9f9;
-        }
-
-        .admin-table .actions {
-            display: flex;
-            gap: 8px;
-        }
-
         .message {
             padding: 12px 15px;
             border-radius: 8px;
-            margin-top: 15px;
+            margin-bottom: 15px;
             font-size: 14px;
             display: none;
         }
@@ -302,130 +222,93 @@
             border-left: 4px solid #dc3545;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .modal-header h3 {
-            color: #A01E4E;
-            font-size: 18px;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .close-btn:hover {
-            color: #333;
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .modal-body .form-group {
-            margin-bottom: 15px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .modal-footer button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .modal-footer .btn-save {
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
-            color: white;
-        }
-
-        .modal-footer .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(160, 30, 78, 0.3);
-        }
-
-        .modal-footer .btn-cancel {
-            background: #f0f0f0;
-            color: #333;
-            border: 2px solid #e0e0e0;
-        }
-
-        .modal-footer .btn-cancel:hover {
-            background: #e0e0e0;
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
         }
 
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 40px;
             color: #A01E4E;
             font-weight: 600;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+        table thead {
+            background: #f9f9f9;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .action-btn.edit:hover {
+            background: #0056b3;
+        }
+
+        .action-btn.delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #c82333;
+        }
+
+        .credenziali-box {
+            background: #e8f4f8;
+            border-left: 4px solid #A01E4E;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #0c5460;
+        }
+
+        .credenziali-box strong {
+            color: #A01E4E;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
         }
 
         @media (max-width: 768px) {
@@ -434,39 +317,20 @@
                 padding: 15px 10px;
             }
 
-            .header-left {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .welcome-box {
-                width: 100%;
-            }
-
-            .logout-btn {
-                width: 100%;
-            }
-
             .page {
                 padding: 15px;
             }
 
-            .admin-table {
+            .form-row {
+                flex-direction: column;
+            }
+
+            table {
                 font-size: 12px;
             }
 
-            .admin-table th,
-            .admin-table td {
-                padding: 8px 10px;
-            }
-
-            .btn-group {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 50% auto;
+            table th, table td {
+                padding: 8px;
             }
         }
     </style>
@@ -480,31 +344,30 @@
                 <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
             </div>
             <div>
-                <h1>Mage Italia - Admin Panel ⚙️</h1>
+                <h1>🔧 Admin Panel - Mage Italia</h1>
             </div>
         </div>
-        <div class="welcome-box">
-            <div class="welcome-text">Amministratore</div>
-            <div class="welcome-name" id="welcomeName">Antonio</div>
-            <div class="welcome-role" id="welcomeRole">👨‍💼 Admin</div>
+        <div class="header-right">
+            <span class="welcome-name" id="adminName">Admin</span>
+            <button class="logout-btn" id="logoutBtn">🚪 Esci</button>
         </div>
-        <button class="logout-btn" id="logoutBtn">🚪 Esci</button>
     </header>
 
     <div class="page">
-        <h2>⚙️ Pannello Amministrazione</h2>
-        
+        <h2>📊 Gestione Sistema</h2>
+
         <!-- SEZIONE DIPENDENTI/OPERATORI -->
         <div class="admin-section">
-            <h3>👥 Gestione Dipendenti/Operatori</h3>
+            <h3>👥 Gestione Dipendenti/Operatori + Credenziali Login</h3>
+            
             <div class="form-row">
                 <div class="form-group">
                     <label>Nome</label>
-                    <input type="text" id="dipNome" placeholder="Nome">
+                    <input type="text" id="dipNome" placeholder="Nome" onchange="aggiornaPreviewCredenziali()">
                 </div>
                 <div class="form-group">
                     <label>Cognome</label>
-                    <input type="text" id="dipCognome" placeholder="Cognome">
+                    <input type="text" id="dipCognome" placeholder="Cognome" onchange="aggiornaPreviewCredenziali()">
                 </div>
                 <div class="form-group">
                     <label>Punto Vendita</label>
@@ -515,178 +378,53 @@
                         <option value="cosenza">Cosenza</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Crea Account di Login?</label>
+                    <select id="dipCreaUtente" onchange="toggleCredenziali()">
+                        <option value="no">❌ No (solo dipendente)</option>
+                        <option value="si">✅ Sì (crea credenziali)</option>
+                    </select>
+                </div>
             </div>
+
+            <!-- ANTEPRIMA CREDENZIALI -->
+            <div id="credentialiInfo" style="display:none; background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #0c5460; margin-bottom: 12px; font-weight: 700;">🔐 Credenziali che verranno create:</h4>
+                <div style="background: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #bee5eb;">
+                    <p style="margin: 8px 0; font-size: 14px; color: #333;">
+                        <strong>📝 Username:</strong> <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-family: monospace;" id="previewUsername">nome.cognome</code>
+                    </p>
+                    <p style="margin: 8px 0; font-size: 14px; color: #333;">
+                        <strong>🔑 Password (default):</strong> <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-family: monospace;" id="previewPassword">nome.cognome</code>
+                    </p>
+                </div>
+                <p style="margin: 0; font-size: 12px; color: #0c5460; font-style: italic;">
+                    ℹ️ L'operatore dovrà cambiare la password al primo accesso
+                </p>
+            </div>
+
+            <div id="dipendentiMessage"></div>
+
             <div class="btn-group">
                 <button onclick="aggiungiDipendente()">➕ Aggiungi Dipendente</button>
                 <button class="btn-secondary" onclick="ricaricaDipendenti()">🔄 Ricarica</button>
             </div>
-            <div id="dipendentiContainer"></div>
-            <div id="dipendentiMessage"></div>
+
+            <div id="dipendentiContainer" class="loading">⏳ Caricamento dipendenti...</div>
         </div>
 
-        <!-- SEZIONE PRODOTTI -->
-        <div class="admin-section">
-            <h3>📦 Gestione Prodotti</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nome Prodotto</label>
-                    <input type="text" id="prodNome" placeholder="Nome prodotto">
-                </div>
-                <div class="form-group">
-                    <label>Codice</label>
-                    <input type="text" id="prodCodice" placeholder="Codice prodotto">
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="prodCategoria">
-                        <option value="">-- Seleziona --</option>
-                        <option value="dolce">Dolce</option>
-                        <option value="salato">Salato</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Punto Vendita (lascia vuoto per globale)</label>
-                    <select id="prodPunto">
-                        <option value="">-- Globale --</option>
-                        <option value="pisa">Pisa</option>
-                        <option value="sesto">Sesto Fiorentino</option>
-                        <option value="cosenza">Cosenza</option>
-                    </select>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button onclick="aggiungiProdotto()">➕ Aggiungi Prodotto</button>
-                <button class="btn-secondary" onclick="ricaricaProdotti()">🔄 Ricarica</button>
-            </div>
-            <div id="prodottiContainer"></div>
-            <div id="prodottiMessage"></div>
-        </div>
-
-        <!-- SEZIONE REPORT EXCEL -->
-        <div class="admin-section">
-            <h3>📊 Generazione Report Excel</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Data Inizio</label>
-                    <input type="date" id="reportDataInizio">
-                </div>
-                <div class="form-group">
-                    <label>Data Fine</label>
-                    <input type="date" id="reportDataFine">
-                </div>
-                <div class="form-group">
-                    <label>Punto Vendita</label>
-                    <select id="reportPunto">
-                        <option value="">-- Cumulativo (Tutti) --</option>
-                        <option value="pisa">Pisa</option>
-                        <option value="sesto">Sesto Fiorentino</option>
-                        <option value="cosenza">Cosenza</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="reportCategoria">
-                        <option value="">-- Tutte --</option>
-                        <option value="dolce">Dolce</option>
-                        <option value="salato">Salato</option>
-                    </select>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button onclick="generaReportExcel()">📥 Scarica Excel</button>
-            </div>
-            <div id="reportMessage"></div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL MODIFICA DIPENDENTE -->
-<div id="dipModalModifica" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Modifica Dipendente</h3>
-            <button class="close-btn" onclick="chiudiModalDip()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Nome</label>
-                <input type="text" id="dipModNome">
-            </div>
-            <div class="form-group">
-                <label>Cognome</label>
-                <input type="text" id="dipModCognome">
-            </div>
-            <div class="form-group">
-                <label>Punto Vendita</label>
-                <select id="dipModPunto">
-                    <option value="">-- Seleziona --</option>
-                    <option value="pisa">Pisa</option>
-                    <option value="sesto">Sesto Fiorentino</option>
-                    <option value="cosenza">Cosenza</option>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="chiudiModalDip()">Annulla</button>
-            <button class="btn-save" onclick="salvaDipendenteModificato()">Salva</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL MODIFICA PRODOTTO -->
-<div id="prodModalModifica" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Modifica Prodotto</h3>
-            <button class="close-btn" onclick="chiudiModalProd()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Nome Prodotto</label>
-                <input type="text" id="prodModNome">
-            </div>
-            <div class="form-group">
-                <label>Codice</label>
-                <input type="text" id="prodModCodice">
-            </div>
-            <div class="form-group">
-                <label>Categoria</label>
-                <select id="prodModCategoria">
-                    <option value="">-- Seleziona --</option>
-                    <option value="dolce">Dolce</option>
-                    <option value="salato">Salato</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Punto Vendita (lascia vuoto per globale)</label>
-                <select id="prodModPunto">
-                    <option value="">-- Globale --</option>
-                    <option value="pisa">Pisa</option>
-                    <option value="sesto">Sesto Fiorentino</option>
-                    <option value="cosenza">Cosenza</option>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="chiudiModalProd()">Annulla</button>
-            <button class="btn-save" onclick="salvaProdottoModificato()">Salva</button>
-        </div>
     </div>
 </div>
 
 <script>
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
+    const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDYwNzI0MCwiZXhwIjoyMDgwMTgzMjQwfQ.HPgjfA-Y-YOa95_f3MqBqBJ0fm5Gx7YZnYUskLsTe88';
     
-    let currentUser = null;
-    let currentRole = null;
-    let currentNome = null;
     let supabase = null;
+    let currentUser = null;
     let isLoggingOut = false;
     let dipendentiData = [];
-    let prodottiData = [];
-    let dipIdModifica = null;
-    let prodIdModifica = null;
 
     function initSupabase() {
         if (window.supabase && !supabase) {
@@ -694,19 +432,20 @@
         }
     }
 
-    window.addEventListener('load', initSupabase);
-
     function showMessage(elementId, message, type) {
         const div = document.getElementById(elementId);
         if (!div) return;
         div.className = 'message ' + type;
         div.textContent = message;
         div.style.display = 'block';
-        setTimeout(() => { div.style.display = 'none'; }, 4000);
+        setTimeout(() => { div.style.display = 'none'; }, 5000);
     }
 
-    function capitalizeNome(nome) {
-        return nome ? nome.charAt(0).toUpperCase() + nome.slice(1).toLowerCase() : '';
+    function loadLogo() {
+        const savedLogo = localStorage.getItem('mageitaliaLogo');
+        if (savedLogo) {
+            document.getElementById('appLogo').src = savedLogo;
+        }
     }
 
     async function checkSession() {
@@ -719,12 +458,21 @@
             
             currentUser = data.session.user;
             const metadata = currentUser.user_metadata || {};
-            currentRole = metadata.role || 'operatore';
-            currentNome = metadata.nome || 'Utente';
-            
+            const ruoloUtente = metadata.role || 'operatore';
+
+            console.log('🔐 Verifica sessione admin:', { ruoloUtente });
+
+            // Verifica che sia admin
+            if (ruoloUtente !== 'admin') {
+                console.error('❌ Accesso negato. Non sei admin.');
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+                return null;
+            }
+
             return data.session.user;
         } catch (err) {
-            console.error('Check session error:', err);
+            console.error('Errore check session:', err);
             return null;
         }
     }
@@ -736,9 +484,6 @@
         try {
             await supabase.auth.signOut();
             currentUser = null;
-            currentRole = null;
-            currentNome = null;
-            
             setTimeout(() => {
                 isLoggingOut = false;
                 window.location.href = 'index.html';
@@ -746,14 +491,6 @@
         } catch (err) {
             console.error('Logout error:', err);
             isLoggingOut = false;
-        }
-    }
-
-    function loadLogo() {
-        const savedLogo = localStorage.getItem('mageitaliaLogo');
-        if (savedLogo) {
-            const appLogo = document.getElementById('appLogo');
-            if (appLogo) appLogo.src = savedLogo;
         }
     }
 
@@ -772,26 +509,38 @@
             return;
         }
 
-        if (currentRole !== 'admin') {
-            window.location.href = 'index.html';
-            return;
-        }
+        const metadata = user.user_metadata || {};
+        const nome = metadata.nome || 'Admin';
+        document.getElementById('adminName').textContent = `${nome} 👤`;
 
-        const nomeCapitalizzato = capitalizeNome(currentNome);
-        document.getElementById('welcomeName').textContent = nomeCapitalizzato;
-        
-        // Carica dati iniziali
+        // Carica dipendenti
         await ricaricaDipendenti();
-        await ricaricaProdotti();
-        
-        // Imposta date report (ultimi 30 giorni)
-        const oggi = new Date();
-        const trenta = new Date(oggi.getTime() - 30 * 24 * 60 * 60 * 1000);
-        document.getElementById('reportDataFine').valueAsDate = oggi;
-        document.getElementById('reportDataInizio').valueAsDate = trenta;
     });
 
-    // ===== DIPENDENTI =====
+    // ===== DIPENDENTI + CREDENZIALI =====
+
+    function toggleCredenziali() {
+        const creaUtente = document.getElementById('dipCreaUtente').value;
+        const credentialiDiv = document.getElementById('credentialiInfo');
+        
+        if (creaUtente === 'si') {
+            credentialiDiv.style.display = 'block';
+            aggiornaPreviewCredenziali();
+        } else {
+            credentialiDiv.style.display = 'none';
+        }
+    }
+
+    function aggiornaPreviewCredenziali() {
+        const nome = document.getElementById('dipNome').value.trim().toLowerCase();
+        const cognome = document.getElementById('dipCognome').value.trim().toLowerCase();
+        
+        if (nome && cognome) {
+            const username = `${nome}.${cognome}`;
+            document.getElementById('previewUsername').textContent = username;
+            document.getElementById('previewPassword').textContent = username;
+        }
+    }
 
     async function ricaricaDipendenti() {
         try {
@@ -807,26 +556,25 @@
             if (error) throw error;
 
             dipendentiData = data || [];
-
+            
             if (dipendentiData.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><p>Nessun dipendente trovato</p></div>';
+                container.innerHTML = '<p style="padding: 40px; text-align: center; color: #999;">Nessun dipendente ancora</p>';
                 return;
             }
 
-            let html = '<table class="admin-table"><thead><tr><th>Nome</th><th>Cognome</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
             
             dipendentiData.forEach(dip => {
                 const punto = dip.punto_vendita_id === 'pisa' ? 'Pisa' : 
-                             dip.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' : 
+                             dip.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
                              dip.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—';
                 
                 html += `<tr>
                     <td>${dip.nome}</td>
                     <td>${dip.cognome}</td>
                     <td>${punto}</td>
-                    <td class="actions">
-                        <button class="btn-small btn-edit" onclick="apertaModalDipModifica(${dip.id})">✏️ Modifica</button>
-                        <button class="btn-small" onclick="eliminaDipendente(${dip.id})">❌ Elimina</button>
+                    <td>
+                        <button class="action-btn delete" onclick="eliminaDipendente(${dip.id})">🗑️ Elimina</button>
                     </td>
                 </tr>`;
             });
@@ -834,7 +582,7 @@
             html += '</tbody></table>';
             container.innerHTML = html;
         } catch (err) {
-            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+            showMessage('dipendentiMessage', '❌ Errore caricamento: ' + err.message, 'error');
         }
     }
 
@@ -842,68 +590,107 @@
         const nome = document.getElementById('dipNome').value.trim();
         const cognome = document.getElementById('dipCognome').value.trim();
         const punto = document.getElementById('dipPunto').value;
+        const creaUtente = document.getElementById('dipCreaUtente').value;
 
         if (!nome || !cognome || !punto) {
-            showMessage('dipendentiMessage', '⚠️ Compila tutti i campi', 'error');
+            showMessage('dipendentiMessage', '⚠️ Compila tutti i campi (Nome, Cognome, Punto Vendita)', 'error');
             return;
         }
 
         try {
-            const { data, error } = await supabase
+            // 1. Aggiungi dipendente nel database
+            const { data: dipData, error: dipError } = await supabase
                 .from('dipendenti')
                 .insert([{ nome, cognome, punto_vendita_id: punto }])
                 .select();
 
-            if (error) throw error;
+            if (dipError) throw dipError;
 
-            showMessage('dipendentiMessage', '✅ Dipendente aggiunto!', 'success');
+            let username = null;
+            let password = null;
+
+            // 2. Se richiesto, crea account nel sistema auth
+            if (creaUtente === 'si') {
+                const nomeLower = nome.toLowerCase();
+                const cognomeLower = cognome.toLowerCase();
+                username = `${nomeLower}.${cognomeLower}`;
+                password = username; // Password = username
+
+                console.log('🔐 Creazione utente auth:', { username });
+
+                try {
+                    // Crea un client admin con la service_role key
+                    const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
+                    
+                    // Crea utente in auth.users
+                    const { data: userData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+                        email: `${username}@mageitalita.local`,
+                        password: password,
+                        email_confirm: true,
+                        user_metadata: {
+                            nome: nome,
+                            cognome: cognome,
+                            punto_vendita: punto,
+                            role: 'operatore',
+                            username: username
+                        }
+                    });
+
+                    if (authError) {
+                        console.error('❌ Errore creazione auth:', authError);
+                        
+                        // Se utente esiste, aggiorna il metadata
+                        if (authError.message.includes('already exists')) {
+                            console.log('⚠️ Utente esiste, aggiorno metadata...');
+                            
+                            const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+                            const existingUser = users.users.find(u => u.email === `${username}@mageitalita.local`);
+                            
+                            if (existingUser) {
+                                await supabaseAdmin.auth.admin.updateUserById(
+                                    existingUser.id,
+                                    {
+                                        user_metadata: {
+                                            nome: nome,
+                                            cognome: cognome,
+                                            punto_vendita: punto,
+                                            role: 'operatore',
+                                            username: username
+                                        },
+                                        email_confirm: true
+                                    }
+                                );
+                                console.log('✅ Utente aggiornato');
+                                showMessage('dipendentiMessage', `✅ Dipendente aggiunto!\n👤 Username: ${username}\n🔑 Password: ${password}`, 'success');
+                            } else {
+                                showMessage('dipendentiMessage', `⚠️ Dipendente aggiunto ma errore credenziali: ${authError.message}`, 'error');
+                            }
+                        } else {
+                            showMessage('dipendentiMessage', `⚠️ Dipendente aggiunto ma errore credenziali: ${authError.message}`, 'error');
+                        }
+                    } else {
+                        console.log('✅ Utente auth creato');
+                        showMessage('dipendentiMessage', `✅ Dipendente aggiunto!\n👤 Username: ${username}\n🔑 Password: ${password}`, 'success');
+                    }
+                } catch (authErr) {
+                    console.error('❌ Errore creazione utente:', authErr);
+                    showMessage('dipendentiMessage', `⚠️ Dipendente aggiunto ma errore credenziali: ${authErr.message}`, 'error');
+                }
+            } else {
+                showMessage('dipendentiMessage', '✅ Dipendente aggiunto (senza credenziali di login)', 'success');
+            }
+
+            // Pulisci form
             document.getElementById('dipNome').value = '';
             document.getElementById('dipCognome').value = '';
             document.getElementById('dipPunto').value = '';
+            document.getElementById('dipCreaUtente').value = 'no';
+            document.getElementById('credentialiInfo').style.display = 'none';
+
+            // Ricarica lista
             await ricaricaDipendenti();
         } catch (err) {
-            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    function apertaModalDipModifica(id) {
-        const dip = dipendentiData.find(d => d.id === id);
-        if (!dip) return;
-
-        dipIdModifica = id;
-        document.getElementById('dipModNome').value = dip.nome;
-        document.getElementById('dipModCognome').value = dip.cognome;
-        document.getElementById('dipModPunto').value = dip.punto_vendita_id || '';
-        document.getElementById('dipModalModifica').style.display = 'block';
-    }
-
-    function chiudiModalDip() {
-        document.getElementById('dipModalModifica').style.display = 'none';
-        dipIdModifica = null;
-    }
-
-    async function salvaDipendenteModificato() {
-        const nome = document.getElementById('dipModNome').value.trim();
-        const cognome = document.getElementById('dipModCognome').value.trim();
-        const punto = document.getElementById('dipModPunto').value;
-
-        if (!nome || !cognome || !punto) {
-            showMessage('dipendentiMessage', '⚠️ Compila tutti i campi', 'error');
-            return;
-        }
-
-        try {
-            const { error } = await supabase
-                .from('dipendenti')
-                .update({ nome, cognome, punto_vendita_id: punto })
-                .eq('id', dipIdModifica);
-
-            if (error) throw error;
-
-            showMessage('dipendentiMessage', '✅ Dipendente modificato!', 'success');
-            chiudiModalDip();
-            await ricaricaDipendenti();
-        } catch (err) {
+            console.error('Errore aggiungi dipendente:', err);
             showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
@@ -919,284 +706,11 @@
 
             if (error) throw error;
 
-            showMessage('dipendentiMessage', '✅ Dipendente eliminato!', 'success');
+            showMessage('dipendentiMessage', '✅ Dipendente eliminato', 'success');
             await ricaricaDipendenti();
         } catch (err) {
             showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
         }
-    }
-
-    // ===== PRODOTTI =====
-
-    async function ricaricaProdotti() {
-        try {
-            const container = document.getElementById('prodottiContainer');
-            container.innerHTML = '<div class="loading">⏳ Caricamento prodotti...</div>';
-
-            const { data, error } = await supabase
-                .from('prodotti')
-                .select('*')
-                .eq('attivo', true)
-                .order('nome', { ascending: true });
-
-            if (error) throw error;
-
-            prodottiData = data || [];
-
-            if (prodottiData.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><p>Nessun prodotto trovato</p></div>';
-                return;
-            }
-
-            let html = '<table class="admin-table"><thead><tr><th>Nome</th><th>Codice</th><th>Categoria</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
-            
-            prodottiData.forEach(prod => {
-                const punto = prod.punto_vendita_id === 'pisa' ? 'Pisa' : 
-                             prod.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' : 
-                             prod.punto_vendita_id === 'cosenza' ? 'Cosenza' : 'Globale';
-                const categoria = prod.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato';
-                
-                html += `<tr>
-                    <td>${prod.nome}</td>
-                    <td>${prod.codice_prodotto || '—'}</td>
-                    <td>${categoria}</td>
-                    <td>${punto}</td>
-                    <td class="actions">
-                        <button class="btn-small btn-edit" onclick="apertaModalProdModifica(${prod.id})">✏️ Modifica</button>
-                        <button class="btn-small" onclick="eliminaProdotto(${prod.id})">❌ Elimina</button>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        } catch (err) {
-            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    async function aggiungiProdotto() {
-        const nome = document.getElementById('prodNome').value.trim();
-        const codice = document.getElementById('prodCodice').value.trim();
-        const categoria = document.getElementById('prodCategoria').value;
-        const punto = document.getElementById('prodPunto').value;
-
-        if (!nome || !categoria) {
-            showMessage('prodottiMessage', '⚠️ Compila nome e categoria', 'error');
-            return;
-        }
-
-        try {
-            const { data, error } = await supabase
-                .from('prodotti')
-                .insert([{ 
-                    nome, 
-                    codice_prodotto: codice || null, 
-                    categoria,
-                    punto_vendita_id: punto || null
-                }])
-                .select();
-
-            if (error) throw error;
-
-            showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
-            document.getElementById('prodNome').value = '';
-            document.getElementById('prodCodice').value = '';
-            document.getElementById('prodCategoria').value = '';
-            document.getElementById('prodPunto').value = '';
-            await ricaricaProdotti();
-        } catch (err) {
-            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    function apertaModalProdModifica(id) {
-        const prod = prodottiData.find(p => p.id === id);
-        if (!prod) return;
-
-        prodIdModifica = id;
-        document.getElementById('prodModNome').value = prod.nome;
-        document.getElementById('prodModCodice').value = prod.codice_prodotto || '';
-        document.getElementById('prodModCategoria').value = prod.categoria || '';
-        document.getElementById('prodModPunto').value = prod.punto_vendita_id || '';
-        document.getElementById('prodModalModifica').style.display = 'block';
-    }
-
-    function chiudiModalProd() {
-        document.getElementById('prodModalModifica').style.display = 'none';
-        prodIdModifica = null;
-    }
-
-    async function salvaProdottoModificato() {
-        const nome = document.getElementById('prodModNome').value.trim();
-        const codice = document.getElementById('prodModCodice').value.trim();
-        const categoria = document.getElementById('prodModCategoria').value;
-        const punto = document.getElementById('prodModPunto').value;
-
-        if (!nome || !categoria) {
-            showMessage('prodottiMessage', '⚠️ Compila nome e categoria', 'error');
-            return;
-        }
-
-        try {
-            const { error } = await supabase
-                .from('prodotti')
-                .update({ 
-                    nome, 
-                    codice_prodotto: codice || null, 
-                    categoria,
-                    punto_vendita_id: punto || null
-                })
-                .eq('id', prodIdModifica);
-
-            if (error) throw error;
-
-            showMessage('prodottiMessage', '✅ Prodotto modificato!', 'success');
-            chiudiModalProd();
-            await ricaricaProdotti();
-        } catch (err) {
-            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    async function eliminaProdotto(id) {
-        if (!confirm('Sei sicuro di voler eliminare questo prodotto?')) return;
-
-        try {
-            const { error } = await supabase
-                .from('prodotti')
-                .update({ attivo: false })
-                .eq('id', id);
-
-            if (error) throw error;
-
-            showMessage('prodottiMessage', '✅ Prodotto eliminato!', 'success');
-            await ricaricaProdotti();
-        } catch (err) {
-            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    // ===== REPORT EXCEL =====
-
-    async function generaReportExcel() {
-        try {
-            const dataInizio = document.getElementById('reportDataInizio').value;
-            const dataFine = document.getElementById('reportDataFine').value;
-            const punto = document.getElementById('reportPunto').value;
-            const categoria = document.getElementById('reportCategoria').value;
-
-            if (!dataInizio || !dataFine) {
-                showMessage('reportMessage', '⚠️ Seleziona date valide', 'error');
-                return;
-            }
-
-            showMessage('reportMessage', '⏳ Generazione report in corso...', 'success');
-
-            // Query base
-            let query = supabase
-                .from('registrazioni_giornaliere')
-                .select(`
-                    id,
-                    data_registrazione,
-                    punto_vendita_id,
-                    recuperati,
-                    buttati,
-                    dipendenti(nome, cognome),
-                    prodotti(nome, categoria)
-                `)
-                .gte('data_registrazione', dataInizio)
-                .lte('data_registrazione', dataFine);
-
-            if (punto) {
-                query = query.eq('punto_vendita_id', punto);
-            }
-
-            const { data, error } = await query;
-
-            if (error) throw error;
-
-            // Filtra per categoria se necessario
-            let datiFiltratti = data || [];
-            if (categoria) {
-                datiFiltratti = datiFiltratti.filter(r => r.prodotti && r.prodotti.categoria === categoria);
-            }
-
-            if (datiFiltratti.length === 0) {
-                showMessage('reportMessage', '⚠️ Nessun dato trovato per il periodo selezionato', 'error');
-                return;
-            }
-
-            // Crea workbook
-            const workbook = XLSX.utils.book_new();
-
-            // SHEET 1: Dettagli
-            const sheetDettagli = datiFiltratti.map(r => ({
-                'Data': r.data_registrazione,
-                'Punto Vendita': r.punto_vendita_id,
-                'Operatore': (r.dipendenti?.nome || '') + ' ' + (r.dipendenti?.cognome || ''),
-                'Prodotto': r.prodotti?.nome || '—',
-                'Categoria': r.prodotti?.categoria || '—',
-                'Recuperati': r.recuperati || 0,
-                'Buttati': r.buttati || 0,
-                'Totale Scarto': (r.recuperati || 0) + (r.buttati || 0)
-            }));
-
-            const wsDettagli = XLSX.utils.json_to_sheet(sheetDettagli);
-            XLSX.utils.book_append_sheet(workbook, wsDettagli, 'Dettagli');
-
-            // SHEET 2: Riepilogo per prodotto
-            const riepilogo = {};
-            datiFiltratti.forEach(r => {
-                const prodNome = r.prodotti?.nome || 'Sconosciuto';
-                if (!riepilogo[prodNome]) {
-                    riepilogo[prodNome] = { recuperati: 0, buttati: 0 };
-                }
-                riepilogo[prodNome].recuperati += r.recuperati || 0;
-                riepilogo[prodNome].buttati += r.buttati || 0;
-            });
-
-            const sheetRiepilogo = Object.entries(riepilogo).map(([prod, val]) => ({
-                'Prodotto': prod,
-                'Recuperati': val.recuperati,
-                'Buttati': val.buttati,
-                'Totale': val.recuperati + val.buttati
-            }));
-
-            const wsRiepilogo = XLSX.utils.json_to_sheet(sheetRiepilogo);
-            XLSX.utils.book_append_sheet(workbook, wsRiepilogo, 'Riepilogo');
-
-            // SHEET 3: Totali cumulativi
-            const totalRecuperati = datiFiltratti.reduce((sum, r) => sum + (r.recuperati || 0), 0);
-            const totalButtati = datiFiltratti.reduce((sum, r) => sum + (r.buttati || 0), 0);
-            const sheetTotali = [
-                { Descrizione: 'Totale Recuperati', Valore: totalRecuperati },
-                { Descrizione: 'Totale Buttati', Valore: totalButtati },
-                { Descrizione: 'Totale Scarti', Valore: totalRecuperati + totalButtati },
-                { Descrizione: 'Periodo', Valore: `${dataInizio} a ${dataFine}` },
-                { Descrizione: 'Punto Vendita', Valore: punto || 'Cumulativo' }
-            ];
-
-            const wsTotali = XLSX.utils.json_to_sheet(sheetTotali);
-            XLSX.utils.book_append_sheet(workbook, wsTotali, 'Totali');
-
-            // Scarica file
-            const nomeFile = `Mage_Italia_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(workbook, nomeFile);
-
-            showMessage('reportMessage', `✅ Report scaricato: ${nomeFile}`, 'success');
-        } catch (err) {
-            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
-        }
-    }
-
-    // Chiudi modal se clicchi fuori
-    window.onclick = function(event) {
-        const dipModal = document.getElementById('dipModalModifica');
-        const prodModal = document.getElementById('prodModalModifica');
-        
-        if (event.target === dipModal) dipModal.style.display = 'none';
-        if (event.target === prodModal) prodModal.style.display = 'none';
     }
 </script>
 
