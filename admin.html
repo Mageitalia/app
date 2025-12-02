@@ -413,6 +413,45 @@
             <div id="dipendentiContainer" class="loading">⏳ Caricamento dipendenti...</div>
         </div>
 
+        <!-- SEZIONE REPORT EXCEL -->
+        <div class="admin-section">
+            <h3>📊 Generazione Report Excel</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data Inizio</label>
+                    <input type="date" id="reportDataInizio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fine</label>
+                    <input type="date" id="reportDataFine">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="reportPunto">
+                        <option value="">-- Cumulativo (Tutti) --</option>
+                        <option value="pisa">📍 Pisa</option>
+                        <option value="sesto">📍 Sesto Fiorentino</option>
+                        <option value="cosenza">📍 Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Categoria Prodotto</label>
+                    <select id="reportCategoria">
+                        <option value="">-- Tutte --</option>
+                        <option value="dolce">🍰 Dolce</option>
+                        <option value="salato">🥖 Salato</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="reportMessage"></div>
+
+            <div class="btn-group">
+                <button onclick="generaReportExcel()">📥 Scarica Excel</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -710,6 +749,151 @@
             await ricaricaDipendenti();
         } catch (err) {
             showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ===== REPORT EXCEL =====
+
+    async function generaReportExcel() {
+        try {
+            const dataInizio = document.getElementById('reportDataInizio').value;
+            const dataFine = document.getElementById('reportDataFine').value;
+            const punto = document.getElementById('reportPunto').value;
+            const categoria = document.getElementById('reportCategoria').value;
+
+            if (!dataInizio || !dataFine) {
+                showMessage('reportMessage', '⚠️ Seleziona date valide', 'error');
+                return;
+            }
+
+            // Converti le date
+            const [annoInizio, meseInizio, giornoInizio] = dataInizio.split('-');
+            const [annoFine, meseFine, giornoFine] = dataFine.split('-');
+            
+            const dateStart = new Date(annoInizio, parseInt(meseInizio) - 1, giornoInizio);
+            const dateEnd = new Date(annoFine, parseInt(meseFine) - 1, parseInt(giornoFine) + 1); // +1 per includere fine giorno
+
+            showMessage('reportMessage', '⏳ Generazione report in corso...', 'info');
+            console.log('📊 Parametri report:', { dataInizio, dataFine, punto, categoria });
+
+            // Query registrazioni
+            let query = supabase
+                .from('registrazioni_giornaliere')
+                .select(`
+                    *,
+                    prodotti(nome, categoria, punto_vendita_id),
+                    dipendenti(nome, cognome, punto_vendita_id)
+                `)
+                .gte('created_at', dateStart.toISOString())
+                .lte('created_at', dateEnd.toISOString());
+
+            // Filtri
+            if (punto) {
+                query = query.eq('prodotti.punto_vendita_id', punto);
+            }
+            if (categoria) {
+                query = query.eq('prodotti.categoria', categoria);
+            }
+
+            const { data: registrazioni, error: errReg } = await query;
+            
+            if (errReg) {
+                console.error('❌ Errore query registrazioni:', errReg);
+                showMessage('reportMessage', '❌ Errore: ' + errReg.message, 'error');
+                return;
+            }
+
+            console.log('📋 Registrazioni trovate:', registrazioni.length);
+
+            // Crea workbook Excel
+            const wb = XLSX.utils.book_new();
+
+            // ===== SHEET 1: DETTAGLI =====
+            const dettagliData = [];
+            
+            (registrazioni || []).forEach(reg => {
+                dettagliData.push({
+                    'Data': new Date(reg.created_at).toLocaleDateString('it-IT'),
+                    'Ora': new Date(reg.created_at).toLocaleTimeString('it-IT'),
+                    'Prodotto': reg.prodotti?.nome || '—',
+                    'Categoria': reg.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
+                    'Punto Vendita': 
+                        reg.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                        reg.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
+                        reg.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
+                    'Recuperati (kg)': reg.recuperati || 0,
+                    'Buttati (kg)': reg.buttati || 0,
+                    'Operatore': reg.dipendenti ? `${reg.dipendenti.nome} ${reg.dipendenti.cognome}` : '—'
+                });
+            });
+
+            const wsDettagli = XLSX.utils.json_to_sheet(dettagliData);
+            XLSX.utils.book_append_sheet(wb, wsDettagli, 'Dettagli');
+
+            // ===== SHEET 2: RIEPILOGO PER PRODOTTO =====
+            const riepilogoProdotto = {};
+            
+            (registrazioni || []).forEach(reg => {
+                const key = reg.prodotti?.nome || 'Sconosciuto';
+                if (!riepilogoProdotto[key]) {
+                    riepilogoProdotto[key] = {
+                        'Prodotto': key,
+                        'Categoria': reg.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
+                        'Punto Vendita': 
+                            reg.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                            reg.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
+                            reg.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
+                        'Recuperati (kg)': 0,
+                        'Buttati (kg)': 0,
+                        'Registrazioni': 0
+                    };
+                }
+                riepilogoProdotto[key]['Recuperati (kg)'] += reg.recuperati || 0;
+                riepilogoProdotto[key]['Buttati (kg)'] += reg.buttati || 0;
+                riepilogoProdotto[key]['Registrazioni'] += 1;
+            });
+
+            const riepilogoData = Object.values(riepilogoProdotto);
+            const wsRiepilogo = XLSX.utils.json_to_sheet(riepilogoData);
+            XLSX.utils.book_append_sheet(wb, wsRiepilogo, 'Riepilogo');
+
+            // ===== SHEET 3: TOTALI =====
+            const totalRecuperati = (registrazioni || []).reduce((sum, r) => sum + (r.recuperati || 0), 0);
+            const totalButtati = (registrazioni || []).reduce((sum, r) => sum + (r.buttati || 0), 0);
+            const totalRegistrazioni = (registrazioni || []).length;
+
+            const totaliData = [
+                {
+                    'Metrica': 'Totale Recuperati',
+                    'Valore (kg)': totalRecuperati.toFixed(2)
+                },
+                {
+                    'Metrica': 'Totale Buttati',
+                    'Valore (kg)': totalButtati.toFixed(2)
+                },
+                {
+                    'Metrica': 'Totale Registrazioni',
+                    'Valore (kg)': totalRegistrazioni
+                },
+                {
+                    'Metrica': 'Totale Scarto',
+                    'Valore (kg)': (totalRecuperati + totalButtati).toFixed(2)
+                }
+            ];
+
+            const wsTotali = XLSX.utils.json_to_sheet(totaliData);
+            XLSX.utils.book_append_sheet(wb, wsTotali, 'Totali');
+
+            // ===== SALVA FILE =====
+            const nomeFIle = `Mage-Italia-Report-${dataInizio}-a-${dataFine}.xlsx`;
+            XLSX.writeFile(wb, nomeFIle);
+
+            showMessage('reportMessage', `✅ Report generato! File: ${nomeFIle}`, 'success');
+            console.log('✅ Report Excel generato:', { totalRecuperati, totalButtati, totalRegistrazioni });
+
+        } catch (err) {
+            console.error('❌ Errore generazione report:', err);
+            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 </script>
