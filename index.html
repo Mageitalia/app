@@ -3,42 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Italia v5.0 - Login</title>
+    <title>Mage Italia - Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
-            color: #333;
-        }
-
-        /* ===== LOGIN PAGE ===== */
-        .login-wrapper {
-            width: 100%;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
         }
 
-        .login-container {
+        .login-wrapper {
             width: 100%;
             max-width: 450px;
             background: white;
@@ -59,31 +43,45 @@
             }
         }
 
-        .logo-section {
+        .logo-container {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .logo-img {
+        .logo {
             width: 80px;
             height: 80px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            overflow: hidden;
+            border: 3px solid #A01E4E;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            margin-bottom: 15px;
+            padding: 10px;
         }
 
-        .logo-section h1 {
-            font-size: 28px;
-            color: #A01E4E;
-            margin-bottom: 8px;
+        .logo-text {
+            font-size: 24px;
             font-weight: 700;
+            color: #A01E4E;
+            margin-bottom: 5px;
         }
 
-        .logo-section p {
-            font-size: 14px;
+        .logo-subtitle {
+            font-size: 12px;
             color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* ===== FORM STYLES ===== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -96,55 +94,78 @@
             font-size: 14px;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
+            background: white;
             transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #A01E4E;
             box-shadow: 0 0 0 3px rgba(160, 30, 78, 0.1);
         }
 
-        /* ===== BUTTONS ===== */
-        button {
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 8px;
+        .form-group input::placeholder {
+            color: #999;
         }
 
-        #loginForm button {
+        .punto-info {
+            background: #e8f4f8;
+            border-left: 3px solid #A01E4E;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #0c5460;
+        }
+
+        .punto-info strong {
+            color: #A01E4E;
+        }
+
+        .login-btn {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
             color: white;
-            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
             margin-top: 10px;
         }
 
-        #loginForm button:hover {
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(160, 30, 78, 0.3);
         }
 
-        #loginForm button:active {
+        .login-btn:active {
             transform: translateY(0);
         }
 
-        /* ===== MESSAGES ===== */
+        .login-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .message {
             padding: 12px 15px;
             border-radius: 8px;
+            margin-bottom: 20px;
             font-size: 14px;
-            margin-top: 15px;
-            animation: slideDown 0.3s ease-out;
+            display: none;
+            animation: slideDown 0.3s ease;
         }
 
         @keyframes slideDown {
@@ -170,36 +191,44 @@
             border-left: 4px solid #dc3545;
         }
 
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 30px 20px;
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 20px 0;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .login-wrapper {
+                padding: 25px;
             }
 
-            .logo-img {
+            .logo {
                 width: 60px;
                 height: 60px;
             }
 
-            .logo-section h1 {
-                font-size: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 20px 15px;
-            }
-
-            .logo-section {
-                margin-bottom: 20px;
-            }
-
-            .logo-section h1 {
+            .logo-text {
                 font-size: 20px;
-            }
-
-            .logo-section p {
-                font-size: 12px;
             }
         }
     </style>
@@ -207,43 +236,61 @@
 <body>
 
 <div class="login-wrapper">
-    <div class="login-container">
-        <div class="logo-section">
-            <img id="loginLogo" class="logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
-            <h1>Mage Italia</h1>
-            <p>Sistema Gestione Scarti Alimentari v5.0</p>
+    <div class="logo-container">
+        <div class="logo">
+            <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
         </div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label>📧 Email</label>
-                <input type="email" id="email" required placeholder="operatore@mageitalita.com">
-            </div>
-            
-            <div class="form-group">
-                <label>🔒 Password</label>
-                <input type="password" id="password" required placeholder="••••••••">
-            </div>
-            
-            <button type="submit">Accedi</button>
-            
-            <div id="loginError" style="display: none;"></div>
-        </form>
+        <div class="logo-text">Mage Italia</div>
+        <div class="logo-subtitle">Gestione Scarti Alimentari</div>
+    </div>
+
+    <div id="loginMessage"></div>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label>👤 Username</label>
+            <input type="text" id="username" placeholder="es. antonio.rossi" required>
+            <div class="help-text">Formato: nome.cognome</div>
+        </div>
+
+        <div class="form-group">
+            <label>🔐 Password</label>
+            <input type="password" id="password" placeholder="Inserisci password" required>
+        </div>
+
+        <div class="form-group">
+            <label>📍 Punto Vendita</label>
+            <select id="punto" required>
+                <option value="">-- Seleziona il tuo punto --</option>
+                <option value="pisa">🍰 Pisa</option>
+                <option value="sesto">🍰 Sesto Fiorentino</option>
+                <option value="cosenza">🍰 Cosenza</option>
+                <option value="admin">⚙️ Admin Panel</option>
+            </select>
+        </div>
+
+        <div class="punto-info">
+            <strong>ℹ️ Nota:</strong> Seleziona il punto vendita dove lavori. Gli operatori vedranno solo i dati del loro punto.
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">
+            🚀 Accedi
+        </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+        <p>Mage Italia v5.0.6 | Sistema Gestione Scarti</p>
+        <p style="margin-top: 8px; color: #aaa;">© 2025 SIM Carabinieri</p>
     </div>
 </div>
 
 <script>
-    // ===== CONFIG SUPABASE (INLINE) =====
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
     
-    let currentUser = null;
-    let currentRole = null;
-    let currentNome = null;
-    let currentPunto = null;
-    let logoBase64 = null;
     let supabase = null;
-    let isLoggingOut = false;
 
     function initSupabase() {
         if (window.supabase && !supabase) {
@@ -251,150 +298,125 @@
         }
     }
 
-    window.addEventListener('load', initSupabase);
-
-    // ===== UTILITY FUNCTIONS =====
-    function showMessage(elementId, message, type) {
-        const div = document.getElementById(elementId);
-        if (!div) return;
-        
+    function showMessage(message, type) {
+        const div = document.getElementById('loginMessage');
         div.className = 'message ' + type;
         div.textContent = message;
         div.style.display = 'block';
-        setTimeout(() => { div.style.display = 'none'; }, 4000);
     }
 
-    function capitalizeNome(nome) {
-        return nome ? nome.charAt(0).toUpperCase() + nome.slice(1).toLowerCase() : '';
-    }
-
-    async function checkSession() {
-        try {
-            initSupabase();
-            if (!supabase) {
-                console.error('Supabase non è inizializzato');
-                return null;
-            }
-
-            const { data, error } = await supabase.auth.getSession();
-            if (error) {
-                console.error('Session error:', error);
-                return null;
-            }
-            
-            if (data.session && data.session.user) {
-                currentUser = data.session.user;
-                const metadata = currentUser.user_metadata || {};
-                currentRole = metadata.role || 'operatore';
-                currentNome = metadata.nome || 'Utente';
-                currentPunto = metadata.punto_vendita || null;
-                
-                console.log('Sessione trovata:', { currentRole, currentNome, currentPunto });
-                return data.session.user;
-            }
-            
-            return null;
-        } catch (err) {
-            console.error('Check session error:', err);
-            return null;
-        }
-    }
-
-    async function logout() {
-        if (isLoggingOut) return;
-        isLoggingOut = true;
-        
-        try {
-            await supabase.auth.signOut();
-            currentUser = null;
-            currentRole = null;
-            currentNome = null;
-            currentPunto = null;
-            
-            setTimeout(() => {
-                isLoggingOut = false;
-                window.location.href = 'index.html';
-            }, 200);
-        } catch (err) {
-            console.error('Logout error:', err);
-            isLoggingOut = false;
-        }
-    }
-
-    // Load logo al caricamento
     function loadLogo() {
         const savedLogo = localStorage.getItem('mageitaliaLogo');
         if (savedLogo) {
-            logoBase64 = savedLogo;
-            const loginLogo = document.getElementById('loginLogo');
-            const appLogo = document.getElementById('appLogo');
-            if (loginLogo) loginLogo.src = savedLogo;
-            if (appLogo) appLogo.src = savedLogo;
+            document.getElementById('appLogo').src = savedLogo;
         }
     }
 
-    window.addEventListener('load', loadLogo);
-
-    // ===== LOGIN FORM =====
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
+    window.addEventListener('load', () => {
         initSupabase();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('loginError');
-
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            });
-
-            if (error) throw error;
-
-            // Salva sessione
-            currentUser = data.user;
-            const metadata = currentUser.user_metadata || {};
-            currentRole = metadata.role || 'operatore';
-            currentNome = metadata.nome || 'Utente';
-            currentPunto = metadata.punto_vendita || null;
-
-            console.log('Login riuscito:', { currentRole, currentNome, currentPunto });
-
-            // Redirect intelligente
-            if (currentRole === 'admin') {
-                window.location.href = 'admin.html';
-            } else {
-                window.location.href = `operatore-${currentPunto}.html`;
-            }
-
-        } catch (err) {
-            errorDiv.innerHTML = '❌ Errore: ' + err.message;
-            errorDiv.style.display = 'block';
-        }
+        loadLogo();
     });
 
-    // ===== AUTO REDIRECT SE GIÀ LOGGATO =====
-    window.addEventListener('load', async () => {
-        initSupabase();
-        
-        // Aspetta un po' per assicurarsi che la sessione sia completamente cancellata
-        setTimeout(async () => {
-            if (isLoggingOut) return;
-            
-            const user = await checkSession();
-            if (user) {
-                const role = currentRole || 'operatore';
-                const punto = currentPunto || null;
-                
-                if (role === 'admin') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = `operatore-${punto}.html`;
-                }
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value.trim().toLowerCase();
+        const password = document.getElementById('password').value;
+        const punto = document.getElementById('punto').value;
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (!username || !password || !punto) {
+            showMessage('⚠️ Compila tutti i campi', 'error');
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.classList.add('loading');
+        loginBtn.textContent = '⏳ Accesso in corso...';
+
+        try {
+            console.log('🔐 Tentativo login:', { username, punto });
+
+            // Costruisci l'email fittizia per il login
+            const email = `${username}@mageitalita.local`;
+
+            // Login su Supabase Auth
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                console.error('❌ Errore login:', error);
+                showMessage('❌ Username o password errati', 'error');
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('loading');
+                loginBtn.textContent = '🚀 Accedi';
+                return;
             }
-        }, 300);
+
+            console.log('✅ Login riuscito:', data.user);
+
+            // Verifica il metadata dell'utente
+            const userMetadata = data.user.user_metadata || {};
+            const puntoUtente = userMetadata.punto_vendita || null;
+            const ruoloUtente = userMetadata.role || 'operatore';
+
+            console.log('📋 Metadata utente:', { puntoUtente, ruoloUtente });
+
+            // Verifica che il punto selezionato corrisponda al metadata
+            if (punto !== 'admin' && punto !== puntoUtente) {
+                console.error('❌ Punto vendita non corrisponde. Selezionato:', punto, 'Metadata:', puntoUtente);
+                await supabase.auth.signOut();
+                showMessage(`❌ Accesso negato. Il tuo account è associato a ${puntoUtente}, non a ${punto}`, 'error');
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('loading');
+                loginBtn.textContent = '🚀 Accedi';
+                return;
+            }
+
+            // Verifica il ruolo per admin
+            if (punto === 'admin' && ruoloUtente !== 'admin') {
+                console.error('❌ Accesso admin negato. Ruolo:', ruoloUtente);
+                await supabase.auth.signOut();
+                showMessage('❌ Accesso admin negato. Solo gli amministratori possono accedere qui', 'error');
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('loading');
+                loginBtn.textContent = '🚀 Accedi';
+                return;
+            }
+
+            // Login riuscito - salva dati locali e reindirizza
+            localStorage.setItem('mageitaliaUser', JSON.stringify({
+                username: username,
+                nome: userMetadata.nome,
+                punto_vendita: puntoUtente,
+                role: ruoloUtente
+            }));
+
+            showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
+            console.log('✅ Reindirizzamento a:', punto);
+
+            // Reindirizza in base al punto
+            setTimeout(() => {
+                if (punto === 'admin') {
+                    window.location.href = 'admin.html';
+                } else if (punto === 'pisa') {
+                    window.location.href = 'operatore-pisa.html';
+                } else if (punto === 'sesto') {
+                    window.location.href = 'operatore-sesto.html';
+                } else if (punto === 'cosenza') {
+                    window.location.href = 'operatore-cosenza.html';
+                }
+            }, 1500);
+
+        } catch (err) {
+            console.error('❌ Errore login:', err);
+            showMessage('❌ Errore: ' + err.message, 'error');
+            loginBtn.disabled = false;
+            loginBtn.classList.remove('loading');
+            loginBtn.textContent = '🚀 Accedi';
+        }
     });
 </script>
 
