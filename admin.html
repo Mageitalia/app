@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mage Italia - Admin Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -258,15 +258,6 @@
             transition: all 0.2s ease;
         }
 
-        .btn-edit {
-            background: #007bff;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #0056b3;
-        }
-
         .btn-delete {
             background: #dc3545;
             color: white;
@@ -357,63 +348,6 @@
             font-weight: 600;
         }
 
-        /* ===== INFO BOX ===== */
-        .info-box {
-            background: #e8f4f8;
-            border-left: 4px solid #A01E4E;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #0c5460;
-            line-height: 1.6;
-        }
-
-        .info-box strong {
-            color: #A01E4E;
-        }
-
-        /* ===== PREVIEW BOX ===== */
-        .preview-box {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .preview-box h4 {
-            color: #0c5460;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .credential-item {
-            background: white;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            text-align: left;
-            color: #333;
-            border: 1px solid #bee5eb;
-        }
-
-        .credential-item strong {
-            color: #A01E4E;
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        .credential-item code {
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            display: block;
-            font-size: 13px;
-        }
-
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -494,27 +428,11 @@
                 </div>
                 <div class="form-group">
                     <label>Crea Account Login? *</label>
-                    <select id="dipCreaUtente" onchange="togglePreview()">
+                    <select id="dipCreaUtente">
                         <option value="no">❌ No (solo dipendente)</option>
                         <option value="si">✅ Sì (crea credenziali)</option>
                     </select>
                 </div>
-            </div>
-
-            <!-- PREVIEW CREDENZIALI -->
-            <div id="previewBox" class="preview-box" style="display:none;">
-                <h4>🔐 Credenziali che verranno create:</h4>
-                <div class="credential-item">
-                    <strong>👤 Username:</strong>
-                    <code id="previewUsername">nome.cognome</code>
-                </div>
-                <div class="credential-item">
-                    <strong>🔑 Password (default):</strong>
-                    <code id="previewPassword">nome.cognome</code>
-                </div>
-                <p style="margin-top: 10px; font-size: 12px; color: #0c5460;">
-                    ℹ️ L'operatore deve cambiare la password al primo accesso
-                </p>
             </div>
 
             <div id="dipendentiMessage" class="message"></div>
@@ -546,7 +464,7 @@
                 </div>
                 <div class="form-group">
                     <label>Categoria *</label>
-                    <select id="prodCategoria" onchange="aggiornaPreviewProdotto()">
+                    <select id="prodCategoria">
                         <option value="">-- Seleziona --</option>
                         <option value="dolce">🍰 Dolce</option>
                         <option value="salato">🥖 Salato</option>
@@ -554,29 +472,12 @@
                 </div>
                 <div class="form-group">
                     <label>Punto Vendita *</label>
-                    <select id="prodPunto" onchange="aggiornaPreviewProdotto()">
+                    <select id="prodPunto">
                         <option value="">-- Seleziona --</option>
                         <option value="pisa">📍 Pisa</option>
                         <option value="sesto">📍 Sesto Fiorentino</option>
                         <option value="cosenza">📍 Cosenza</option>
                     </select>
-                </div>
-            </div>
-
-            <!-- PREVIEW PRODOTTO -->
-            <div id="previewBoxProd" class="preview-box" style="display:none;">
-                <h4>📝 Anteprima Prodotto:</h4>
-                <div class="credential-item">
-                    <strong>Nome:</strong>
-                    <code id="previewProdNome">Pane Bianco</code>
-                </div>
-                <div class="credential-item">
-                    <strong>Categoria:</strong>
-                    <code id="previewProdCategoria">🍰 Dolce</code>
-                </div>
-                <div class="credential-item">
-                    <strong>Punto Vendita:</strong>
-                    <code id="previewProdPunto">📍 Pisa</code>
                 </div>
             </div>
 
@@ -626,12 +527,6 @@
 
         <div class="admin-section">
             <h3>📥 Scarica Report</h3>
-            
-            <div class="info-box">
-                <strong>ℹ️ Informazioni:</strong><br>
-                Il report genera 3 fogli Excel automaticamente: Dettagli, Riepilogo e Totali.
-                Puoi filtrare per data, punto vendita e categoria.
-            </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -696,17 +591,12 @@
     }
 
     function switchTab(tabName) {
-        // Nascondi tutte le pagine
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        // Deseleziona tutti i bottoni
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
         
-        // Mostra la pagina selezionata
         document.getElementById(`tab-${tabName}`).classList.add('active');
-        // Seleziona il bottone
         event.target.classList.add('active');
 
-        // Carica dati se necessario
         if (tabName === 'dipendenti') {
             ricaricaDipendenti();
         } else if (tabName === 'prodotti') {
@@ -776,29 +666,6 @@
 
     // ===== DIPENDENTI =====
 
-    function togglePreview() {
-        const val = document.getElementById('dipCreaUtente').value;
-        document.getElementById('previewBox').style.display = val === 'si' ? 'block' : 'none';
-        aggiornaPreviewDipendente();
-    }
-
-    function aggiornaPreviewDipendente() {
-        const nome = document.getElementById('dipNome').value.trim().toLowerCase();
-        const cognome = document.getElementById('dipCognome').value.trim().toLowerCase();
-        
-        if (nome && cognome) {
-            const username = `${nome}.${cognome}`;
-            document.getElementById('previewUsername').textContent = username;
-            document.getElementById('previewPassword').textContent = username;
-        }
-    }
-
-    // Update preview when typing
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('dipNome').addEventListener('input', aggiornaPreviewDipendente);
-        document.getElementById('dipCognome').addEventListener('input', aggiornaPreviewDipendente);
-    });
-
     async function ricaricaDipendenti() {
         try {
             const container = document.getElementById('dipendentiContainer');
@@ -861,22 +728,17 @@
         }
 
         try {
-            // 1. Aggiungi dipendente nel database
             const { error: dipError } = await supabase
                 .from('dipendenti')
                 .insert([{ nome, cognome, punto_vendita_id: punto }]);
 
             if (dipError) throw dipError;
 
-            let username = null;
-            let password = null;
-
-            // 2. Se richiesto, crea account
             if (creaUtente === 'si') {
                 const nomeLower = nome.toLowerCase();
                 const cognomeLower = cognome.toLowerCase();
-                username = `${nomeLower}.${cognomeLower}`;
-                password = username;
+                const username = `${nomeLower}.${cognomeLower}`;
+                const password = username;
 
                 try {
                     const supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
@@ -914,12 +776,10 @@
                 showMessage('dipendentiMessage', '✅ Dipendente aggiunto (senza credenziali)', 'success');
             }
 
-            // Pulisci form
             document.getElementById('dipNome').value = '';
             document.getElementById('dipCognome').value = '';
             document.getElementById('dipPunto').value = '';
             document.getElementById('dipCreaUtente').value = 'no';
-            document.getElementById('previewBox').style.display = 'none';
 
             await ricaricaDipendenti();
         } catch (err) {
@@ -946,29 +806,6 @@
     }
 
     // ===== PRODOTTI =====
-
-    function aggiornaPreviewProdotto() {
-        const nome = document.getElementById('prodNome').value.trim();
-        const categoria = document.getElementById('prodCategoria').value;
-        const punto = document.getElementById('prodPunto').value;
-        
-        if (nome && categoria && punto) {
-            document.getElementById('previewBoxProd').style.display = 'block';
-            document.getElementById('previewProdNome').textContent = nome || '—';
-            document.getElementById('previewProdCategoria').textContent = 
-                categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato';
-            document.getElementById('previewProdPunto').textContent = 
-                punto === 'pisa' ? '📍 Pisa' :
-                punto === 'sesto' ? '📍 Sesto Fiorentino' :
-                punto === 'cosenza' ? '📍 Cosenza' : '—';
-        } else {
-            document.getElementById('previewBoxProd').style.display = 'none';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('prodNome').addEventListener('input', aggiornaPreviewProdotto);
-    });
 
     async function ricaricaProdotti() {
         try {
@@ -1041,11 +878,9 @@
 
             showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
 
-            // Pulisci form
             document.getElementById('prodNome').value = '';
             document.getElementById('prodCategoria').value = '';
             document.getElementById('prodPunto').value = '';
-            document.getElementById('previewBoxProd').style.display = 'none';
 
             await ricaricaProdotti();
         } catch (err) {
@@ -1075,21 +910,6 @@
 
     async function generaReportExcel() {
         try {
-            // Verifica che XLSX sia caricato
-            if (typeof XLSX === 'undefined') {
-                showMessage('reportMessage', '⚠️ Libreria Excel non caricata. Attendi 2 secondi e riprova.', 'error');
-                console.error('❌ XLSX non è caricato');
-                
-                // Tenta di caricare XLSX
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js';
-                script.onload = () => {
-                    showMessage('reportMessage', '✅ Libreria caricata. Prova di nuovo.', 'success');
-                };
-                document.head.appendChild(script);
-                return;
-            }
-
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
             const punto = document.getElementById('reportPunto').value;
@@ -1101,163 +921,74 @@
             }
 
             showMessage('reportMessage', '⏳ Generazione report...', 'info');
-            console.log('📊 Parametri report:', { dataInizio, dataFine, punto, categoria });
+            console.log('📊 Parametri:', {dataInizio, dataFine, punto, categoria});
 
-            // Converti date correttamente
             const dateStart = new Date(dataInizio + 'T00:00:00Z');
             const dateEnd = new Date(dataFine + 'T23:59:59Z');
 
-            console.log('📅 Date:', {
-                dataInizio,
-                dataFine,
-                dateStartISO: dateStart.toISOString(),
-                dateEndISO: dateEnd.toISOString()
-            });
-
-            // Query con logging
             let query = supabase
                 .from('registrazioni_giornaliere')
-                .select(`
-                    id,
-                    created_at,
-                    recuperati,
-                    buttati,
-                    prodotti(nome, categoria, punto_vendita_id),
-                    dipendenti(nome, cognome)
-                `)
+                .select(`id, created_at, recuperati, buttati, prodotti(nome, categoria, punto_vendita_id), dipendenti(nome, cognome)`)
                 .gte('created_at', dateStart.toISOString())
                 .lte('created_at', dateEnd.toISOString());
 
             const { data: registrazioni, error } = await query;
 
             if (error) {
-                console.error('❌ Errore query:', error);
-                showMessage('reportMessage', '❌ Errore query: ' + error.message, 'error');
+                showMessage('reportMessage', '❌ Errore: ' + error.message, 'error');
                 return;
             }
 
-            console.log('📋 Registrazioni trovate:', registrazioni?.length || 0);
-            console.log('Dati:', registrazioni);
-
-            // Se non ci sono registrazioni, avvisa
             if (!registrazioni || registrazioni.length === 0) {
-                showMessage('reportMessage', '⚠️ Nessuna registrazione trovata nel periodo selezionato', 'error');
+                showMessage('reportMessage', '⚠️ Nessuna registrazione trovata', 'error');
                 return;
             }
 
-            // Filtra manualmente se necessario
             let filtered = registrazioni;
-            if (punto) {
-                filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
-            }
-            if (categoria) {
-                filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
-            }
-
-            console.log('📋 Registrazioni dopo filtri:', filtered.length);
+            if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
+            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
 
             if (filtered.length === 0) {
-                showMessage('reportMessage', '⚠️ Nessuna registrazione corrispondente ai filtri', 'error');
+                showMessage('reportMessage', '⚠️ Nessun dato per questi filtri', 'error');
                 return;
             }
 
-            console.log('📊 Inizio creazione Excel...');
-
-            const wb = XLSX.utils.book_new();
-
-            // Sheet 1: Dettagli
+            // Prepara dati
             const dettagli = filtered.map(r => ({
                 'Data': new Date(r.created_at).toLocaleDateString('it-IT'),
-                'Ora': new Date(r.created_at).toLocaleTimeString('it-IT'),
                 'Prodotto': r.prodotti?.nome || '—',
-                'Categoria': r.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
-                'Punto': r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
-                        r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
-                        r.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
-                'Recuperati (kg)': r.recuperati || 0,
-                'Buttati (kg)': r.buttati || 0,
-                'Operatore': r.dipendenti ? `${r.dipendenti.nome} ${r.dipendenti.cognome}` : '—'
+                'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
+                'Punto': r.prodotti?.punto_vendita_id,
+                'Recuperati': r.recuperati || 0,
+                'Buttati': r.buttati || 0
             }));
 
-            const ws1 = XLSX.utils.json_to_sheet(dettagli);
-            ws1['!cols'] = [
-                { wch: 12 },
-                { wch: 10 },
-                { wch: 20 },
-                { wch: 12 },
-                { wch: 18 },
-                { wch: 14 },
-                { wch: 14 },
-                { wch: 20 }
-            ];
-            XLSX.utils.book_append_sheet(wb, ws1, 'Dettagli');
-
-            console.log('✅ Sheet 1 (Dettagli) creato:', dettagli.length, 'righe');
-
-            // Sheet 2: Riepilogo
-            const riepilogo = {};
-            filtered.forEach(r => {
-                const key = r.prodotti?.nome || 'Sconosciuto';
-                if (!riepilogo[key]) {
-                    riepilogo[key] = {
-                        'Prodotto': key,
-                        'Categoria': r.prodotti?.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato',
-                        'Punto': r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
-                                r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
-                                r.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : '—',
-                        'Recuperati': 0,
-                        'Buttati': 0,
-                        'Registrazioni': 0
-                    };
-                }
-                riepilogo[key]['Recuperati'] += r.recuperati || 0;
-                riepilogo[key]['Buttati'] += r.buttati || 0;
-                riepilogo[key]['Registrazioni'] += 1;
-            });
-
-            const riepilogoData = Object.values(riepilogo);
-            const ws2 = XLSX.utils.json_to_sheet(riepilogoData);
-            ws2['!cols'] = [
-                { wch: 20 },
-                { wch: 12 },
-                { wch: 18 },
-                { wch: 14 },
-                { wch: 14 },
-                { wch: 14 }
-            ];
-            XLSX.utils.book_append_sheet(wb, ws2, 'Riepilogo');
-
-            console.log('✅ Sheet 2 (Riepilogo) creato');
-
-            // Sheet 3: Totali
-            const tot_rec = filtered.reduce((s, r) => s + (r.recuperati || 0), 0);
-            const tot_but = filtered.reduce((s, r) => s + (r.buttati || 0), 0);
-            const totali = [
-                { 'Metrica': 'Totale Registrazioni', 'Valore': filtered.length },
-                { 'Metrica': 'Totale Recuperati (kg)', 'Valore': tot_rec.toFixed(2) },
-                { 'Metrica': 'Totale Buttati (kg)', 'Valore': tot_but.toFixed(2) },
-                { 'Metrica': 'Totale Scarto (kg)', 'Valore': (tot_rec + tot_but).toFixed(2) }
-            ];
-
-            const ws3 = XLSX.utils.json_to_sheet(totali);
-            ws3['!cols'] = [
-                { wch: 30 },
-                { wch: 20 }
-            ];
-            XLSX.utils.book_append_sheet(wb, ws3, 'Totali');
-
-            console.log('✅ Sheet 3 (Totali) creato');
-            console.log('📊 Totali:', { tot_rec, tot_but, tot_registrazioni: filtered.length });
-
-            // Salva file
-            const filename = `Mage-Report-${dataInizio}-a-${dataFine}.xlsx`;
-            XLSX.writeFile(wb, filename);
-
-            showMessage('reportMessage', `✅ Report generato e scaricato: ${filename}`, 'success');
-            console.log('✅ File Excel generato:', filename);
+            // Se XLSX è disponibile, usa quello
+            if (typeof XLSX !== 'undefined' && XLSX.utils && XLSX.writeFile) {
+                console.log('✅ Usando XLSX');
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(dettagli);
+                XLSX.utils.book_append_sheet(wb, ws, 'Report');
+                XLSX.writeFile(wb, `Mage-Report-${dataInizio}.xlsx`);
+                showMessage('reportMessage', '✅ Report generato!', 'success');
+            } else {
+                // Fallback: scarica come CSV
+                console.log('⚠️ XLSX non disponibile, usando CSV');
+                const csv = [Object.keys(dettagli[0]).join(',')];
+                dettagli.forEach(row => {
+                    csv.push(Object.values(row).join(','));
+                });
+                const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Mage-Report-${dataInizio}.csv`;
+                a.click();
+                showMessage('reportMessage', '✅ Report scaricato (CSV)!', 'success');
+            }
 
         } catch (err) {
-            console.error('❌ Errore generazione report:', err);
+            console.error('Errore:', err);
             showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
