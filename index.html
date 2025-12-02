@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Italia v3.1 - Versione Migliorata</title>
+    <title>Mage Italia v4.0 - Sistema Gestione Scarti</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,16 +21,110 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* ===== HEADER ===== */
+        /* ===== LOGIN PAGE ===== */
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
+        }
+
+        .login-container {
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo-section {
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .login-container h1 {
+            color: #8B2635;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-container p {
+            color: #999;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #8B2635;
+            box-shadow: 0 0 8px rgba(139, 38, 53, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 38, 53, 0.3);
+        }
+
+        #loginError {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* ===== HEADER APP ===== */
         header {
             background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
             color: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(139, 38, 53, 0.3);
@@ -38,40 +133,44 @@
             align-items: center;
         }
 
-        header .logo-section {
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+        }
+
+        .header-logo {
+            max-width: 60px;
+        }
+
+        .header-logo img {
+            max-width: 100%;
+            height: auto;
         }
 
         header h1 {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 24px;
         }
 
         .welcome-box {
             background: rgba(255, 255, 255, 0.15);
             padding: 12px 20px;
             border-radius: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .welcome-text {
             font-size: 14px;
-            margin-bottom: 5px;
-            opacity: 0.95;
+            opacity: 0.9;
         }
 
         .welcome-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .welcome-role {
             font-size: 12px;
             opacity: 0.85;
-            margin-top: 3px;
         }
 
         .logout-btn {
@@ -88,78 +187,9 @@
         .logout-btn:hover {
             background: #FFD700;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        /* ===== LOGIN PAGE ===== */
-        .login-container {
-            max-width: 420px;
-            margin: 60px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        .login-container h2 {
-            margin-bottom: 10px;
-            color: #8B2635;
-            font-size: 28px;
-        }
-
-        .login-container p {
-            color: #999;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #8B2635;
-            box-shadow: 0 0 8px rgba(139, 38, 53, 0.2);
-        }
-
-        button {
-            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 38, 53, 0.3);
-        }
-
+        /* ===== MAIN APP ===== */
         .main-content {
             display: none;
         }
@@ -168,22 +198,10 @@
             display: block;
         }
 
-        .page {
-            display: none;
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .page.active {
-            display: block;
-        }
-
         .nav-buttons {
             display: flex;
             gap: 12px;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
@@ -198,15 +216,241 @@
             transition: all 0.3s;
         }
 
-        .nav-btn:hover {
-            border-color: #8B2635;
-            color: #8B2635;
-        }
-
         .nav-btn.active {
             background: #8B2635;
             color: white;
             border-color: #8B2635;
+        }
+
+        .page {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h2 {
+            color: #8B2635;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #8B2635;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        /* ===== STATS ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(139, 38, 53, 0.2);
+        }
+
+        .stat-box h3 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            color: white;
+        }
+
+        .stat-box p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 0;
+        }
+
+        /* ===== CHARTS ===== */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-box h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* ===== SEARCH & CATEGORIES ===== */
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #8B2635;
+            box-shadow: 0 0 8px rgba(139, 38, 53, 0.2);
+        }
+
+        /* ===== PREFERITI ===== */
+        .preferiti-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 2px solid #FFD700;
+        }
+
+        .preferiti-title {
+            color: #8B2635;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preferiti-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .preferito-btn {
+            background: white;
+            border: 2px solid #8B2635;
+            color: #8B2635;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .preferito-btn:hover {
+            background: #8B2635;
+            color: white;
+        }
+
+        /* ===== CATEGORIE PRODOTTI ===== */
+        .categoria-section {
+            margin-bottom: 40px;
+        }
+
+        .categoria-title {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #8B2635;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #8B2635;
+        }
+
+        .categoria-title span {
+            font-size: 28px;
+            margin-right: 12px;
+        }
+
+        .prodotti-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .prodotto-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #8B2635;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .prodotto-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            transform: translateY(-3px);
+        }
+
+        .prodotto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .prodotto-card h4 {
+            margin: 0;
+            color: #8B2635;
+            font-size: 15px;
+        }
+
+        .prodotto-code {
+            background: #FFD700;
+            color: #333;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-row > div {
+            flex: 1;
+        }
+
+        .input-row label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .input-row input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .input-row input:focus {
+            outline: none;
+            border-color: #8B2635;
+            box-shadow: 0 0 4px rgba(139, 38, 53, 0.2);
         }
 
         /* ===== TABLES ===== */
@@ -216,10 +460,9 @@
             margin-top: 20px;
         }
 
-        table th,
-        table td {
+        table th, table td {
             border: 1px solid #e0e0e0;
-            padding: 14px;
+            padding: 12px;
             text-align: left;
         }
 
@@ -233,8 +476,49 @@
             background: #fafafa;
         }
 
-        table tr:hover {
-            background: #f0f0f0;
+        /* ===== BUTTONS ===== */
+        button {
+            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 38, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button {
+            flex: 1;
+            min-width: 140px;
         }
 
         /* ===== MESSAGES ===== */
@@ -269,136 +553,7 @@
             border-color: #17a2b8;
         }
 
-        /* ===== STATS ===== */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #8B2635 0%, #6b1f2a 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(139, 38, 53, 0.2);
-            transition: transform 0.3s;
-        }
-
-        .stat-box:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-box h3 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .stat-box p {
-            font-size: 14px;
-            opacity: 0.95;
-        }
-
-        /* ===== CATEGORY SECTIONS ===== */
-        .categoria-section {
-            margin-bottom: 40px;
-        }
-
-        .categoria-title {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: #8B2635;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #8B2635;
-        }
-
-        .categoria-title span {
-            font-size: 28px;
-            margin-right: 12px;
-        }
-
-        .prodotti-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .prodotto-card {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #8B2635;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .prodotto-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-            transform: translateY(-3px);
-        }
-
-        .prodotto-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
-        }
-
-        .prodotto-card h3 {
-            margin: 0;
-            color: #8B2635;
-            font-size: 16px;
-        }
-
-        .prodotto-code {
-            background: #FFD700;
-            color: #333;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .prodotto-card p {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 15px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .input-row input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .input-row input:focus {
-            outline: none;
-            border-color: #8B2635;
-            box-shadow: 0 0 4px rgba(139, 38, 53, 0.2);
-        }
-
-        .input-row label {
-            font-size: 11px;
-            color: #666;
-            min-width: 70px;
-        }
-
-        /* ===== FORM GROUPS ===== */
+        /* ===== FORM ===== */
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -406,41 +561,39 @@
             margin-bottom: 20px;
         }
 
-        /* ===== BUTTON GROUPS ===== */
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-            flex-wrap: wrap;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .btn-group button {
-            flex: 1;
-            min-width: 140px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
         }
 
-        .btn-secondary {
-            background: #6c757d;
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
         }
 
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #8B2635;
+            box-shadow: 0 0 4px rgba(139, 38, 53, 0.2);
         }
 
         /* ===== ADMIN TABS ===== */
-        .admin-tab {
+        .admin-only {
             display: none;
         }
 
-        .admin-tab.active {
+        .admin-only.show {
             display: block;
         }
 
@@ -450,6 +603,7 @@
             margin-bottom: 25px;
             border-bottom: 2px solid #e0e0e0;
             padding-bottom: 15px;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -463,16 +617,19 @@
             transition: all 0.3s;
         }
 
-        .tab-btn:hover {
-            color: #8B2635;
-        }
-
         .tab-btn.active {
             color: #8B2635;
             border-bottom-color: #8B2635;
         }
 
-        /* ===== OPERATORE ONLY ===== */
+        .admin-tab {
+            display: none;
+        }
+
+        .admin-tab.active {
+            display: block;
+        }
+
         .operatore-only {
             display: none;
         }
@@ -480,58 +637,34 @@
         .operatore-only.show {
             display: block;
         }
-
-        /* ===== ADMIN ONLY ===== */
-        .admin-only {
-            display: none;
-        }
-
-        .admin-only.show {
-            display: block;
-        }
-
-        h2 {
-            color: #8B2635;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        h3 {
-            color: #8B2635;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
 
 <!-- ===== LOGIN PAGE ===== -->
-<div id="loginPage" class="login-container">
-    <h2>🍽️ Mage Italia</h2>
-    <p>Sistema di Gestione Scarti Alimentari v3.1</p>
-    
-    <form id="loginForm">
-        <div class="form-group">
-            <label>📧 Email</label>
-            <input type="email" id="email" required placeholder="admin@test.com">
+<div id="loginPage" class="login-wrapper">
+    <div class="login-container">
+        <div class="logo-section">
+            <img id="loginLogo" class="logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
+            <h1>Mage Italia</h1>
+            <p>Sistema Gestione Scarti Alimentari v4.0</p>
         </div>
         
-        <div class="form-group">
-            <label>🔐 Password</label>
-            <input type="password" id="password" required placeholder="••••••••">
-        </div>
-        
-        <button type="submit">Accedi</button>
-        
-        <div id="loginError" class="message error" style="display: none; margin-top: 15px;"></div>
-    </form>
-
-    <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0; text-align: center; color: #999; font-size: 12px;">
-        <p><strong>Credenziali Test:</strong></p>
-        <p>👨‍💼 Admin: amministrazionemageitalia@gmail.com</p>
-        <p>👤 Operatore: operatore1@test.com</p>
-        <p style="margin-top: 10px; opacity: 0.7;">Password: Test123456!</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>📧 Email</label>
+                <input type="email" id="email" required placeholder="operatore@mageitalita.com">
+            </div>
+            
+            <div class="form-group">
+                <label>🔐 Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            
+            <button type="submit" class="login-btn">Accedi</button>
+            
+            <div id="loginError" style="display: none; margin-top: 15px;"></div>
+        </form>
     </div>
 </div>
 
@@ -539,21 +672,26 @@
 <div id="mainApp" class="main-content">
     <div class="container">
         <header>
-            <div class="logo-section">
-                <h1>🍽️ Mage Italia</h1>
+            <div class="header-left">
+                <div class="header-logo">
+                    <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
+                </div>
+                <div>
+                    <h1>Mage Italia</h1>
+                </div>
             </div>
             <div class="welcome-box">
                 <div class="welcome-text">Benvenuto</div>
-                <div class="welcome-name" id="welcomeName">Antonio Rossi</div>
+                <div class="welcome-name" id="welcomeName">Antonio</div>
                 <div class="welcome-role" id="welcomeRole">👨‍💼 Amministratore</div>
             </div>
-            <button class="logout-btn" onclick="logout()">Esci</button>
+            <button class="logout-btn" onclick="logout()">🚪 Esci</button>
         </header>
 
         <!-- NAVIGATION -->
-        <div class="nav-buttons" id="navButtons">
+        <div class="nav-buttons">
             <button class="nav-btn active" onclick="showPage('dashboard')">📊 Dashboard</button>
-            <button class="nav-btn" onclick="showPage('scarti')">✏️ Compila Scarti</button>
+            <button class="nav-btn operatore-only show" onclick="showPage('scarti')">✏️ Compila Scarti</button>
             <button class="nav-btn admin-only" onclick="showPage('admin')">⚙️ Amministrazione</button>
         </div>
 
@@ -576,8 +714,19 @@
                 </div>
             </div>
 
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>📊 Recuperati vs Buttati (Oggi)</h3>
+                    <canvas id="chartRecuperatiVsButtati"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>🍰 Dolci vs 🥖 Salati</h3>
+                    <canvas id="chartDolciSalati"></canvas>
+                </div>
+            </div>
+
             <h3>📋 Ultimi Inserimenti</h3>
-            <table id="ultimiInserimenti">
+            <table>
                 <thead>
                     <tr>
                         <th>Data</th>
@@ -602,7 +751,6 @@
                     <label>📅 Data</label>
                     <input type="date" id="dataScarti" required>
                 </div>
-
                 <div class="form-group">
                     <label>🏪 Punto Vendita</label>
                     <select id="puntoVendita" required onchange="loadProdottiScarti()">
@@ -611,6 +759,16 @@
                         <option value="sesto">Sesto Fiorentino</option>
                         <option value="cosenza">Cosenza</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- SEARCH & PREFERITI -->
+            <div class="search-container">
+                <input type="text" id="searchProdotto" class="search-box" placeholder="🔍 Cerca per nome o codice...">
+                
+                <div class="preferiti-section">
+                    <div class="preferiti-title">⭐ PREFERITI (I Più Usati)</div>
+                    <div class="preferiti-grid" id="preferitiGrid"></div>
                 </div>
             </div>
 
@@ -645,46 +803,63 @@
             <h2>⚙️ Amministrazione</h2>
             
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+                <button class="tab-btn active" onclick="switchAdminTab('utenti')">👤 Gestione Utenti</button>
                 <button class="tab-btn" onclick="switchAdminTab('dipendenti')">👥 Dipendenti</button>
                 <button class="tab-btn" onclick="switchAdminTab('prodotti')">🍕 Prodotti</button>
                 <button class="tab-btn" onclick="switchAdminTab('report')">📄 Report</button>
+                <button class="tab-btn" onclick="switchAdminTab('logo')">🖼️ Logo</button>
             </div>
 
-            <!-- TAB: Dashboard Admin -->
-            <div id="tabDashboard" class="admin-tab active">
-                <h3>Panoramica Sistema</h3>
-                <table>
+            <!-- TAB: Gestione Utenti -->
+            <div id="tabUtenti" class="admin-tab active">
+                <h3>➕ Crea Nuovo Operatore</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="opNome" placeholder="Marco">
+                    </div>
+                    <div class="form-group">
+                        <label>Cognome</label>
+                        <input type="text" id="opCognome" placeholder="Rossi">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="opEmail" placeholder="marco.rossi@mageitalita.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="opPassword" placeholder="Password123!">
+                    </div>
+                    <div class="form-group">
+                        <label>Punto Vendita</label>
+                        <select id="opPunto">
+                            <option value="pisa">Pisa</option>
+                            <option value="sesto">Sesto Fiorentino</option>
+                            <option value="cosenza">Cosenza</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="creaOperatore()">➕ Crea Operatore</button>
+
+                <h3 style="margin-top: 40px;">👥 Operatori Attuali</h3>
+                <table id="tabellaOperatori">
                     <thead>
                         <tr>
-                            <th>Elemento</th>
-                            <th>Quantità</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Punto</th>
+                            <th>Azioni</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Punti Vendita</td>
-                            <td id="countPunti">0</td>
-                        </tr>
-                        <tr>
-                            <td>Dipendenti Attivi</td>
-                            <td id="countDip">0</td>
-                        </tr>
-                        <tr>
-                            <td>Prodotti Attivi</td>
-                            <td id="countProd">0</td>
-                        </tr>
-                        <tr>
-                            <td>Inserimenti Totali</td>
-                            <td id="countInser">0</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="corpoOperatori"></tbody>
                 </table>
+
+                <div id="utentiMessage"></div>
             </div>
 
             <!-- TAB: Dipendenti -->
             <div id="tabDipendenti" class="admin-tab">
-                <h3>Aggiungi Dipendente</h3>
+                <h3>➕ Aggiungi Dipendente</h3>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nome</label>
@@ -705,7 +880,7 @@
                 </div>
                 <button onclick="aggiungiDipendente()">➕ Aggiungi Dipendente</button>
 
-                <h3>Dipendenti Attuali</h3>
+                <h3 style="margin-top: 40px;">Dipendenti Attuali</h3>
                 <table id="tabellaDipendenti">
                     <thead>
                         <tr>
@@ -717,11 +892,13 @@
                     </thead>
                     <tbody id="corpoDipendenti"></tbody>
                 </table>
+
+                <div id="dipendentiMessage"></div>
             </div>
 
             <!-- TAB: Prodotti -->
             <div id="tabProdotti" class="admin-tab">
-                <h3>Aggiungi Prodotto</h3>
+                <h3>➕ Aggiungi Prodotto</h3>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nome Prodotto</label>
@@ -749,7 +926,7 @@
                 </div>
                 <button onclick="aggiungiProdotto()">➕ Aggiungi Prodotto</button>
 
-                <h3>Prodotti Attuali</h3>
+                <h3 style="margin-top: 40px;">Prodotti Attuali</h3>
                 <table id="tabellaProdotti">
                     <thead>
                         <tr>
@@ -762,12 +939,23 @@
                     </thead>
                     <tbody id="corpoProdotti"></tbody>
                 </table>
+
+                <div id="prodottiMessage"></div>
             </div>
 
             <!-- TAB: Report -->
             <div id="tabReport" class="admin-tab">
-                <h3>Genera Report Excel</h3>
+                <h3>📊 Genera Report Excel</h3>
                 <div class="form-row">
+                    <div class="form-group">
+                        <label>Punto Vendita</label>
+                        <select id="reportPunto">
+                            <option value="">Tutti</option>
+                            <option value="pisa">Pisa</option>
+                            <option value="sesto">Sesto Fiorentino</option>
+                            <option value="cosenza">Cosenza</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label>Data Inizio</label>
                         <input type="date" id="reportDataInizio">
@@ -779,17 +967,39 @@
                     <div class="form-group">
                         <label>Tipo Report</label>
                         <select id="reportTipo">
-                            <option value="giornaliero">📋 Giornaliero</option>
+                            <option value="completo">📋 Completo (Dolci + Salati)</option>
+                            <option value="dolce">🍰 Solo Dolci</option>
+                            <option value="salato">🥖 Solo Salati</option>
                             <option value="riepilogo">📊 Riepilogo Prodotto</option>
                         </select>
                     </div>
                 </div>
                 <button onclick="generaReport()">📥 Genera Report Excel</button>
 
-                <div id="adminMessage"></div>
+                <div id="reportMessage"></div>
             </div>
 
-            <div id="adminMessage" style="margin-top: 20px;"></div>
+            <!-- TAB: Logo -->
+            <div id="tabLogo" class="admin-tab">
+                <h3>🖼️ Carica Logo Azienda</h3>
+                <p style="color: #666; margin-bottom: 20px;">Carica un'immagine per il logo (PNG, JPG). Dimensione consigliata: 200x200px</p>
+                
+                <div class="form-group">
+                    <label>Seleziona Immagine</label>
+                    <input type="file" id="logoUpload" accept="image/*">
+                </div>
+                
+                <button onclick="salvaLogo()">💾 Salva Logo</button>
+                
+                <h3 style="margin-top: 40px;">Anteprima Logo</h3>
+                <div style="border: 2px dashed #ccc; padding: 20px; border-radius: 8px; text-align: center;">
+                    <img id="logoPreview" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo Preview" style="max-width: 150px; height: auto;">
+                </div>
+
+                <div id="logoMessage"></div>
+            </div>
+
+            <div id="adminMessage"></div>
         </div>
     </div>
 </div>
@@ -805,6 +1015,23 @@
     let currentRole = null;
     let currentNome = null;
     let scartiForm = {};
+    let tuttiProdotti = [];
+    let preferitiUsati = [];
+    let logoBase64 = null;
+    let charts = {};
+
+    // =========== LOAD LOGO DA LOCALSTORAGE ===========
+    function loadLogo() {
+        const savedLogo = localStorage.getItem('mageitaliaLogo');
+        if (savedLogo) {
+            logoBase64 = savedLogo;
+            document.getElementById('loginLogo').src = logoBase64;
+            document.getElementById('appLogo').src = logoBase64;
+            document.getElementById('logoPreview').src = logoBase64;
+        }
+    }
+
+    loadLogo();
 
     // =========== LOGIN ===========
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -823,17 +1050,13 @@
             if (error) throw error;
 
             currentUser = data.user;
-            
-            // Leggi metadati
             const metadata = currentUser.user_metadata || {};
             currentRole = metadata.role || 'operatore';
             currentNome = metadata.nome || 'Utente';
 
-            // Mostra app
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').classList.add('active');
 
-            // Personalizza benvenuto
             const emoji = currentRole === 'admin' ? '👨‍💼' : '👤';
             const roleText = currentRole === 'admin' ? 'Amministratore' : 'Operatore';
             const nomeCapitalizzato = currentNome.charAt(0).toUpperCase() + currentNome.slice(1).toLowerCase();
@@ -841,7 +1064,6 @@
             document.getElementById('welcomeName').textContent = nomeCapitalizzato;
             document.getElementById('welcomeRole').textContent = `${emoji} ${roleText}`;
 
-            // Mostra/nascondi elementi in base al ruolo
             if (currentRole === 'admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.add('show'));
                 document.querySelectorAll('.operatore-only').forEach(el => el.classList.remove('show'));
@@ -850,14 +1072,12 @@
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('show'));
             }
 
-            // Carica dati
             await loadDashboard();
             await loadScartiForm();
             if (currentRole === 'admin') {
                 await loadAdminData();
             }
 
-            // Imposta date
             document.getElementById('dataScarti').valueAsDate = new Date();
             document.getElementById('reportDataInizio').valueAsDate = new Date(new Date().setDate(new Date().getDate() - 7));
             document.getElementById('reportDataFine').valueAsDate = new Date();
@@ -884,8 +1104,11 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageName).classList.add('active');
         
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        if (pageName === 'dashboard' && Object.keys(charts).length > 0) {
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.resize();
+            });
+        }
     }
 
     function switchAdminTab(tabName) {
@@ -919,7 +1142,7 @@
             document.getElementById('statOperatori').textContent = dipCount || 0;
             document.getElementById('statInserimenti').textContent = inserCount || 0;
 
-            // Ultimi inserimenti
+            // Carica dati per grafici
             const { data: inserimenti } = await supabase
                 .from('registrazioni_giornaliere')
                 .select(`
@@ -928,10 +1151,10 @@
                     recuperati,
                     buttati,
                     dipendenti(nome, cognome),
-                    prodotti(nome, codice_prodotto)
+                    prodotti(nome, codice_prodotto, categoria)
                 `)
-                .order('created_at', { ascending: false })
-                .limit(10);
+                .eq('data_registrazione', today)
+                .order('created_at', { ascending: false });
 
             const tbody = document.getElementById('tabellaInserimenti');
             tbody.innerHTML = '';
@@ -950,6 +1173,65 @@
                 });
             }
 
+            // Grafici
+            const totalRecuperati = inserimenti ? inserimenti.reduce((sum, i) => sum + (i.recuperati || 0), 0) : 0;
+            const totalButtati = inserimenti ? inserimenti.reduce((sum, i) => sum + (i.buttati || 0), 0) : 0;
+
+            const dolci = inserimenti ? inserimenti.filter(i => i.prodotti && i.prodotti.categoria === 'dolce').reduce((sum, i) => sum + (i.recuperati || 0) + (i.buttati || 0), 0) : 0;
+            const salati = inserimenti ? inserimenti.filter(i => i.prodotti && i.prodotti.categoria === 'salato').reduce((sum, i) => sum + (i.recuperati || 0) + (i.buttati || 0), 0) : 0;
+
+            // Chart Recuperati vs Buttati
+            const ctxChart1 = document.getElementById('chartRecuperatiVsButtati');
+            if (ctxChart1) {
+                if (charts.chart1) charts.chart1.destroy();
+                charts.chart1 = new Chart(ctxChart1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['✅ Recuperati', '❌ Buttati'],
+                        datasets: [{
+                            data: [totalRecuperati, totalButtati],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                            borderColor: ['#fff', '#fff'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart Dolci vs Salati
+            const ctxChart2 = document.getElementById('chartDolciSalati');
+            if (ctxChart2) {
+                if (charts.chart2) charts.chart2.destroy();
+                charts.chart2 = new Chart(ctxChart2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['🍰 Dolci', '🥖 Salati'],
+                        datasets: [{
+                            data: [dolci, salati],
+                            backgroundColor: ['#FFD700', '#FF6B6B'],
+                            borderColor: ['#fff', '#fff'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
         } catch (err) {
             console.error('Dashboard error:', err);
         }
@@ -960,6 +1242,14 @@
         try {
             document.getElementById('puntoVendita').value = 'pisa';
             await loadProdottiScarti();
+            
+            // Carica preferiti
+            const saved = localStorage.getItem('preferitiMageItalia');
+            if (saved) {
+                preferitiUsati = JSON.parse(saved);
+            }
+            
+            document.getElementById('searchProdotto').addEventListener('input', filterProdotti);
         } catch (err) {
             console.error('Scarti form error:', err);
         }
@@ -978,47 +1268,96 @@
                 .order('categoria', { ascending: true })
                 .order('nome', { ascending: true });
 
-            const gridDolci = document.getElementById('prodottiDolci');
-            const gridSalati = document.getElementById('prodottiSalati');
-            gridDolci.innerHTML = '';
-            gridSalati.innerHTML = '';
-            scartiForm = {};
-
-            if (prodotti) {
-                prodotti.forEach(p => {
-                    scartiForm[p.id] = { recuperati: 0, buttati: 0 };
-                    
-                    const card = document.createElement('div');
-                    card.className = 'prodotto-card';
-                    card.innerHTML = `
-                        <div class="prodotto-header">
-                            <h3>${p.nome}</h3>
-                            <div class="prodotto-code">${p.codice_prodotto}</div>
-                        </div>
-                        <div class="input-row">
-                            <div style="flex: 1;">
-                                <label>✅ Recuperati</label>
-                                <input type="number" min="0" placeholder="0" 
-                                       onchange="scartiForm[${p.id}].recuperati = parseInt(this.value || 0)">
-                            </div>
-                            <div style="flex: 1;">
-                                <label>❌ Buttati</label>
-                                <input type="number" min="0" placeholder="0"
-                                       onchange="scartiForm[${p.id}].buttati = parseInt(this.value || 0)">
-                            </div>
-                        </div>
-                    `;
-                    
-                    if (p.categoria === 'dolce') {
-                        gridDolci.appendChild(card);
-                    } else {
-                        gridSalati.appendChild(card);
-                    }
-                });
-            }
+            tuttiProdotti = prodotti || [];
+            
+            renderProdotti(tuttiProdotti);
+            renderPreferiti();
 
         } catch (err) {
             console.error('Prodotti scarti error:', err);
+        }
+    }
+
+    function renderProdotti(prodotti) {
+        const gridDolci = document.getElementById('prodottiDolci');
+        const gridSalati = document.getElementById('prodottiSalati');
+        gridDolci.innerHTML = '';
+        gridSalati.innerHTML = '';
+        scartiForm = {};
+
+        prodotti.forEach(p => {
+            scartiForm[p.id] = { recuperati: 0, buttati: 0 };
+            
+            const card = document.createElement('div');
+            card.className = 'prodotto-card';
+            card.innerHTML = `
+                <div class="prodotto-header">
+                    <h4>${p.nome}</h4>
+                    <div class="prodotto-code">${p.codice_prodotto}</div>
+                </div>
+                <div class="input-row">
+                    <div>
+                        <label>✅ Recuperati</label>
+                        <input type="number" min="0" placeholder="0" 
+                               onchange="scartiForm[${p.id}].recuperati = parseInt(this.value || 0); salvaPreferiti(${p.id});">
+                    </div>
+                    <div>
+                        <label>❌ Buttati</label>
+                        <input type="number" min="0" placeholder="0"
+                               onchange="scartiForm[${p.id}].buttati = parseInt(this.value || 0); salvaPreferiti(${p.id});">
+                    </div>
+                </div>
+            `;
+            
+            if (p.categoria === 'dolce') {
+                gridDolci.appendChild(card);
+            } else {
+                gridSalati.appendChild(card);
+            }
+        });
+    }
+
+    function filterProdotti() {
+        const search = document.getElementById('searchProdotto').value.toLowerCase();
+        const filtered = tuttiProdotti.filter(p => 
+            p.nome.toLowerCase().includes(search) || 
+            p.codice_prodotto.toLowerCase().includes(search)
+        );
+        renderProdotti(filtered);
+    }
+
+    function renderPreferiti() {
+        const grid = document.getElementById('preferitiGrid');
+        grid.innerHTML = '';
+
+        const preferiti = tuttiProdotti
+            .filter(p => preferitiUsati.includes(p.id))
+            .slice(0, 6);
+
+        if (preferiti.length === 0) {
+            grid.innerHTML = '<p style="color: #999; grid-column: 1/-1;">Nessun preferito ancora. Aggiungi durante la compilazione!</p>';
+            return;
+        }
+
+        preferiti.forEach(p => {
+            const btn = document.createElement('button');
+            btn.className = 'preferito-btn';
+            btn.textContent = `${p.nome.substring(0, 15)}... [${p.codice_prodotto}]`;
+            btn.onclick = () => {
+                const inputs = document.querySelectorAll('.prodotto-card input');
+                inputs.forEach(inp => inp.value = '');
+                document.querySelector(`[data-product-id="${p.id}"]`)?.focus();
+            };
+            grid.appendChild(btn);
+        });
+    }
+
+    function salvaPreferiti(prodId) {
+        if (!preferitiUsati.includes(prodId)) {
+            preferitiUsati.push(prodId);
+            if (preferitiUsati.length > 10) preferitiUsati.shift();
+            localStorage.setItem('preferitiMageItalia', JSON.stringify(preferitiUsati));
+            renderPreferiti();
         }
     }
 
@@ -1032,27 +1371,22 @@
                 return;
             }
 
-            // Se è operatore, usa l'ID dal metadata
-            let dipId = null;
-            if (currentRole === 'operatore' && currentUser.user_metadata) {
-                // Per operatori, cerchiamo il dipendente corrispondente
-                const { data: dip } = await supabase
-                    .from('dipendenti')
-                    .select('id')
-                    .eq('nome', currentNome)
-                    .limit(1);
-                
-                if (dip && dip.length > 0) {
-                    dipId = dip[0].id;
-                }
-            }
-
-            if (!dipId && currentRole === 'operatore') {
+            // Trova dipendente corrispondente all'operatore loggato
+            const { data: dip } = await supabase
+                .from('dipendenti')
+                .select('id')
+                .eq('nome', currentNome)
+                .eq('punto_vendita_id', punto)
+                .limit(1);
+            
+            if (!dip || dip.length === 0) {
                 showMessage('scartiMessage', '⚠️ Operatore non trovato nel sistema', 'error');
                 return;
             }
 
+            const dipId = dip[0].id;
             const registrazioni = [];
+
             for (const [prodId, valori] of Object.entries(scartiForm)) {
                 if (valori.recuperati > 0 || valori.buttati > 0) {
                     registrazioni.push({
@@ -1092,29 +1426,94 @@
         scartiForm = {};
     }
 
-    // =========== ADMIN ===========
-    async function loadAdminData() {
-        await loadAdminDashboard();
-        await loadDipendentiAdmin();
-        await loadProdottiAdmin();
-    }
-
-    async function loadAdminDashboard() {
+    // =========== ADMIN - GESTIONE UTENTI ===========
+    async function creaOperatore() {
         try {
-            const { count: punti } = await supabase.from('punti_vendita').select('*', { count: 'exact', head: true });
-            const { count: dip } = await supabase.from('dipendenti').select('*', { count: 'exact', head: true }).eq('attivo', true);
-            const { count: prod } = await supabase.from('prodotti').select('*', { count: 'exact', head: true }).eq('attivo', true);
-            const { count: inser } = await supabase.from('registrazioni_giornaliere').select('*', { count: 'exact', head: true });
+            const nome = document.getElementById('opNome').value;
+            const cognome = document.getElementById('opCognome').value;
+            const email = document.getElementById('opEmail').value;
+            const password = document.getElementById('opPassword').value;
+            const punto = document.getElementById('opPunto').value;
 
-            document.getElementById('countPunti').textContent = punti || 0;
-            document.getElementById('countDip').textContent = dip || 0;
-            document.getElementById('countProd').textContent = prod || 0;
-            document.getElementById('countInser').textContent = inser || 0;
+            if (!nome || !cognome || !email || !password) {
+                showMessage('utentiMessage', '⚠️ Compila tutti i campi', 'error');
+                return;
+            }
+
+            // Crea utente in auth
+            const { data, error } = await supabase.auth.admin.createUser({
+                email,
+                password,
+                email_confirm: true,
+                user_metadata: {
+                    nome: nome,
+                    role: 'operatore',
+                    punto_vendita: punto
+                }
+            });
+
+            if (error) throw error;
+
+            // Crea dipendente
+            await supabase.from('dipendenti').insert([{
+                nome,
+                cognome,
+                punto_vendita_id: punto,
+                attivo: true
+            }]);
+
+            document.getElementById('opNome').value = '';
+            document.getElementById('opCognome').value = '';
+            document.getElementById('opEmail').value = '';
+            document.getElementById('opPassword').value = '';
+
+            showMessage('utentiMessage', '✅ Operatore creato!', 'success');
+            await loadOperatoriAdmin();
+
         } catch (err) {
-            console.error('Admin dashboard error:', err);
+            showMessage('utentiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 
+    async function loadOperatoriAdmin() {
+        try {
+            const { data: users } = await supabase.auth.admin.listUsers();
+            
+            const tbody = document.getElementById('corpoOperatori');
+            tbody.innerHTML = '';
+
+            if (users) {
+                users.forEach(u => {
+                    if (u.user_metadata && u.user_metadata.role === 'operatore') {
+                        const row = tbody.insertRow();
+                        const nome = u.user_metadata.nome || 'Sconosciuto';
+                        row.innerHTML = `
+                            <td>${nome}</td>
+                            <td>${u.email}</td>
+                            <td>${u.user_metadata.punto_vendita || '-'}</td>
+                            <td><button class="btn-danger" onclick="eliminaOperatore('${u.id}')" style="width: 100%; padding: 8px;">❌ Elimina</button></td>
+                        `;
+                    }
+                });
+            }
+
+        } catch (err) {
+            console.error('Load operatori error:', err);
+        }
+    }
+
+    async function eliminaOperatore(userId) {
+        if (!confirm('Sei sicuro? L\'operatore non potrà più accedere.')) return;
+        try {
+            await supabase.auth.admin.deleteUser(userId);
+            showMessage('utentiMessage', '✅ Operatore eliminato!', 'success');
+            await loadOperatoriAdmin();
+        } catch (err) {
+            showMessage('utentiMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // =========== ADMIN - DIPENDENTI ===========
     async function loadDipendentiAdmin() {
         try {
             const { data: dipendenti } = await supabase
@@ -1149,7 +1548,7 @@
             const punto = document.getElementById('dipPunto').value;
 
             if (!nome || !cognome) {
-                showMessage('adminMessage', '⚠️ Compila nome e cognome', 'error');
+                showMessage('dipendentiMessage', '⚠️ Compila nome e cognome', 'error');
                 return;
             }
 
@@ -1161,16 +1560,16 @@
 
             document.getElementById('dipNome').value = '';
             document.getElementById('dipCognome').value = '';
-            showMessage('adminMessage', '✅ Dipendente aggiunto!', 'success');
+            showMessage('dipendentiMessage', '✅ Dipendente aggiunto!', 'success');
             await loadDipendentiAdmin();
 
         } catch (err) {
-            showMessage('adminMessage', '❌ Errore: ' + err.message, 'error');
+            showMessage('dipendentiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 
     async function eliminaDipendente(id) {
-        if (!confirm('Sei sicuro di voler eliminare questo dipendente?')) return;
+        if (!confirm('Sei sicuro?')) return;
         try {
             const { error } = await supabase
                 .from('dipendenti')
@@ -1184,6 +1583,7 @@
         }
     }
 
+    // =========== ADMIN - PRODOTTI ===========
     async function loadProdottiAdmin() {
         try {
             const { data: prodotti } = await supabase
@@ -1221,7 +1621,7 @@
             const punto = document.getElementById('prodPunto').value;
 
             if (!nome || !codice) {
-                showMessage('adminMessage', '⚠️ Compila nome e codice', 'error');
+                showMessage('prodottiMessage', '⚠️ Compila nome e codice', 'error');
                 return;
             }
 
@@ -1239,16 +1639,16 @@
 
             document.getElementById('prodNome').value = '';
             document.getElementById('prodCodice').value = '';
-            showMessage('adminMessage', '✅ Prodotto aggiunto!', 'success');
+            showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
             await loadProdottiAdmin();
 
         } catch (err) {
-            showMessage('adminMessage', '❌ Errore: ' + err.message, 'error');
+            showMessage('prodottiMessage', '❌ Errore: ' + err.message, 'error');
         }
     }
 
     async function eliminaProdotto(id) {
-        if (!confirm('Sei sicuro di voler eliminare questo prodotto?')) return;
+        if (!confirm('Sei sicuro?')) return;
         try {
             const { error } = await supabase
                 .from('prodotti')
@@ -1262,18 +1662,20 @@
         }
     }
 
+    // =========== ADMIN - REPORT ===========
     async function generaReport() {
         try {
+            const punto = document.getElementById('reportPunto').value;
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
             const tipo = document.getElementById('reportTipo').value;
 
             if (!dataInizio || !dataFine) {
-                showMessage('adminMessage', '⚠️ Seleziona le date', 'error');
+                showMessage('reportMessage', '⚠️ Seleziona le date', 'error');
                 return;
             }
 
-            const { data: registrazioni } = await supabase
+            let query = supabase
                 .from('registrazioni_giornaliere')
                 .select(`
                     *,
@@ -1282,44 +1684,42 @@
                     punti_vendita(nome)
                 `)
                 .gte('data_registrazione', dataInizio)
-                .lte('data_registrazione', dataFine)
-                .order('data_registrazione');
+                .lte('data_registrazione', dataFine);
+
+            if (punto) {
+                query = query.eq('punto_vendita_id', punto);
+            }
+
+            const { data: registrazioni } = await query.order('data_registrazione');
 
             if (!registrazioni || registrazioni.length === 0) {
-                showMessage('adminMessage', 'ℹ️ Nessun dato nel periodo selezionato', 'info');
+                showMessage('reportMessage', 'ℹ️ Nessun dato nel periodo selezionato', 'info');
                 return;
             }
 
             const wb = XLSX.utils.book_new();
 
-            if (tipo === 'giornaliero') {
-                const byDay = {};
+            if (tipo === 'completo') {
+                const wsData = [
+                    ['Data', 'Operatore', 'Prodotto', 'Codice', 'Categoria', 'Recuperati', 'Buttati']
+                ];
+                
                 registrazioni.forEach(r => {
-                    if (!byDay[r.data_registrazione]) byDay[r.data_registrazione] = [];
-                    byDay[r.data_registrazione].push(r);
+                    wsData.push([
+                        r.data_registrazione,
+                        r.dipendenti ? r.dipendenti.nome + ' ' + r.dipendenti.cognome : '',
+                        r.prodotti ? r.prodotti.nome : '',
+                        r.prodotti ? r.prodotti.codice_prodotto : '',
+                        r.prodotti ? r.prodotti.categoria : '',
+                        r.recuperati,
+                        r.buttati
+                    ]);
                 });
 
-                Object.entries(byDay).forEach(([day, dati]) => {
-                    const wsData = [
-                        ['Data', 'Operatore', 'Prodotto', 'Codice', 'Categoria', 'Recuperati', 'Buttati']
-                    ];
-                    
-                    dati.forEach(d => {
-                        wsData.push([
-                            d.data_registrazione,
-                            d.dipendenti ? d.dipendenti.nome + ' ' + d.dipendenti.cognome : '',
-                            d.prodotti ? d.prodotti.nome : '',
-                            d.prodotti ? d.prodotti.codice_prodotto : '',
-                            d.prodotti ? d.prodotti.categoria : '',
-                            d.recuperati,
-                            d.buttati
-                        ]);
-                    });
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                XLSX.utils.book_append_sheet(wb, ws, 'Report Completo');
 
-                    const ws = XLSX.utils.aoa_to_sheet(wsData);
-                    XLSX.utils.book_append_sheet(wb, ws, day);
-                });
-            } else {
+            } else if (tipo === 'riepilogo') {
                 const byProd = {};
                 registrazioni.forEach(r => {
                     const key = r.prodotto_id;
@@ -1343,14 +1743,70 @@
 
                 const ws = XLSX.utils.aoa_to_sheet(wsData);
                 XLSX.utils.book_append_sheet(wb, ws, 'Riepilogo');
+
+            } else {
+                // Solo dolce o salato
+                const filtered = registrazioni.filter(r => !r.prodotti || r.prodotti.categoria === tipo);
+                
+                const wsData = [
+                    ['Data', 'Operatore', 'Prodotto', 'Codice', 'Recuperati', 'Buttati']
+                ];
+                
+                filtered.forEach(r => {
+                    wsData.push([
+                        r.data_registrazione,
+                        r.dipendenti ? r.dipendenti.nome + ' ' + r.dipendenti.cognome : '',
+                        r.prodotti ? r.prodotti.nome : '',
+                        r.prodotti ? r.prodotti.codice_prodotto : '',
+                        r.recuperati,
+                        r.buttati
+                    ]);
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                const label = tipo === 'dolce' ? 'Dolci' : 'Salati';
+                XLSX.utils.book_append_sheet(wb, ws, label);
             }
 
             XLSX.writeFile(wb, `Mage-Italia-Report-${dataInizio}.xlsx`);
-            showMessage('adminMessage', '✅ Report scaricato!', 'success');
+            showMessage('reportMessage', '✅ Report scaricato!', 'success');
 
         } catch (err) {
-            showMessage('adminMessage', '❌ Errore: ' + err.message, 'error');
+            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
         }
+    }
+
+    // =========== ADMIN - LOGO ===========
+    document.getElementById('logoUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            logoBase64 = event.target.result;
+            document.getElementById('logoPreview').src = logoBase64;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function salvaLogo() {
+        if (!logoBase64) {
+            showMessage('logoMessage', '⚠️ Seleziona un\'immagine', 'error');
+            return;
+        }
+
+        localStorage.setItem('mageitaliaLogo', logoBase64);
+        document.getElementById('loginLogo').src = logoBase64;
+        document.getElementById('appLogo').src = logoBase64;
+        
+        showMessage('logoMessage', '✅ Logo salvato!', 'success');
+    }
+
+    // =========== ADMIN DATA ===========
+    async function loadAdminData() {
+        await loadOperatoriAdmin();
+        await loadDipendentiAdmin();
+        await loadProdottiAdmin();
     }
 
     // =========== UTILITY ===========
