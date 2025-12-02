@@ -6,6 +6,7 @@
     <title>Mage Italia - Admin Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -459,6 +460,10 @@
             
             <div class="form-row">
                 <div class="form-group">
+                    <label>Codice Prodotto *</label>
+                    <input type="text" id="prodCodice" placeholder="Es: 6387">
+                </div>
+                <div class="form-group">
                     <label>Nome Prodotto *</label>
                     <input type="text" id="prodNome" placeholder="Es: Pane Bianco">
                 </div>
@@ -523,7 +528,7 @@
 
     <!-- ===== TAB 3: REPORT ===== -->
     <div id="tab-report" class="page">
-        <h2>📊 Generazione Report Excel</h2>
+        <h2>📊 Generazione Report Excel + Grafici</h2>
 
         <div class="admin-section">
             <h3>📥 Scarica Report</h3>
@@ -560,6 +565,35 @@
 
             <div class="btn-group">
                 <button class="btn-primary" onclick="generaReportExcel()">📥 Scarica Excel</button>
+                <button class="btn-secondary" onclick="mostraGrafici()">📊 Visualizza Grafici</button>
+            </div>
+        </div>
+
+        <!-- GRAFICI -->
+        <div id="grafichiContainer" style="display:none;">
+            <div class="admin-section">
+                <h3>📈 Andamento Prodotti</h3>
+                <canvas id="chartProdotti" style="max-height: 300px;"></canvas>
+            </div>
+
+            <div class="admin-section">
+                <h3>🗑️ Prodotti Buttati (Top 5)</h3>
+                <canvas id="chartButtati" style="max-height: 300px;"></canvas>
+            </div>
+
+            <div class="admin-section">
+                <h3>♻️ Prodotti Recuperati (Top 5)</h3>
+                <canvas id="chartRecuperati" style="max-height: 300px;"></canvas>
+            </div>
+
+            <div class="admin-section">
+                <h3>📍 Scarto per Punto Vendita</h3>
+                <canvas id="chartPunti" style="max-height: 300px;"></canvas>
+            </div>
+
+            <div class="admin-section">
+                <h3>📊 Riepilogo Totale</h3>
+                <canvas id="chartRiepilogo" style="max-height: 300px;"></canvas>
             </div>
         </div>
     </div>
@@ -834,7 +868,7 @@
                 return;
             }
 
-            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Categoria</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
+            let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto Vendita</th><th>Azioni</th></tr></thead><tbody>';
             
             prodotti.forEach(prod => {
                 const categoria = prod.categoria === 'dolce' ? '🍰 Dolce' : '🥖 Salato';
@@ -843,6 +877,7 @@
                              prod.punto_vendita_id === 'cosenza' ? '📍 Cosenza' : '—';
                 
                 html += `<tr>
+                    <td><code style="background:#f0f0f0;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:bold;">${prod.codice_prodotto || '—'}</code></td>
                     <td>${prod.nome}</td>
                     <td>${categoria}</td>
                     <td>${punto}</td>
@@ -860,24 +895,26 @@
     }
 
     async function aggiungiProdotto() {
+        const codice = document.getElementById('prodCodice').value.trim();
         const nome = document.getElementById('prodNome').value.trim();
         const categoria = document.getElementById('prodCategoria').value;
         const punto = document.getElementById('prodPunto').value;
 
-        if (!nome || !categoria || !punto) {
-            showMessage('prodottiMessage', '⚠️ Compila nome, categoria e punto vendita', 'error');
+        if (!codice || !nome || !categoria || !punto) {
+            showMessage('prodottiMessage', '⚠️ Compila codice, nome, categoria e punto vendita', 'error');
             return;
         }
 
         try {
             const { error } = await supabase
                 .from('prodotti')
-                .insert([{ nome, categoria, punto_vendita_id: punto }]);
+                .insert([{ codice_prodotto: codice, nome, categoria, punto_vendita_id: punto }]);
 
             if (error) throw error;
 
             showMessage('prodottiMessage', '✅ Prodotto aggiunto!', 'success');
 
+            document.getElementById('prodCodice').value = '';
             document.getElementById('prodNome').value = '';
             document.getElementById('prodCategoria').value = '';
             document.getElementById('prodPunto').value = '';
@@ -908,7 +945,263 @@
 
     // ===== REPORT EXCEL =====
 
-    async function generaReportExcel() {
+    let ultimiDatiGrafici = null;
+
+    async function mostraGrafici() {
+        try {
+            const dataInizio = document.getElementById('reportDataInizio').value;
+            const dataFine = document.getElementById('reportDataFine').value;
+            const punto = document.getElementById('reportPunto').value;
+            const categoria = document.getElementById('reportCategoria').value;
+
+            if (!dataInizio || !dataFine) {
+                showMessage('reportMessage', '⚠️ Seleziona date valide', 'error');
+                return;
+            }
+
+            showMessage('reportMessage', '⏳ Caricamento dati grafici...', 'info');
+
+            const dateStart = new Date(dataInizio + 'T00:00:00Z');
+            const dateEnd = new Date(dataFine + 'T23:59:59Z');
+
+            let query = supabase
+                .from('registrazioni_giornaliere')
+                .select(`id, created_at, recuperati, buttati, prodotti(nome, categoria, punto_vendita_id), dipendenti(nome, cognome)`)
+                .gte('created_at', dateStart.toISOString())
+                .lte('created_at', dateEnd.toISOString());
+
+            const { data: registrazioni, error } = await query;
+
+            if (error) {
+                showMessage('reportMessage', '❌ Errore: ' + error.message, 'error');
+                return;
+            }
+
+            if (!registrazioni || registrazioni.length === 0) {
+                showMessage('reportMessage', '⚠️ Nessuna registrazione trovata', 'error');
+                return;
+            }
+
+            let filtered = registrazioni;
+            if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
+            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
+
+            if (filtered.length === 0) {
+                showMessage('reportMessage', '⚠️ Nessun dato per questi filtri', 'error');
+                return;
+            }
+
+            ultimiDatiGrafici = filtered;
+            creaGrafici(filtered);
+            document.getElementById('grafichiContainer').style.display = 'block';
+            showMessage('reportMessage', '✅ Grafici generati!', 'success');
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMessage('reportMessage', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    function creaGrafici(dati) {
+        // 1. Grafici per Prodotto (con codice)
+        const prodottiData = {};
+        dati.forEach(r => {
+            const nome = r.prodotti?.nome || 'Sconosciuto';
+            const codice = r.prodotti?.codice_prodotto || '?';
+            const key = `${codice} - ${nome}`;
+            if (!prodottiData[key]) {
+                prodottiData[key] = { recuperati: 0, buttati: 0, registrazioni: 0 };
+            }
+            prodottiData[key].recuperati += r.recuperati || 0;
+            prodottiData[key].buttati += r.buttati || 0;
+            prodottiData[key].registrazioni += 1;
+        });
+
+        // 2. Grafici per Punto Vendita
+        const puntiData = {};
+        dati.forEach(r => {
+            const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                         r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto Fiorentino' :
+                         r.prodotti?.punto_vendita_id === 'cosenza' ? 'Cosenza' : 'Sconosciuto';
+            if (!puntiData[punto]) {
+                puntiData[punto] = { recuperati: 0, buttati: 0, totale: 0 };
+            }
+            puntiData[punto].recuperati += r.recuperati || 0;
+            puntiData[punto].buttati += r.buttati || 0;
+            puntiData[punto].totale += (r.recuperati || 0) + (r.buttati || 0);
+        });
+
+        // Grafico 1: Andamento Prodotti (Bar Chart)
+        const ctxProdotti = document.getElementById('chartProdotti').getContext('2d');
+        if (window.chartProdottiInstance) window.chartProdottiInstance.destroy();
+        
+        window.chartProdottiInstance = new Chart(ctxProdotti, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(prodottiData).slice(0, 15),
+                datasets: [
+                    {
+                        label: 'Recuperati (kg)',
+                        data: Object.values(prodottiData).slice(0, 15).map(p => p.recuperati),
+                        backgroundColor: '#28a745',
+                        borderColor: '#1e7e34',
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Buttati (kg)',
+                        data: Object.values(prodottiData).slice(0, 15).map(p => p.buttati),
+                        backgroundColor: '#dc3545',
+                        borderColor: '#bb2d3b',
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Grafico 2: Top 5 Prodotti Buttati (Horizontal Bar)
+        const topButtati = Object.entries(prodottiData)
+            .sort((a, b) => b[1].buttati - a[1].buttati)
+            .slice(0, 5);
+
+        const ctxButtati = document.getElementById('chartButtati').getContext('2d');
+        if (window.chartButtatiInstance) window.chartButtatiInstance.destroy();
+        
+        window.chartButtatiInstance = new Chart(ctxButtati, {
+            type: 'bar',
+            data: {
+                labels: topButtati.map(([nome]) => nome),
+                datasets: [{
+                    label: 'Kg Buttati',
+                    data: topButtati.map(([, data]) => data.buttati),
+                    backgroundColor: '#ff6b6b',
+                    borderColor: '#c92a2a',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Grafico 3: Top 5 Prodotti Recuperati (Horizontal Bar)
+        const topRecuperati = Object.entries(prodottiData)
+            .sort((a, b) => b[1].recuperati - a[1].recuperati)
+            .slice(0, 5);
+
+        const ctxRecuperati = document.getElementById('chartRecuperati').getContext('2d');
+        if (window.chartRecuperatiInstance) window.chartRecuperatiInstance.destroy();
+        
+        window.chartRecuperatiInstance = new Chart(ctxRecuperati, {
+            type: 'bar',
+            data: {
+                labels: topRecuperati.map(([nome]) => nome),
+                datasets: [{
+                    label: 'Kg Recuperati',
+                    data: topRecuperati.map(([, data]) => data.recuperati),
+                    backgroundColor: '#51cf66',
+                    borderColor: '#2f9e44',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Grafico 4: Scarto per Punto Vendita (Doughnut)
+        const ctxPunti = document.getElementById('chartPunti').getContext('2d');
+        if (window.chartPuntiInstance) window.chartPuntiInstance.destroy();
+        
+        const colori = ['#A01E4E', '#6B1B47', '#FF6B9D'];
+        
+        window.chartPuntiInstance = new Chart(ctxPunti, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(puntiData),
+                datasets: [{
+                    data: Object.values(puntiData).map(p => p.totale),
+                    backgroundColor: colori,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + ' kg';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Grafico 5: Riepilogo (Radar)
+        const totaleRecuperati = Object.values(prodottiData).reduce((s, p) => s + p.recuperati, 0);
+        const totaleButtati = Object.values(prodottiData).reduce((s, p) => s + p.buttati, 0);
+        const totaleProdotti = Object.keys(prodottiData).length;
+        const totaleRegistrazioni = dati.length;
+
+        const ctxRiepilogo = document.getElementById('chartRiepilogo').getContext('2d');
+        if (window.chartRiepilogoInstance) window.chartRiepilogoInstance.destroy();
+        
+        window.chartRiepilogoInstance = new Chart(ctxRiepilogo, {
+            type: 'radar',
+            data: {
+                labels: ['Recuperati (kg)', 'Buttati (kg)', 'Prodotti Unici', 'Registrazioni (÷10)'],
+                datasets: [{
+                    label: 'Totali',
+                    data: [
+                        totaleRecuperati,
+                        totaleButtati,
+                        totaleProdotti,
+                        totaleRegistrazioni / 10
+                    ],
+                    borderColor: '#A01E4E',
+                    backgroundColor: 'rgba(160, 30, 78, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#A01E4E'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    r: { beginAtZero: true }
+                }
+            }
+        });
+    }
         try {
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
