@@ -1202,6 +1202,8 @@
             }
         });
     }
+
+    async function generaReportExcel() {
         try {
             const dataInizio = document.getElementById('reportDataInizio').value;
             const dataFine = document.getElementById('reportDataFine').value;
@@ -1249,6 +1251,7 @@
             // Prepara dati
             const dettagli = filtered.map(r => ({
                 'Data': new Date(r.created_at).toLocaleDateString('it-IT'),
+                'Codice': r.prodotti?.codice_prodotto || '—',
                 'Prodotto': r.prodotti?.nome || '—',
                 'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
                 'Punto': r.prodotti?.punto_vendita_id,
