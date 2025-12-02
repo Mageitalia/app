@@ -1107,8 +1107,8 @@
                     created_at,
                     recuperati,
                     buttati,
-                    prodotti:prodotti_id(nome, categoria, punto_vendita_id),
-                    dipendenti:dipendenti_id(nome, cognome)
+                    prodotti(nome, categoria, punto_vendita_id),
+                    dipendenti(nome, cognome)
                 `)
                 .gte('created_at', dateStart.toISOString())
                 .lte('created_at', dateEnd.toISOString());
