@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mage Italia v4.0 - Sistema Gestione Scarti</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -1005,8 +1005,17 @@
 </div>
 
 <script>
-    // =========== CONFIG ===========
-    const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
+    // Verifica che XLSX sia caricato
+    window.addEventListener('load', function() {
+        console.log('XLSX loaded:', typeof XLSX !== 'undefined');
+        if (typeof XLSX === 'undefined') {
+            console.warn('XLSX non caricato! Aspettando...');
+            setTimeout(() => {
+                console.log('XLSX after timeout:', typeof XLSX !== 'undefined');
+            }, 1000);
+        }
+    });
+</script>
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1595,17 +1604,22 @@
     async function eliminaDipendente(id) {
         if (!confirm('Sei sicuro di voler eliminare questo dipendente?')) return;
         try {
-            const { error } = await supabase
+            console.log('Eliminando dipendente ID:', id);
+            
+            const { data, error } = await supabase
                 .from('dipendenti')
                 .update({ attivo: false })
                 .eq('id', id);
 
             if (error) {
-                console.error('Eliminate error:', error);
+                console.error('DB Eliminate error:', error);
                 throw error;
             }
             
+            console.log('Eliminazione riuscita:', data);
             showMessage('dipendentiMessage', '✅ Dipendente eliminato!', 'success');
+            
+            // Aspetta un attimo e ricarica
             await new Promise(r => setTimeout(r, 500));
             await loadDipendentiAdmin();
             
@@ -1682,17 +1696,22 @@
     async function eliminaProdotto(id) {
         if (!confirm('Sei sicuro di voler eliminare questo prodotto?')) return;
         try {
-            const { error } = await supabase
+            console.log('Eliminando prodotto ID:', id);
+            
+            const { data, error } = await supabase
                 .from('prodotti')
                 .update({ attivo: false })
                 .eq('id', id);
 
             if (error) {
-                console.error('Eliminate error:', error);
+                console.error('DB Eliminate error:', error);
                 throw error;
             }
             
+            console.log('Eliminazione riuscita:', data);
             showMessage('prodottiMessage', '✅ Prodotto eliminato!', 'success');
+            
+            // Aspetta un attimo e ricarica
             await new Promise(r => setTimeout(r, 500));
             await loadProdottiAdmin();
             
