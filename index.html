@@ -4,8 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mage Italia v5.0 - Login</title>
-    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            color: #333;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .logo-section h1 {
+            font-size: 28px;
+            color: #A01E4E;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .logo-section p {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #A01E4E;
+            box-shadow: 0 0 0 3px rgba(160, 30, 78, 0.1);
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 8px;
+        }
+
+        #loginForm button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            color: white;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        #loginForm button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(160, 30, 78, 0.3);
+        }
+
+        #loginForm button:active {
+            transform: translateY(0);
+        }
+
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 15px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .logo-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-section h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px 15px;
+            }
+
+            .logo-section {
+                margin-bottom: 20px;
+            }
+
+            .logo-section h1 {
+                font-size: 20px;
+            }
+
+            .logo-section p {
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -30,7 +227,7 @@
             
             <button type="submit">Accedi</button>
             
-            <div id="loginError" style="display: none; margin-top: 15px;"></div>
+            <div id="loginError" style="display: none;"></div>
         </form>
     </div>
 </div>
@@ -114,7 +311,6 @@
             currentNome = null;
             currentPunto = null;
             
-            // Aspetta un po' prima di redirigere
             setTimeout(() => {
                 isLoggingOut = false;
                 window.location.href = 'index.html';
@@ -138,9 +334,7 @@
     }
 
     window.addEventListener('load', loadLogo);
-</script>
 
-<script>
     // ===== LOGIN FORM =====
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
