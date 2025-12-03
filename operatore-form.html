@@ -20,12 +20,12 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .header {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d3e50 100%);
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
             color: white;
             padding: 25px;
             border-radius: 12px;
@@ -33,7 +33,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .header-left h1 {
@@ -71,151 +71,29 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4db8ff 0%, #0066cc 100%);
+        .btn-save {
+            background: #28a745;
             color: white;
-            padding: 12px 24px;
+            padding: 12px 30px;
             font-size: 15px;
         }
 
-        .btn-primary:hover {
+        .btn-save:hover {
+            background: #218838;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .card h2 {
-            color: #0066cc;
-            margin-bottom: 20px;
-            font-size: 18px;
-            border-bottom: 2px solid #4db8ff;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 13px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #0066cc;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        .form-group input::placeholder {
-            color: #999;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .categoria-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #4db8ff 0%, #0066cc 100%);
-            color: white;
-            border-color: #0066cc;
-        }
-
-        .tab-btn:hover {
-            border-color: #0066cc;
-        }
-
-        .prodotto-search {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .prodotto-search input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .prodotto-search input:focus {
-            outline: none;
-            border-color: #0066cc;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        .prodotto-selected {
-            background: #e6f2ff;
-            border: 2px solid #0066cc;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: none;
-            font-weight: 600;
-            color: #0066cc;
-        }
-
-        .prodotto-selected.active {
-            display: block;
-        }
-
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .btn-save:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .message {
-            padding: 12px 15px;
+            padding: 15px;
             border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 13px;
+            margin-bottom: 20px;
+            font-size: 14px;
             display: none;
             animation: slideDown 0.3s ease;
         }
@@ -243,55 +121,96 @@
             border-left: 4px solid #dc3545;
         }
 
-        .stats-grid {
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .date-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .date-group {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .date-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .date-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .date-group input:focus {
+            outline: none;
+            border-color: #A01E4E;
+            box-shadow: 0 0 0 3px rgba(160, 30, 78, 0.1);
+        }
+
+        .tabelle-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 25px;
         }
 
-        .stat-card {
-            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #0066cc;
+        .tabella-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
-        .stat-card .label {
-            font-size: 11px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .stat-card .value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #0066cc;
+        .tabella-card h2 {
+            color: #A01E4E;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #A01E4E;
+            padding-bottom: 10px;
         }
 
         .table-container {
             overflow-x: auto;
-            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         table thead {
-            background: #1a1a1a;
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
             color: white;
+            z-index: 10;
         }
 
         table th {
             padding: 12px;
             text-align: left;
             font-weight: 600;
+            border-bottom: 2px solid #A01E4E;
         }
 
         table td {
@@ -303,54 +222,70 @@
             background: #f9f9f9;
         }
 
-        .category-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
+        .codice {
             font-weight: 600;
+            color: #A01E4E;
+            font-family: monospace;
+            font-size: 11px;
         }
 
-        .category-badge.dolce {
-            background: #fff3cd;
-            color: #856404;
+        .prodotto {
+            font-weight: 500;
+            color: #333;
         }
 
-        .category-badge.salato {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-            padding: 6px 12px;
-            border: none;
+        .input-number {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .btn-delete:hover {
-            background: #c82333;
-        }
-
-        .empty-state {
             text-align: center;
-            padding: 30px;
-            color: #999;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .product-code {
-            font-family: 'Courier New', monospace;
+        .input-number:focus {
+            outline: none;
+            border-color: #A01E4E;
+            box-shadow: 0 0 0 2px rgba(160, 30, 78, 0.1);
+        }
+
+        .stats-row {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
             font-size: 12px;
-            color: #0066cc;
+            color: #666;
             font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #A01E4E;
         }
 
         @media (max-width: 1024px) {
-            .content {
+            .tabelle-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -362,21 +297,21 @@
                 text-align: center;
             }
 
-            .header-right {
-                width: 100%;
-                justify-content: center;
+            .date-section {
+                flex-direction: column;
             }
 
-            .categoria-tabs {
-                grid-template-columns: 1fr;
+            .date-group {
+                max-width: 100%;
             }
 
-            .input-group {
-                grid-template-columns: 1fr;
+            .table-container {
+                font-size: 11px;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .input-number {
+                width: 50px;
+                padding: 4px;
             }
         }
     </style>
@@ -395,115 +330,103 @@
         </div>
     </div>
 
-    <!-- CONTENUTO -->
-    <div class="content">
-        <!-- FORM VELOCE -->
-        <div class="card">
-            <h2>⚡ Registra Pezzi</h2>
-            <div id="formMessage" class="message"></div>
+    <!-- MESSAGGIO -->
+    <div id="message" class="message"></div>
 
-            <form id="registrationForm">
-                <div class="form-group">
-                    <label>📅 Data</label>
-                    <input type="date" id="data" required>
-                </div>
-
-                <!-- SELEZIONE CATEGORIA -->
-                <div class="form-group">
-                    <label>📂 Categoria</label>
-                    <div class="categoria-tabs">
-                        <button type="button" class="tab-btn active" data-cat="dolce" onclick="selectCategory(event, 'dolce')">
-                            🍰 Dolce
-                        </button>
-                        <button type="button" class="tab-btn" data-cat="salato" onclick="selectCategory(event, 'salato')">
-                            🥖 Salato
-                        </button>
-                    </div>
-                    <input type="hidden" id="categoria" value="dolce" required>
-                </div>
-
-                <!-- RICERCA PRODOTTO -->
-                <div class="form-group">
-                    <label>🍞 Ricerca Prodotto (Codice o Nome)</label>
-                    <div class="prodotto-search">
-                        <input 
-                            type="text" 
-                            id="prodottoSearch" 
-                            placeholder="Digita codice o nome prodotto..."
-                            onkeyup="ricercaProdotto()"
-                            required
-                        >
-                    </div>
-                    <div class="prodotto-selected" id="prodottoSelected">
-                        <span id="prodottoSelectedText"></span>
-                        <input type="hidden" id="prodotto_id" value="">
-                    </div>
-                </div>
-
-                <!-- INPUT PEZZI -->
-                <div class="form-group">
-                    <label>📦 Numero Pezzi</label>
-                    <div class="input-group">
-                        <div>
-                            <label style="font-size: 11px; color: #666; font-weight: 500;">Recuperati</label>
-                            <input type="number" id="recuperati" min="0" value="0" required>
-                        </div>
-                        <div>
-                            <label style="font-size: 11px; color: #666; font-weight: 500;">Scartati</label>
-                            <input type="number" id="scartati" min="0" value="0" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>📝 Note (opzionale)</label>
-                    <textarea id="note" placeholder="Aggiungi note..."></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-                    💾 REGISTRA
-                </button>
-            </form>
-
-            <!-- STATISTICHE OGGI -->
-            <div style="margin-top: 30px;">
-                <h2>📊 Oggi</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="label">✅ Recuperati</div>
-                        <div class="value" id="statRecuperati">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="label">❌ Scartati</div>
-                        <div class="value" id="statScartati">0</div>
-                    </div>
-                </div>
-            </div>
+    <!-- SELEZIONE DATA -->
+    <div class="date-section">
+        <div class="date-group">
+            <label>📅 Data Registrazione</label>
+            <input type="date" id="data" required>
         </div>
+        <button class="btn btn-save" onclick="salvaRegistrazioni()">
+            💾 SALVA TUTTE LE REGISTRAZIONI
+        </button>
+    </div>
 
-        <!-- TABELLA REGISTRAZIONI -->
-        <div class="card">
-            <h2>📋 Registrazioni di Oggi</h2>
+    <!-- TABELLE PEZZI -->
+    <div class="tabelle-container">
+        <!-- TABELLA DOLCI -->
+        <div class="tabella-card">
+            <h2>🍰 DOLCI</h2>
             <div class="table-container">
-                <table id="registrazioniTable">
+                <table id="tabellaDelci">
                     <thead>
                         <tr>
-                            <th>🍞 Prodotto</th>
-                            <th>📂 Cat</th>
+                            <th>Codice</th>
+                            <th>Prodotto</th>
                             <th style="text-align: right;">✅ Rec</th>
                             <th style="text-align: right;">❌ Scar</th>
-                            <th style="text-align: right;">📦 Tot</th>
-                            <th style="text-align: center;">⚙️</th>
                         </tr>
                     </thead>
-                    <tbody id="registrazioniBody">
+                    <tbody id="bodyDelci">
                         <tr>
-                            <td colspan="6" class="empty-state">
-                                <div>Nessuna registrazione oggi</div>
+                            <td colspan="4" style="text-align: center; padding: 30px; color: #999;">
+                                ⏳ Caricamento prodotti...
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-label">✅ Tot. Recuperati</span>
+                    <span class="stat-value" id="statRecDelci">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">❌ Tot. Scartati</span>
+                    <span class="stat-value" id="statScarDelci">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">📦 Totale</span>
+                    <span class="stat-value" id="statTotDelci">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">% Recupero</span>
+                    <span class="stat-value" id="statPercDelci">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELLA SALATI -->
+        <div class="tabella-card">
+            <h2>🥖 SALATI</h2>
+            <div class="table-container">
+                <table id="tabellaSalati">
+                    <thead>
+                        <tr>
+                            <th>Codice</th>
+                            <th>Prodotto</th>
+                            <th style="text-align: right;">✅ Rec</th>
+                            <th style="text-align: right;">❌ Scar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodySalati">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 30px; color: #999;">
+                                ⏳ Caricamento prodotti...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-label">✅ Tot. Recuperati</span>
+                    <span class="stat-value" id="statRecSalati">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">❌ Tot. Scartati</span>
+                    <span class="stat-value" id="statScarSalati">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">📦 Totale</span>
+                    <span class="stat-value" id="statTotSalati">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">% Recupero</span>
+                    <span class="stat-value" id="statPercSalati">0%</span>
+                </div>
             </div>
         </div>
     </div>
@@ -516,20 +439,19 @@
     let supabase = null;
     let operatore = null;
     let punto_vendita_id = null;
-    let categoriaSelezionata = 'dolce';
-    let prodottiDisponibili = [];
+    let prodottiDelci = [];
+    let prodottiSalati = [];
+    let datiTabella = {};
 
     // ═══════════════════════════════════════════════════════════
-    // INIZIALIZZAZIONE
+    // INIT
     // ═══════════════════════════════════════════════════════════
 
     async function init() {
-        // Init Supabase
         if (window.supabase) {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        // Leggi dati login
         const userStr = localStorage.getItem('mageitaliaUser');
         if (!userStr) {
             window.location.href = 'index.html';
@@ -539,29 +461,24 @@
         operatore = JSON.parse(userStr);
         console.log('👤 Operatore:', operatore);
 
-        // Leggi punto da URL
         const params = new URLSearchParams(window.location.search);
         punto_vendita_id = params.get('punto') || operatore.punto_vendita;
 
         console.log('📍 Punto:', punto_vendita_id);
 
-        // Aggiorna header
-        const nomeOperatore = operatore.nome.charAt(0).toUpperCase() + operatore.nome.slice(1);
-        document.getElementById('operatoreName').textContent = nomeOperatore;
+        // Header
+        document.getElementById('operatoreName').textContent = operatore.nome || 'Operatore';
         document.getElementById('operatorePunto').textContent = `📍 ${getPuntoLabel(punto_vendita_id)}`;
 
-        // Imposta data odierna
+        // Data
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('data').value = today;
 
         // Carica prodotti
         await caricaProdotti();
 
-        // Carica registrazioni di oggi
-        await caricaRegistrazioni();
-
-        // Event listeners
-        document.getElementById('registrationForm').addEventListener('submit', registraPezzi);
+        // Event listener data
+        document.getElementById('data').addEventListener('change', caricaDatiGiorno);
     }
 
     function getPuntoLabel(punto) {
@@ -574,290 +491,260 @@
     }
 
     // ═══════════════════════════════════════════════════════════
-    // SELEZIONE CATEGORIA
-    // ═══════════════════════════════════════════════════════════
-
-    function selectCategory(e, categoria) {
-        e.preventDefault();
-        
-        categoriaSelezionata = categoria;
-        document.getElementById('categoria').value = categoria;
-        document.getElementById('prodottoSearch').value = '';
-        document.getElementById('prodotto_id').value = '';
-        document.getElementById('prodottoSelected').classList.remove('active');
-
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        e.target.classList.add('active');
-
-        // Ricarica prodotti per categoria
-        caricaProdotti();
-    }
-
-    // ═══════════════════════════════════════════════════════════
     // CARICA PRODOTTI
     // ═══════════════════════════════════════════════════════════
 
     async function caricaProdotti() {
         try {
+            console.log('🔍 Caricando prodotti per:', punto_vendita_id);
+
             const { data: prodotti, error } = await supabase
                 .from('prodotti')
                 .select('id, codice_prodotto, nome, categoria')
                 .eq('punto_vendita_id', punto_vendita_id)
-                .eq('categoria', categoriaSelezionata)
                 .eq('attivo', true)
+                .order('categoria', { ascending: true })
                 .order('nome', { ascending: true });
 
             if (error) {
                 console.error('❌ Errore caricamento prodotti:', error);
+                showMessage('❌ Errore caricamento prodotti: ' + error.message, 'error');
                 return;
             }
 
-            console.log(`✅ Caricati ${prodotti.length} prodotti ${categoriaSelezionata}`);
-            prodottiDisponibili = prodotti;
+            console.log('✅ Caricati', prodotti.length, 'prodotti');
+
+            // Separa per categoria
+            prodottiDelci = prodotti.filter(p => p.categoria === 'dolce');
+            prodottiSalati = prodotti.filter(p => p.categoria === 'salato');
+
+            console.log('🍰 Dolci:', prodottiDelci.length);
+            console.log('🥖 Salati:', prodottiSalati.length);
+
+            // Mostra tabelle
+            mostraTabelle();
+
+            // Carica dati di oggi
+            await caricaDatiGiorno();
 
         } catch (err) {
             console.error('❌ Errore:', err);
+            showMessage('❌ Errore: ' + err.message, 'error');
         }
     }
 
     // ═══════════════════════════════════════════════════════════
-    // RICERCA PRODOTTO
+    // MOSTRA TABELLE
     // ═══════════════════════════════════════════════════════════
 
-    function ricercaProdotto() {
-        const searchText = document.getElementById('prodottoSearch').value.toLowerCase().trim();
-        
-        if (!searchText) {
-            document.getElementById('prodottoSelected').classList.remove('active');
-            document.getElementById('prodotto_id').value = '';
-            return;
-        }
+    function mostraTabelle() {
+        // DOLCI
+        const bodyDelci = document.getElementById('bodyDelci');
+        bodyDelci.innerHTML = prodottiDelci.map(p => `
+            <tr>
+                <td><span class="codice">${p.codice_prodotto}</span></td>
+                <td><span class="prodotto">${p.nome}</span></td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
+                </td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
+                </td>
+            </tr>
+        `).join('');
 
-        // Cerca per codice o nome
-        const trovato = prodottiDisponibili.find(p => 
-            p.codice_prodotto.toLowerCase().includes(searchText) ||
-            p.nome.toLowerCase().includes(searchText)
-        );
+        // SALATI
+        const bodySalati = document.getElementById('bodySalati');
+        bodySalati.innerHTML = prodottiSalati.map(p => `
+            <tr>
+                <td><span class="codice">${p.codice_prodotto}</span></td>
+                <td><span class="prodotto">${p.nome}</span></td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
+                </td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
+                </td>
+            </tr>
+        `).join('');
 
-        if (trovato) {
-            document.getElementById('prodotto_id').value = trovato.id;
-            document.getElementById('prodottoSelectedText').textContent = 
-                `✅ ${trovato.codice_prodotto} - ${trovato.nome}`;
-            document.getElementById('prodottoSelected').classList.add('active');
-            console.log('✅ Prodotto selezionato:', trovato.nome);
-        } else {
-            document.getElementById('prodottoSelected').classList.remove('active');
-            document.getElementById('prodotto_id').value = '';
-        }
+        aggiornaStats();
     }
 
     // ═══════════════════════════════════════════════════════════
-    // REGISTRA PEZZI
+    // CARICA DATI GIORNO
     // ═══════════════════════════════════════════════════════════
 
-    async function registraPezzi(e) {
-        e.preventDefault();
-
+    async function caricaDatiGiorno() {
         const data = document.getElementById('data').value;
-        const prodotto_id = document.getElementById('prodotto_id').value;
-        const categoria = document.getElementById('categoria').value;
-        const recuperati = parseInt(document.getElementById('recuperati').value) || 0;
-        const scartati = parseInt(document.getElementById('scartati').value) || 0;
-        const note = document.getElementById('note').value || null;
-
-        if (!data || !prodotto_id) {
-            showMessage('⚠️ Seleziona data e prodotto', 'error');
-            return;
-        }
-
-        if (recuperati === 0 && scartati === 0) {
-            showMessage('⚠️ Inserisci almeno un valore', 'error');
-            return;
-        }
 
         try {
-            const { data: result, error } = await supabase
-                .from('registrazioni_giornaliere')
-                .insert({
-                    data_registrazione: data,
-                    prodotto_id: parseInt(prodotto_id),
-                    dipendente_id: operatore.uid,
-                    punto_vendita_id: punto_vendita_id,
-                    recuperati: recuperati,
-                    buttati: scartati,
-                    categoria: categoria,
-                    note: note
-                });
-
-            if (error) {
-                console.error('❌ Errore inserimento:', error);
-                showMessage('❌ Errore registrazione', 'error');
-                return;
-            }
-
-            console.log('✅ Pezzi registrati');
-            showMessage('✅ Registrazione completata!', 'success');
-
-            // Reset form
-            document.getElementById('registrationForm').reset();
-            document.getElementById('data').value = new Date().toISOString().split('T')[0];
-            document.getElementById('categoria').value = 'dolce';
-            document.getElementById('recuperati').value = '0';
-            document.getElementById('scartati').value = '0';
-            document.getElementById('prodottoSearch').value = '';
-            document.getElementById('prodotto_id').value = '';
-            document.getElementById('prodottoSelected').classList.remove('active');
-
-            // Ricarica dati
-            await caricaRegistrazioni();
-            await caricaStatistiche();
-
-        } catch (err) {
-            console.error('❌ Errore:', err);
-            showMessage('❌ Errore registrazione', 'error');
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // CARICA REGISTRAZIONI
-    // ═══════════════════════════════════════════════════════════
-
-    async function caricaRegistrazioni() {
-        try {
-            const today = new Date().toISOString().split('T')[0];
+            console.log('📅 Caricando dati per:', data);
 
             const { data: registrazioni, error } = await supabase
                 .from('registrazioni_giornaliere')
-                .select(`
-                    id,
-                    categoria,
-                    recuperati,
-                    buttati,
-                    prodotto_id,
-                    prodotti!inner(codice_prodotto, nome)
-                `)
+                .select('prodotto_id, recuperati, buttati')
                 .eq('dipendente_id', operatore.uid)
                 .eq('punto_vendita_id', punto_vendita_id)
-                .eq('data_registrazione', today)
-                .order('created_at', { ascending: false });
+                .eq('data_registrazione', data);
 
             if (error) {
-                console.error('❌ Errore caricamento:', error);
+                console.error('❌ Errore caricamento dati:', error);
                 return;
             }
 
-            console.log(`✅ Caricati ${registrazioni.length} pezzi`);
-            mostraRegistrazioni(registrazioni);
+            console.log('✅ Caricati', registrazioni.length, 'dati');
+
+            // Reset dati
+            datiTabella = {};
+            document.querySelectorAll('.input-number').forEach(input => {
+                input.value = '0';
+            });
+
+            // Popola con dati
+            registrazioni.forEach(r => {
+                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="rec"]`).forEach(el => {
+                    el.value = r.recuperati || 0;
+                });
+                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="scar"]`).forEach(el => {
+                    el.value = r.buttati || 0;
+                });
+            });
+
+            aggiornaStats();
 
         } catch (err) {
             console.error('❌ Errore:', err);
         }
     }
 
-    function mostraRegistrazioni(registrazioni) {
-        const tbody = document.getElementById('registrazioniBody');
+    // ═══════════════════════════════════════════════════════════
+    // AGGIORNA STATISTICHE
+    // ═══════════════════════════════════════════════════════════
 
-        if (registrazioni.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="empty-state">
-                        <div>Nessuna registrazione oggi</div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
+    function aggiornaStats() {
+        // DOLCI
+        let recDelci = 0, scarDelci = 0;
+        document.querySelectorAll('#tabellaDelci [data-field="rec"]').forEach(el => {
+            recDelci += parseInt(el.value) || 0;
+        });
+        document.querySelectorAll('#tabellaDelci [data-field="scar"]').forEach(el => {
+            scarDelci += parseInt(el.value) || 0;
+        });
+        const totDelci = recDelci + scarDelci;
+        const percDelci = totDelci > 0 ? ((recDelci / totDelci) * 100).toFixed(0) : 0;
 
-        tbody.innerHTML = registrazioni.map(r => {
-            const total = (r.recuperati || 0) + (r.buttati || 0);
-            const catBadge = r.categoria === 'dolce' 
-                ? '<span class="category-badge dolce">Dolce</span>'
-                : '<span class="category-badge salato">Salato</span>';
-            
-            return `
-                <tr>
-                    <td>
-                        <div class="product-code">${r.prodotti.codice_prodotto}</div>
-                        <div style="font-size: 12px; color: #666;">${r.prodotti.nome}</div>
-                    </td>
-                    <td>${catBadge}</td>
-                    <td style="text-align: right; color: #28a745; font-weight: 600;">+${r.recuperati || 0}</td>
-                    <td style="text-align: right; color: #dc3545; font-weight: 600;">-${r.buttati || 0}</td>
-                    <td style="text-align: right; font-weight: 600;">${total}</td>
-                    <td style="text-align: center;">
-                        <button class="btn-delete" onclick="eliminaRegistrazione(${r.id})">
-                            🗑️
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+        document.getElementById('statRecDelci').textContent = recDelci;
+        document.getElementById('statScarDelci').textContent = scarDelci;
+        document.getElementById('statTotDelci').textContent = totDelci;
+        document.getElementById('statPercDelci').textContent = percDelci + '%';
+
+        // SALATI
+        let recSalati = 0, scarSalati = 0;
+        document.querySelectorAll('#tabellaSalati [data-field="rec"]').forEach(el => {
+            recSalati += parseInt(el.value) || 0;
+        });
+        document.querySelectorAll('#tabellaSalati [data-field="scar"]').forEach(el => {
+            scarSalati += parseInt(el.value) || 0;
+        });
+        const totSalati = recSalati + scarSalati;
+        const percSalati = totSalati > 0 ? ((recSalati / totSalati) * 100).toFixed(0) : 0;
+
+        document.getElementById('statRecSalati').textContent = recSalati;
+        document.getElementById('statScarSalati').textContent = scarSalati;
+        document.getElementById('statTotSalati').textContent = totSalati;
+        document.getElementById('statPercSalati').textContent = percSalati + '%';
     }
 
     // ═══════════════════════════════════════════════════════════
-    // ELIMINA REGISTRAZIONE
+    // SALVA REGISTRAZIONI
     // ═══════════════════════════════════════════════════════════
 
-    async function eliminaRegistrazione(id) {
-        if (!confirm('Sei sicuro?')) {
+    async function salvaRegistrazioni() {
+        const data = document.getElementById('data').value;
+
+        if (!data) {
+            showMessage('⚠️ Seleziona una data', 'error');
             return;
         }
 
         try {
-            const { error } = await supabase
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Salvataggio...';
+
+            // Raccogli dati da tabelle
+            const datiDaSalvare = [];
+
+            document.querySelectorAll('.input-number').forEach(input => {
+                const prodottoId = parseInt(input.dataset.id);
+                const field = input.dataset.field;
+                const valore = parseInt(input.value) || 0;
+
+                if (valore > 0) {
+                    let rec = datiDaSalvare.find(d => d.prodotto_id === prodottoId);
+                    if (!rec) {
+                        rec = { 
+                            prodotto_id: prodottoId, 
+                            recuperati: 0, 
+                            buttati: 0,
+                            data_registrazione: data,
+                            dipendente_id: operatore.uid,
+                            punto_vendita_id: punto_vendita_id,
+                            categoria: prodottiDelci.find(p => p.id === prodottoId) ? 'dolce' : 'salato'
+                        };
+                        datiDaSalvare.push(rec);
+                    }
+                    if (field === 'rec') rec.recuperati = valore;
+                    if (field === 'scar') rec.buttati = valore;
+                }
+            });
+
+            console.log('💾 Salvando', datiDaSalvare.length, 'registrazioni');
+
+            if (datiDaSalvare.length === 0) {
+                showMessage('⚠️ Nessun dato da salvare', 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+                return;
+            }
+
+            // Elimina vecchie registrazioni per oggi
+            const { error: errDel } = await supabase
                 .from('registrazioni_giornaliere')
                 .delete()
-                .eq('id', id);
-
-            if (error) {
-                console.error('❌ Errore eliminazione:', error);
-                showMessage('❌ Errore eliminazione', 'error');
-                return;
-            }
-
-            console.log('✅ Registrazione eliminata');
-            showMessage('✅ Eliminata!', 'success');
-
-            await caricaRegistrazioni();
-            await caricaStatistiche();
-
-        } catch (err) {
-            console.error('❌ Errore:', err);
-            showMessage('❌ Errore eliminazione', 'error');
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // STATISTICHE
-    // ═══════════════════════════════════════════════════════════
-
-    async function caricaStatistiche() {
-        try {
-            const today = new Date().toISOString().split('T')[0];
-
-            const { data: registrazioni, error } = await supabase
-                .from('registrazioni_giornaliere')
-                .select('recuperati, buttati')
                 .eq('dipendente_id', operatore.uid)
                 .eq('punto_vendita_id', punto_vendita_id)
-                .eq('data_registrazione', today);
+                .eq('data_registrazione', data);
 
-            if (error) {
-                console.error('❌ Errore statistiche:', error);
+            if (errDel) {
+                console.error('❌ Errore eliminazione vecchi dati:', errDel);
+            }
+
+            // Inserisci nuovi dati
+            const { error: errInsert } = await supabase
+                .from('registrazioni_giornaliere')
+                .insert(datiDaSalvare);
+
+            if (errInsert) {
+                console.error('❌ Errore salvataggio:', errInsert);
+                showMessage('❌ Errore salvataggio: ' + errInsert.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
                 return;
             }
 
-            const totRecuperati = registrazioni.reduce((sum, r) => sum + (r.recuperati || 0), 0);
-            const totScartati = registrazioni.reduce((sum, r) => sum + (r.buttati || 0), 0);
+            console.log('✅ Salvato con successo!');
+            showMessage(`✅ ${datiDaSalvare.length} registrazioni salvate!`, 'success');
 
-            document.getElementById('statRecuperati').textContent = totRecuperati;
-            document.getElementById('statScartati').textContent = totScartati;
+            btn.disabled = false;
+            btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
 
         } catch (err) {
             console.error('❌ Errore:', err);
+            showMessage('❌ Errore: ' + err.message, 'error');
+            event.target.disabled = false;
+            event.target.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
         }
     }
 
@@ -866,14 +753,14 @@
     // ═══════════════════════════════════════════════════════════
 
     function showMessage(message, type) {
-        const el = document.getElementById('formMessage');
+        const el = document.getElementById('message');
         el.className = 'message ' + type;
         el.textContent = message;
         el.style.display = 'block';
 
         setTimeout(() => {
             el.style.display = 'none';
-        }, 4000);
+        }, 5000);
     }
 
     function logout() {
@@ -884,7 +771,6 @@
         window.location.href = 'index.html';
     }
 
-    // Init quando carica
     window.addEventListener('load', init);
 </script>
 
