@@ -22,50 +22,52 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
         .header {
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
             color: white;
-            padding: 30px;
+            padding: clamp(20px, 5vw, 30px);
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 5vw, 30px);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         }
 
         .header-left h1 {
-            font-size: 36px;
-            margin-bottom: 8px;
+            font-size: clamp(24px, 6vw, 36px);
+            margin-bottom: 5px;
             font-weight: 700;
         }
 
         .header-left p {
-            font-size: 16px;
+            font-size: clamp(13px, 3vw, 16px);
             opacity: 0.95;
         }
 
         .header-right {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: clamp(8px, 2vw, 14px) clamp(15px, 3vw, 30px);
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-size: 14px;
+            font-size: clamp(12px, 2vw, 14px);
         }
 
         .btn-logout {
@@ -81,9 +83,10 @@
         .btn-save {
             background: var(--color-primary);
             color: white;
-            padding: 14px 35px;
-            font-size: 16px;
+            padding: clamp(10px, 2vw, 14px) clamp(20px, 4vw, 35px);
+            font-size: clamp(13px, 2.5vw, 16px);
             font-weight: 700;
+            white-space: nowrap;
         }
 
         .btn-save:hover {
@@ -129,44 +132,39 @@
             border-left: 4px solid #dc3545;
         }
 
-        .message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-
         .date-section {
             background: white;
-            padding: 25px;
+            padding: clamp(15px, 4vw, 25px);
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: clamp(20px, 5vw, 30px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             display: flex;
-            gap: 25px;
+            gap: clamp(15px, 3vw, 25px);
             align-items: flex-end;
+            flex-wrap: wrap;
         }
 
         .date-group {
             flex: 1;
-            max-width: 350px;
+            min-width: 250px;
         }
 
         .date-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 700;
             color: var(--color-primary);
-            font-size: 15px;
+            font-size: clamp(12px, 2vw, 15px);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .date-group input {
             width: 100%;
-            padding: 15px;
+            padding: clamp(10px, 2vw, 15px);
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: clamp(13px, 2vw, 16px);
             font-weight: 600;
         }
 
@@ -178,36 +176,38 @@
 
         .tabelle-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: clamp(15px, 4vw, 25px);
+            margin-bottom: 30px;
         }
 
         .tabella-card {
             background: white;
             border-radius: 12px;
-            padding: 25px;
+            padding: clamp(15px, 3vw, 25px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
         .tabella-card h2 {
             color: var(--color-primary);
-            margin-bottom: 20px;
-            font-size: 22px;
+            margin-bottom: clamp(12px, 3vw, 20px);
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: 700;
             border-bottom: 3px solid var(--color-primary);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .table-container {
             overflow-x: auto;
-            max-height: 700px;
+            max-height: 70vh;
             overflow-y: auto;
+            border-radius: 8px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 15px;
+            font-size: clamp(12px, 2vw, 15px);
         }
 
         table thead {
@@ -219,19 +219,19 @@
         }
 
         table th {
-            padding: 16px;
+            padding: clamp(10px, 2vw, 16px);
             text-align: left;
             font-weight: 700;
-            font-size: 14px;
+            font-size: clamp(11px, 1.8vw, 14px);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--color-primary);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
 
         table td {
-            padding: 14px 16px;
+            padding: clamp(8px, 2vw, 14px);
             border-bottom: 1px solid #e0e0e0;
-            font-size: 15px;
+            font-size: clamp(12px, 1.8vw, 15px);
         }
 
         table tbody tr:hover {
@@ -242,24 +242,24 @@
             font-weight: 700;
             color: var(--color-primary);
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: clamp(10px, 1.5vw, 13px);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .prodotto {
             font-weight: 600;
             color: #222;
-            font-size: 14px;
+            font-size: clamp(12px, 1.8vw, 14px);
         }
 
         .input-number {
-            width: 80px;
-            padding: 10px;
+            width: clamp(50px, 10vw, 80px);
+            padding: clamp(6px, 1.5vw, 10px);
             border: 2px solid #ddd;
             border-radius: 6px;
             text-align: center;
-            font-size: 16px;
+            font-size: clamp(12px, 2vw, 16px);
             font-weight: 700;
             background: white;
         }
@@ -273,12 +273,12 @@
 
         .stats-row {
             background: var(--color-light);
-            padding: 16px;
+            padding: clamp(12px, 2vw, 16px);
             border-radius: 8px;
-            margin-top: 20px;
+            margin-top: clamp(15px, 3vw, 20px);
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(10px, 2vw, 15px);
             border-left: 4px solid var(--color-primary);
         }
 
@@ -286,7 +286,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: clamp(6px, 1.5vw, 10px) 0;
             border-bottom: 1px solid #ddd;
         }
 
@@ -295,47 +295,102 @@
         }
 
         .stat-label {
-            font-size: 14px;
+            font-size: clamp(11px, 1.8vw, 14px);
             color: #555;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         .stat-value {
-            font-size: 20px;
+            font-size: clamp(16px, 4vw, 20px);
             font-weight: 700;
             color: var(--color-primary);
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
             .tabelle-container {
                 grid-template-columns: 1fr;
             }
-        }
 
-        @media (max-width: 480px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+            .table-container {
+                max-height: 60vh;
             }
 
             .date-section {
                 flex-direction: column;
+                align-items: stretch;
             }
 
             .date-group {
-                max-width: 100%;
+                min-width: 100%;
             }
 
-            .table-container {
+            .btn-save {
+                width: 100%;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .header {
+                padding: 12px;
+                gap: 15px;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            table {
                 font-size: 11px;
+            }
+
+            table th {
+                padding: 6px;
+                font-size: 10px;
+            }
+
+            table td {
+                padding: 6px;
+            }
+
+            .codice {
+                font-size: 9px;
             }
 
             .input-number {
                 width: 50px;
                 padding: 4px;
+                font-size: 12px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-value {
+                font-size: 16px;
             }
         }
     </style>
@@ -379,13 +434,14 @@
                         <tr>
                             <th>Codice</th>
                             <th>Prodotto</th>
+                            <th style="text-align: right;">📦 Prod</th>
                             <th style="text-align: right;">✅ Rec</th>
                             <th style="text-align: right;">❌ Scar</th>
                         </tr>
                     </thead>
                     <tbody id="bodyDelci">
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 30px; color: #999;">
+                            <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
                                 ⏳ Caricamento prodotti...
                             </td>
                         </tr>
@@ -394,19 +450,19 @@
             </div>
             <div class="stats-row">
                 <div class="stat-item">
-                    <span class="stat-label">✅ Tot. Recuperati</span>
+                    <span class="stat-label">📦 Prod</span>
+                    <span class="stat-value" id="statProdDelci">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">✅ Rec</span>
                     <span class="stat-value" id="statRecDelci">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">❌ Tot. Scartati</span>
+                    <span class="stat-label">❌ Scar</span>
                     <span class="stat-value" id="statScarDelci">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">📦 Totale</span>
-                    <span class="stat-value" id="statTotDelci">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">% Recupero</span>
+                    <span class="stat-label">% Rec</span>
                     <span class="stat-value" id="statPercDelci">0%</span>
                 </div>
             </div>
@@ -421,13 +477,14 @@
                         <tr>
                             <th>Codice</th>
                             <th>Prodotto</th>
+                            <th style="text-align: right;">📦 Prod</th>
                             <th style="text-align: right;">✅ Rec</th>
                             <th style="text-align: right;">❌ Scar</th>
                         </tr>
                     </thead>
                     <tbody id="bodySalati">
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 30px; color: #999;">
+                            <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
                                 ⏳ Caricamento prodotti...
                             </td>
                         </tr>
@@ -436,19 +493,19 @@
             </div>
             <div class="stats-row">
                 <div class="stat-item">
-                    <span class="stat-label">✅ Tot. Recuperati</span>
+                    <span class="stat-label">📦 Prod</span>
+                    <span class="stat-value" id="statProdSalati">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">✅ Rec</span>
                     <span class="stat-value" id="statRecSalati">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">❌ Tot. Scartati</span>
+                    <span class="stat-label">❌ Scar</span>
                     <span class="stat-value" id="statScarSalati">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">📦 Totale</span>
-                    <span class="stat-value" id="statTotSalati">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">% Recupero</span>
+                    <span class="stat-label">% Rec</span>
                     <span class="stat-value" id="statPercSalati">0%</span>
                 </div>
             </div>
@@ -465,11 +522,6 @@
     let punto_vendita_id = null;
     let prodottiDelci = [];
     let prodottiSalati = [];
-    let datiTabella = {};
-
-    // ═══════════════════════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════════════════════
 
     async function init() {
         if (window.supabase) {
@@ -483,58 +535,28 @@
         }
 
         operatore = JSON.parse(userStr);
-        console.log('👤 Operatore:', operatore);
-
         const params = new URLSearchParams(window.location.search);
         punto_vendita_id = params.get('punto') || operatore.punto_vendita;
 
-        console.log('📍 Punto:', punto_vendita_id);
-
-        // Applica colori dinamici
         applicaColoriPunto(punto_vendita_id);
 
-        // Header
         document.getElementById('operatoreName').textContent = operatore.nome || 'Operatore';
         document.getElementById('operatorePunto').textContent = `📍 ${getPuntoLabel(punto_vendita_id)}`;
 
-        // Data
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('data').value = today;
 
-        // Carica prodotti
         await caricaProdotti();
-
-        // Event listener data
         document.getElementById('data').addEventListener('change', caricaDatiGiorno);
     }
 
     function applicaColoriPunto(punto) {
         const colori = {
-            'pisa': {
-                primary: '#003D82',
-                dark: '#001a3d',
-                light: '#f0f4f8',
-                nome: 'Blu'
-            },
-            'sesto': {
-                primary: '#7B2DBF',
-                dark: '#4a1a80',
-                light: '#f3e8ff',
-                nome: 'Viola'
-            },
-            'cosenza': {
-                primary: '#DC2626',
-                dark: '#7f1d1d',
-                light: '#fef2f2',
-                nome: 'Rosso'
-            }
+            'pisa': { primary: '#003D82', dark: '#001a3d', light: '#f0f4f8' },
+            'sesto': { primary: '#7B2DBF', dark: '#4a1a80', light: '#f3e8ff' },
+            'cosenza': { primary: '#DC2626', dark: '#7f1d1d', light: '#fef2f2' }
         };
-
         const tema = colori[punto] || colori['pisa'];
-        
-        console.log(`🎨 Tema ${tema.nome} applicato per ${punto}`);
-
-        // Applica CSS variabili
         const root = document.documentElement;
         root.style.setProperty('--color-primary', tema.primary);
         root.style.setProperty('--color-dark', tema.dark);
@@ -542,68 +564,45 @@
     }
 
     function getPuntoLabel(punto) {
-        const labels = {
-            'pisa': '🍰 Pisa',
-            'sesto': '🍰 Sesto Fiorentino',
-            'cosenza': '🍰 Cosenza'
-        };
+        const labels = { 'pisa': '🍰 Pisa', 'sesto': '🍰 Sesto Fiorentino', 'cosenza': '🍰 Cosenza' };
         return labels[punto] || punto;
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // CARICA PRODOTTI
-    // ═══════════════════════════════════════════════════════════
-
     async function caricaProdotti() {
         try {
-            console.log('🔍 Caricando prodotti per:', punto_vendita_id);
-
             const { data: prodotti, error } = await supabase
                 .from('prodotti')
                 .select('id, codice_prodotto, nome, categoria')
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('attivo', true)
-                .order('categoria', { ascending: true })
-                .order('nome', { ascending: true });
+                .order('categoria')
+                .order('nome');
 
             if (error) {
-                console.error('❌ Errore caricamento prodotti:', error);
-                showMessage('❌ Errore caricamento prodotti: ' + error.message, 'error');
+                showMessage('❌ Errore caricamento prodotti', 'error');
                 return;
             }
 
-            console.log('✅ Caricati', prodotti.length, 'prodotti');
-
-            // Separa per categoria
             prodottiDelci = prodotti.filter(p => p.categoria === 'dolce');
             prodottiSalati = prodotti.filter(p => p.categoria === 'salato');
 
-            console.log('🍰 Dolci:', prodottiDelci.length);
-            console.log('🥖 Salati:', prodottiSalati.length);
-
-            // Mostra tabelle
             mostraTabelle();
-
-            // Carica dati di oggi
             await caricaDatiGiorno();
 
         } catch (err) {
-            console.error('❌ Errore:', err);
             showMessage('❌ Errore: ' + err.message, 'error');
         }
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // MOSTRA TABELLE
-    // ═══════════════════════════════════════════════════════════
-
     function mostraTabelle() {
-        // DOLCI
         const bodyDelci = document.getElementById('bodyDelci');
         bodyDelci.innerHTML = prodottiDelci.map(p => `
             <tr>
                 <td><span class="codice">${p.codice_prodotto}</span></td>
                 <td><span class="prodotto">${p.nome}</span></td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
+                </td>
                 <td style="text-align: right;">
                     <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
                 </td>
@@ -613,12 +612,14 @@
             </tr>
         `).join('');
 
-        // SALATI
         const bodySalati = document.getElementById('bodySalati');
         bodySalati.innerHTML = prodottiSalati.map(p => `
             <tr>
                 <td><span class="codice">${p.codice_prodotto}</span></td>
                 <td><span class="prodotto">${p.nome}</span></td>
+                <td style="text-align: right;">
+                    <input type="number" class="input-number" data-id="${p.id}" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
+                </td>
                 <td style="text-align: right;">
                     <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
                 </td>
@@ -631,113 +632,64 @@
         aggiornaStats();
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // CARICA DATI GIORNO
-    // ═══════════════════════════════════════════════════════════
-
     async function caricaDatiGiorno() {
         const data = document.getElementById('data').value;
-
         try {
-            console.log('📅 Caricando dati per:', data);
-            console.log('🔑 UUID Operatore:', operatore.uid);
-
             const { data: registrazioni, error } = await supabase
                 .from('registrazioni_giornaliere')
-                .select('prodotto_id, recuperati, buttati')
-                .eq('dipendente_id', operatore.uid.toString())
+                .select('prodotto_id, produzione, recuperati, buttati')
+                .eq('dipendente_id', operatore.uid)
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
-            if (error) {
-                console.error('❌ Errore caricamento dati:', error);
-                console.error('📋 Dettagli errore:', error.message);
-                return;
-            }
+            if (error) return;
 
-            console.log('✅ Caricati', registrazioni.length, 'dati');
+            document.querySelectorAll('.input-number').forEach(input => input.value = '0');
 
-            // Reset dati
-            datiTabella = {};
-            document.querySelectorAll('.input-number').forEach(input => {
-                input.value = '0';
-            });
-
-            // Popola con dati
             registrazioni.forEach(r => {
-                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="rec"]`).forEach(el => {
-                    el.value = r.recuperati || 0;
-                });
-                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="scar"]`).forEach(el => {
-                    el.value = r.buttati || 0;
-                });
+                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="prod"]`).forEach(el => el.value = r.produzione || 0);
+                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="rec"]`).forEach(el => el.value = r.recuperati || 0);
+                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="scar"]`).forEach(el => el.value = r.buttati || 0);
             });
 
             aggiornaStats();
-
-        } catch (err) {
-            console.error('❌ Errore:', err);
-        }
+        } catch (err) {}
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // AGGIORNA STATISTICHE
-    // ═══════════════════════════════════════════════════════════
-
     function aggiornaStats() {
-        // DOLCI
-        let recDelci = 0, scarDelci = 0;
-        document.querySelectorAll('#tabellaDelci [data-field="rec"]').forEach(el => {
-            recDelci += parseInt(el.value) || 0;
-        });
-        document.querySelectorAll('#tabellaDelci [data-field="scar"]').forEach(el => {
-            scarDelci += parseInt(el.value) || 0;
-        });
-        const totDelci = recDelci + scarDelci;
-        const percDelci = totDelci > 0 ? ((recDelci / totDelci) * 100).toFixed(0) : 0;
+        let prodDelci = 0, recDelci = 0, scarDelci = 0;
+        document.querySelectorAll('#tabellaDelci [data-field="prod"]').forEach(el => prodDelci += parseInt(el.value) || 0);
+        document.querySelectorAll('#tabellaDelci [data-field="rec"]').forEach(el => recDelci += parseInt(el.value) || 0);
+        document.querySelectorAll('#tabellaDelci [data-field="scar"]').forEach(el => scarDelci += parseInt(el.value) || 0);
+        const percDelci = (prodDelci + recDelci + scarDelci) > 0 ? ((recDelci / (prodDelci + recDelci + scarDelci)) * 100).toFixed(0) : 0;
 
+        document.getElementById('statProdDelci').textContent = prodDelci;
         document.getElementById('statRecDelci').textContent = recDelci;
         document.getElementById('statScarDelci').textContent = scarDelci;
-        document.getElementById('statTotDelci').textContent = totDelci;
         document.getElementById('statPercDelci').textContent = percDelci + '%';
 
-        // SALATI
-        let recSalati = 0, scarSalati = 0;
-        document.querySelectorAll('#tabellaSalati [data-field="rec"]').forEach(el => {
-            recSalati += parseInt(el.value) || 0;
-        });
-        document.querySelectorAll('#tabellaSalati [data-field="scar"]').forEach(el => {
-            scarSalati += parseInt(el.value) || 0;
-        });
-        const totSalati = recSalati + scarSalati;
-        const percSalati = totSalati > 0 ? ((recSalati / totSalati) * 100).toFixed(0) : 0;
+        let prodSalati = 0, recSalati = 0, scarSalati = 0;
+        document.querySelectorAll('#tabellaSalati [data-field="prod"]').forEach(el => prodSalati += parseInt(el.value) || 0);
+        document.querySelectorAll('#tabellaSalati [data-field="rec"]').forEach(el => recSalati += parseInt(el.value) || 0);
+        document.querySelectorAll('#tabellaSalati [data-field="scar"]').forEach(el => scarSalati += parseInt(el.value) || 0);
+        const percSalati = (prodSalati + recSalati + scarSalati) > 0 ? ((recSalati / (prodSalati + recSalati + scarSalati)) * 100).toFixed(0) : 0;
 
+        document.getElementById('statProdSalati').textContent = prodSalati;
         document.getElementById('statRecSalati').textContent = recSalati;
         document.getElementById('statScarSalati').textContent = scarSalati;
-        document.getElementById('statTotSalati').textContent = totSalati;
         document.getElementById('statPercSalati').textContent = percSalati + '%';
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // SALVA REGISTRAZIONI
-    // ═══════════════════════════════════════════════════════════
-
     async function salvaRegistrazioni() {
         const data = document.getElementById('data').value;
+        if (!data) { showMessage('⚠️ Seleziona una data', 'error'); return; }
 
-        if (!data) {
-            showMessage('⚠️ Seleziona una data', 'error');
-            return;
-        }
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = '⏳ Salvataggio...';
 
         try {
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '⏳ Salvataggio...';
-
-            // Raccogli dati da tabelle
             const datiDaSalvare = [];
-
             document.querySelectorAll('.input-number').forEach(input => {
                 const prodottoId = parseInt(input.dataset.id);
                 const field = input.dataset.field;
@@ -748,8 +700,7 @@
                     if (!rec) {
                         rec = { 
                             prodotto_id: prodottoId, 
-                            recuperati: 0, 
-                            buttati: 0,
+                            produzione: 0, recuperati: 0, buttati: 0,
                             data_registrazione: data,
                             dipendente_id: operatore.uid,
                             punto_vendita_id: punto_vendita_id,
@@ -757,12 +708,11 @@
                         };
                         datiDaSalvare.push(rec);
                     }
+                    if (field === 'prod') rec.produzione = valore;
                     if (field === 'rec') rec.recuperati = valore;
                     if (field === 'scar') rec.buttati = valore;
                 }
             });
-
-            console.log('💾 Salvando', datiDaSalvare.length, 'registrazioni');
 
             if (datiDaSalvare.length === 0) {
                 showMessage('⚠️ Nessun dato da salvare', 'error');
@@ -771,64 +721,35 @@
                 return;
             }
 
-            // Elimina vecchie registrazioni per oggi
-            const { error: errDel } = await supabase
-                .from('registrazioni_giornaliere')
-                .delete()
-                .eq('dipendente_id', operatore.uid.toString())
+            await supabase.from('registrazioni_giornaliere').delete()
+                .eq('dipendente_id', operatore.uid)
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
-            if (errDel) {
-                console.error('❌ Errore eliminazione vecchi dati:', errDel);
-            }
+            const { error: errInsert } = await supabase.from('registrazioni_giornaliere').insert(datiDaSalvare);
+            if (errInsert) throw errInsert;
 
-            // Inserisci nuovi dati
-            const { error: errInsert } = await supabase
-                .from('registrazioni_giornaliere')
-                .insert(datiDaSalvare);
-
-            if (errInsert) {
-                console.error('❌ Errore salvataggio:', errInsert);
-                showMessage('❌ Errore salvataggio: ' + errInsert.message, 'error');
-                btn.disabled = false;
-                btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
-                return;
-            }
-
-            console.log('✅ Salvato con successo!');
             showMessage(`✅ ${datiDaSalvare.length} registrazioni salvate!`, 'success');
-
             btn.disabled = false;
             btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
 
         } catch (err) {
-            console.error('❌ Errore:', err);
             showMessage('❌ Errore: ' + err.message, 'error');
-            event.target.disabled = false;
-            event.target.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+            btn.disabled = false;
+            btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
         }
     }
-
-    // ═══════════════════════════════════════════════════════════
-    // UTILITY
-    // ═══════════════════════════════════════════════════════════
 
     function showMessage(message, type) {
         const el = document.getElementById('message');
         el.className = 'message ' + type;
         el.textContent = message;
         el.style.display = 'block';
-
-        setTimeout(() => {
-            el.style.display = 'none';
-        }, 5000);
+        setTimeout(() => { el.style.display = 'none'; }, 5000);
     }
 
     function logout() {
-        if (!confirm('Sei sicuro di voler uscire?')) {
-            return;
-        }
+        if (!confirm('Sei sicuro di voler uscire?')) return;
         localStorage.removeItem('mageitaliaUser');
         window.location.href = 'index.html';
     }
