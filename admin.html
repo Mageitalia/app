@@ -313,16 +313,24 @@
             const container = document.getElementById('dipendentiContainer');
             container.innerHTML = '<div class="loading">⏳ Caricamento...</div>';
 
+            console.log('🔄 Caricando dipendenti...');
+
             const { data, error } = await supabase
                 .from('dipendenti')
                 .select('*')
-                .eq('attivo', true)
                 .order('punto_vendita_id')
                 .order('nome');
 
-            if (error) throw error;
+            console.log('📦 Risposta:', { data, error });
 
-            const html = (data || []).map(d => {
+            if (error) {
+                console.error('❌ Errore:', error);
+                throw error;
+            }
+
+            console.log('✅ Trovati:', data?.length || 0, 'dipendenti');
+
+            const html = (data || []).filter(d => d.attivo !== false).map(d => {
                 const punto = d.punto_vendita_id === 'pisa' ? '🍰 Pisa' :
                              d.punto_vendita_id === 'sesto' ? '🍰 Sesto Fiorentino' :
                              d.punto_vendita_id === 'cosenza' ? '🍰 Cosenza' : '—';
