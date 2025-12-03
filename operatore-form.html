@@ -168,6 +168,32 @@
             cursor: not-allowed;
         }
 
+        .btn-reset {
+            background: #dc3545;
+            color: white;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 3vw, 35px);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: clamp(12px, 2vw, 14px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-reset:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .tabelle-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -391,6 +417,9 @@
         </div>
         <button class="btn-save" onclick="salvaAllRegistrazioni()">
             💾 SALVA TUTTE LE REGISTRAZIONI
+        </button>
+        <button class="btn-reset" onclick="azzeraRegistrazioni()">
+            🗑️ AZZERA GIORNATA
         </button>
     </div>
 
@@ -728,6 +757,47 @@
             showMessage('❌ Errore: ' + err.message, 'error');
             btn.disabled = false;
             btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+        }
+    }
+
+    async function azzeraRegistrazioni() {
+        const data = document.getElementById('data').value;
+        if (!data) {
+            showMessage('⚠️ Seleziona una data', 'error');
+            return;
+        }
+
+        if (!confirm('⚠️ Sei sicuro di voler eliminare TUTTE le registrazioni di questa giornata?\n\nQuesta azione non può essere annullata!')) {
+            return;
+        }
+
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = '⏳ Eliminazione...';
+
+        try {
+            const { error } = await supabase
+                .from('registrazioni_giornaliere')
+                .delete()
+                .eq('dipendente_id', operatore.uid)
+                .eq('punto_vendita_id', punto_vendita_id)
+                .eq('data_registrazione', data);
+
+            if (error) throw error;
+
+            showMessage('✅ Registrazioni della giornata eliminate!', 'success');
+            
+            document.querySelectorAll('.input-number').forEach(input => input.value = '');
+            aggiornaStats();
+
+            btn.disabled = false;
+            btn.textContent = '🗑️ AZZERA GIORNATA';
+
+        } catch (err) {
+            console.error('❌ Errore:', err);
+            showMessage('❌ Errore: ' + err.message, 'error');
+            btn.disabled = false;
+            btn.textContent = '🗑️ AZZERA GIORNATA';
         }
     }
 
