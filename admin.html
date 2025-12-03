@@ -1479,19 +1479,45 @@
                 return;
             }
 
-            const excel = filtered.map(r => ({
-                'Data': r.data_registrazione,
-                'Codice': r.prodotti?.codice_prodotto || '—',
-                'Prodotto': r.prodotti?.nome || '—',
-                'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
-                'Produzione': r.produzione || 0,
-                'Recuperati': r.recuperati || 0,
-                'Scartati': r.buttati || 0,
-                'Totale': (r.produzione || 0) + (r.recuperati || 0) + (r.buttati || 0)
-            }));
+            const excel = filtered.map(r => {
+                let puntoPunto = '';
+                if (r.prodotti?.punto_vendita_id === 'pisa') {
+                    puntoPunto = '🔷 Pisa';
+                } else if (r.prodotti?.punto_vendita_id === 'sesto') {
+                    puntoPunto = '🟣 Sesto Fiorentino';
+                } else if (r.prodotti?.punto_vendita_id === 'cosenza') {
+                    puntoPunto = '🟠 Cosenza';
+                }
+
+                return {
+                    'Data': r.data_registrazione,
+                    'Punto Vendita': puntoPunto,
+                    'Codice': r.prodotti?.codice_prodotto || '—',
+                    'Prodotto': r.prodotti?.nome || '—',
+                    'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
+                    'Produzione': r.produzione || 0,
+                    'Recuperati': r.recuperati || 0,
+                    'Scartati': r.buttati || 0
+                };
+            });
 
             if (XLSX && XLSX.utils && XLSX.writeFile) {
                 const ws = XLSX.utils.json_to_sheet(excel);
+                
+                // Colora le colonne per punto vendita
+                excel.forEach((row, idx) => {
+                    const cellKey = `B${idx + 2}`; // Colonna B = Punto Vendita
+                    if (ws[cellKey]) {
+                        if (row['Punto Vendita'].includes('Pisa')) {
+                            ws[cellKey].fill = { fgColor: { rgb: 'FF1E40AF' } };
+                            ws[cellKey].font = { color: { rgb: 'FFFFFFFF' }, bold: true };
+                        } else if (row['Punto Vendita'].includes('Sesto')) {
+                            ws[cellKey].fill = { fgColor: { rgb: 'FF6D28D9' } };
+                            ws[cellKey].font = { color: { rgb: 'FFFFFFFF' }, bold: true };
+                        }
+                    }
+                });
+
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Report');
                 XLSX.writeFile(wb, `Mage-Report-${inizio}-to-${fine}.xlsx`);
