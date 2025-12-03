@@ -583,11 +583,27 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.3s;
             border: 2px solid transparent;
+            opacity: 0.6;
+            transform: scale(0.85);
+        }
+
+        .report-card.today {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-width: 3px;
         }
 
         .report-card:hover {
-            transform: translateY(-4px);
+            opacity: 0.95;
+            transform: scale(0.88);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .report-card.today:hover {
+            opacity: 1;
+            transform: scale(1.02);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.25);
         }
 
         .report-card.pisa {
@@ -999,10 +1015,14 @@
                 new Date(b.data) - new Date(a.data)
             );
 
+            // Oggi
+            const oggi = new Date().toISOString().split('T')[0];
+
             let html = '<div class="report-grid">';
 
             reportArray.forEach(r => {
                 const data = new Date(r.data).toLocaleDateString('it-IT');
+                const isToday = r.data === oggi;
                 let classPunto = '';
                 let nomePunto = '';
 
@@ -1017,8 +1037,10 @@
                     nomePunto = '🟠 Cosenza';
                 }
 
+                const todayClass = isToday ? 'today' : '';
+
                 html += `
-                    <div class="report-card ${classPunto}">
+                    <div class="report-card ${classPunto} ${todayClass}">
                         <div class="report-card-date">${data}</div>
                         <div class="report-card-punto">${nomePunto}</div>
                         <div class="report-card-status">✅ Inviato</div>
