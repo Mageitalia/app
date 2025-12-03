@@ -3,419 +3,1478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Italia - Login</title>
+    <title>Admin - Mage Italia</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 450px;
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: #f0f0f0;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            overflow: hidden;
-            border: 3px solid #A01E4E;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 10px;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #A01E4E;
-            margin-bottom: 5px;
-        }
-
-        .logo-subtitle {
-            font-size: 12px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
+            padding: 20px; 
+            color: #2c3e50;
+            line-height: 1.6;
             font-size: 14px;
         }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header { 
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(160,30,78,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .header h1 { 
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+        
+        .logout-btn { 
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logout-btn:hover { 
+            background: rgba(255,255,255,0.3);
+            border-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tabs { 
+            display: flex; 
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .tab-btn { 
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+            position: relative;
+        }
+        
+        .tab-btn.active { 
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(160,30,78,0.3);
+        }
+        
+        .tab-btn:hover { 
+            border-color: #A01E4E;
+            color: #A01E4E;
+            transform: translateY(-2px);
+        }
+        
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .section { 
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #A01E4E;
+            transition: all 0.3s;
+        }
+        
+        .section:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        
+        .section h2 { 
+            color: #A01E4E;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            border-radius: 2px;
+        }
+        
+        .form-row { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group { display: flex; flex-direction: column; }
+        
+        .form-group label { 
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+        }
+        
+        input, select { 
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
-            background: white;
-            transition: all 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #fafbfc;
+            line-height: 1.5;
         }
-
-        .form-group input:focus,
-        .form-group select:focus {
+        
+        input:focus, select:focus { 
             outline: none;
             border-color: #A01E4E;
-            box-shadow: 0 0 0 3px rgba(160, 30, 78, 0.1);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(160,30,78,0.1);
         }
-
-        .form-group input::placeholder {
-            color: #999;
+        
+        input::placeholder {
+            color: #aaa;
         }
-
-        .punto-info {
-            background: #e8f4f8;
-            border-left: 3px solid #A01E4E;
-            padding: 12px 15px;
-            border-radius: 6px;
+        
+        .btn-row { 
+            display: flex; 
+            gap: 10px;
+            flex-wrap: wrap;
             margin-bottom: 20px;
-            font-size: 13px;
-            color: #0c5460;
         }
-
-        .punto-info strong {
-            color: #A01E4E;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
-            color: white;
+        
+        button { 
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
-            font-size: 15px;
-            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.4;
         }
-
-        .login-btn:hover {
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover { 
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(160, 30, 78, 0.3);
+            box-shadow: 0 6px 20px rgba(160,30,78,0.3);
         }
-
-        .login-btn:active {
-            transform: translateY(0);
+        
+        .btn-primary:active { transform: translateY(0); }
+        
+        .btn-secondary { 
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
         }
-
-        .login-btn.loading {
-            opacity: 0.7;
-            cursor: not-allowed;
+        
+        .btn-secondary:hover { 
+            background: white;
+            border-color: #A01E4E;
+            color: #A01E4E;
+            box-shadow: 0 4px 12px rgba(160,30,78,0.1);
         }
-
-        .message {
-            padding: 12px 15px;
+        
+        .btn-delete { 
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        
+        .btn-delete:hover { 
+            background: #c82333;
+            box-shadow: 0 4px 12px rgba(220,53,69,0.3);
+        }
+        
+        .btn-verify { 
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        
+        .btn-verify:hover { 
+            background: #218838;
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+        }
+        
+        .btn-copy { 
+            background: #007bff;
+            color: white;
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        
+        .btn-copy:hover { 
+            background: #0056b3;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        
+        .message { 
+            padding: 16px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
             display: none;
+            border-left: 4px solid;
             animation: slideDown 0.3s ease;
+            font-weight: 500;
         }
-
+        
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .message.success {
+        
+        .message.success { 
             background: #d4edda;
             color: #155724;
-            border-left: 4px solid #28a745;
+            border-left-color: #28a745;
+            display: block;
         }
-
-        .message.error {
+        
+        .message.error { 
             background: #f8d7da;
             color: #721c24;
-            border-left: 4px solid #dc3545;
+            border-left-color: #dc3545;
+            display: block;
         }
-
-        .message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-
-        .footer {
-            text-align: center;
+        
+        .table-container { 
+            overflow-x: auto;
             margin-top: 20px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            background: #fff;
+        }
+        
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        table thead { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #ddd;
+        }
+        
+        table th { 
+            padding: 16px 16px;
+            text-align: left;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
             font-size: 12px;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        table td { 
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        
+        table tr { transition: all 0.2s; }
+        
+        table tr:hover { 
+            background: #fafbfc;
+            box-shadow: inset 0 0 10px rgba(160,30,78,0.03);
+        }
+        
+        table tr:last-child td { border-bottom: none; }
+        
+        .code { 
+            background: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            letter-spacing: 0.3px;
+            display: inline-block;
+        }
+        
+        .loading { 
+            text-align: center;
+            padding: 50px 20px;
+            color: #A01E4E;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .modal { 
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px);
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        
+        .modal-content { 
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .modal-close { 
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 28px;
+            cursor: pointer;
             color: #999;
+            transition: all 0.2s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
-
-        .divider {
-            height: 1px;
-            background: #e0e0e0;
-            margin: 20px 0;
+        
+        .modal-close:hover { 
+            color: #A01E4E;
+            background: #f5f5f5;
+            transform: rotate(90deg);
         }
-
-        .help-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 8px;
+        
+        .modal h2 { 
+            color: #A01E4E;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .modal-field { margin-bottom: 20px; }
+        
+        .modal-field label { 
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .modal-field input, .modal-field select { 
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: all 0.3s;
             line-height: 1.5;
         }
+        
+        .modal-field input:focus, .modal-field select:focus { 
+            outline: none;
+            border-color: #A01E4E;
+            box-shadow: 0 0 0 3px rgba(160,30,78,0.1);
+        }
+        
+        .copy-btn { 
+            float: right;
+            background: #007bff;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover { 
+            background: #0056b3;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
 
-        @media (max-width: 480px) {
-            .login-wrapper {
-                padding: 25px;
+        /* Migliorie di leggibilità */
+        table td:first-child { font-weight: 500; }
+        
+        .btn-copy, .btn-delete {
+            margin-left: 5px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .verified-status {
+            padding: 10px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .verified-status.yes {
+            background: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
+        }
+
+        .verified-status.no {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 3px solid #ffc107;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #A01E4E;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Codifica colori per punto vendita */
+        .punto-pisa {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .punto-sesto {
+            background: linear-gradient(135deg, #5b21b6 0%, #6d28d9 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .punto-cosenza {
+            background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Highlight riga basato sul punto */
+        table tr.highlight-pisa {
+            background: #eff6ff;
+        }
+
+        table tr.highlight-pisa:hover {
+            background: #dbeafe;
+        }
+
+        table tr.highlight-sesto {
+            background: #f5f3ff;
+        }
+
+        table tr.highlight-sesto:hover {
+            background: #ede9fe;
+        }
+
+        table tr.highlight-cosenza {
+            background: #fef3f2;
+        }
+
+        table tr.highlight-cosenza:hover {
+            background: #fde2df;
+        }
+        
+        @media (max-width: 768px) {
+            .header { 
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .header h1 { font-size: 22px; }
+            
+            .form-row { grid-template-columns: 1fr; }
+            
+            table { font-size: 12px; }
+            
+            table th, table td { padding: 12px; }
+            
+            .modal-content { padding: 25px; }
+
+            .table-actions {
+                flex-direction: column;
             }
 
-            .logo {
-                width: 60px;
-                height: 60px;
-            }
-
-            .logo-text {
-                font-size: 20px;
+            .btn-copy, .btn-delete {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="login-wrapper">
-    <div class="logo-container">
-        <div class="logo">
-            <img id="appLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Logo">
-        </div>
-        <div class="logo-text">Mage Italia</div>
-        <div class="logo-subtitle">Gestione Prodotti Alimentari</div>
+<div class="container">
+    <div class="header">
+        <h1>⚙️ Admin Panel - Mage Italia</h1>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </div>
 
-    <div id="loginMessage"></div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('dipendenti')">👥 Dipendenti</button>
+        <button class="tab-btn" onclick="switchTab('prodotti')">📦 Prodotti</button>
+        <button class="tab-btn" onclick="switchTab('report')">📊 Report</button>
+    </div>
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label>👤 Username</label>
-            <input type="text" id="username" placeholder="es. antonio.rossi" required>
-            <div class="help-text">Formato: nome.cognome</div>
+    <!-- TAB DIPENDENTI -->
+    <div id="dipendenti" class="tab-panel active">
+        <div class="section">
+            <h2>➕ Nuovo Dipendente</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome *</label>
+                    <input type="text" id="dipNome" placeholder="Antonio">
+                </div>
+                <div class="form-group">
+                    <label>Cognome *</label>
+                    <input type="text" id="dipCognome" placeholder="Rossi">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita *</label>
+                    <select id="dipPunto">
+                        <option value="">-- Seleziona --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Crea Login? *</label>
+                    <select id="dipLogin">
+                        <option value="no">No</option>
+                        <option value="si">Sì</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="addDipendente()">➕ Aggiungi Dipendente</button>
+                <button class="btn-secondary" onclick="loadDipendenti()">🔄 Ricarica</button>
+            </div>
+
+            <div id="dipMsg" class="message"></div>
         </div>
 
-        <div class="form-group">
-            <label>🔐 Password</label>
-            <input type="password" id="password" placeholder="Inserisci password" required>
+        <div class="section">
+            <h2>📋 Lista Dipendenti Attivi</h2>
+            <div id="dipTable" class="loading">⏳ Caricamento...</div>
+        </div>
+    </div>
+
+    <!-- TAB PRODOTTI -->
+    <div id="prodotti" class="tab-panel">
+        <div class="section">
+            <h2>➕ Nuovo Prodotto</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Codice *</label>
+                    <input type="text" id="prodCodice" placeholder="6387">
+                </div>
+                <div class="form-group">
+                    <label>Nome *</label>
+                    <input type="text" id="prodNome" placeholder="Pane Bianco">
+                </div>
+                <div class="form-group">
+                    <label>Categoria *</label>
+                    <select id="prodCategoria">
+                        <option value="">-- Seleziona --</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita *</label>
+                    <select id="prodPunto">
+                        <option value="">-- Seleziona --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="addProdotto()">➕ Aggiungi Prodotto</button>
+                <button class="btn-secondary" onclick="loadProdotti()">🔄 Ricarica</button>
+            </div>
+
+            <div id="prodMsg" class="message"></div>
         </div>
 
-        <div class="form-group">
-            <label>📍 Punto Vendita</label>
-            <select id="punto" required>
-                <option value="">-- Seleziona il tuo punto --</option>
-                <option value="pisa">🍰 Pisa</option>
-                <option value="sesto">🍰 Sesto Fiorentino</option>
-                <option value="cosenza">🍰 Cosenza</option>
-                <option value="admin">⚙️ Admin Panel</option>
+        <div class="section">
+            <h2>📦 Lista Prodotti</h2>
+            
+            <div class="form-row">
+                <div class="form-group" style="grid-column: 1;">
+                    <label>🔍 Cerca Prodotto</label>
+                    <input type="text" id="prodRicerca" placeholder="Nome, codice..." onkeyup="filterProdotti()">
+                </div>
+            </div>
+
+            <div id="prodTable" class="loading">⏳ Caricamento...</div>
+        </div>
+    </div>
+
+    <!-- TAB REPORT -->
+    <div id="report" class="tab-panel">
+        <div class="section">
+            <h2>📊 Genera Report</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data Inizio *</label>
+                    <input type="date" id="repInizio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fine *</label>
+                    <input type="date" id="repFine">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="repPunto">
+                        <option value="">-- Tutti --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="repCategoria">
+                        <option value="">-- Tutte --</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="downloadExcel()">📥 Scarica Excel</button>
+                <button class="btn-secondary" onclick="showCharts()">📊 Mostra Grafici</button>
+            </div>
+
+            <div id="repMsg" class="message"></div>
+        </div>
+
+        <div id="chartsContainer" style="display: none;">
+            <div class="section">
+                <h2>📈 Andamento Prodotti</h2>
+                <canvas id="chartProdotti"></canvas>
+            </div>
+
+            <div class="section">
+                <h2>📍 Scarto per Punto</h2>
+                <canvas id="chartPunti"></canvas>
+            </div>
+
+            <div class="section">
+                <h2>🗑️ Prodotti più Scartati per Punto Vendita</h2>
+                <canvas id="chartProdottiScartati"></canvas>
+            </div>
+
+            <div class="section">
+                <h2>📊 Totali</h2>
+                <canvas id="chartTotali"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CREDENZIALI -->
+<div id="credenziali-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2>👤 Credenziali Dipendente</h2>
+        
+        <div class="modal-field">
+            <label>📧 Email:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="modal-email" readonly style="background: #f9f9f9;">
+                <button class="copy-btn" onclick="copyText('modal-email')">📋 Copia</button>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>🔑 Password:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="modal-password" readonly style="background: #f9f9f9;">
+                <button class="copy-btn" onclick="copyText('modal-password')">📋 Copia</button>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>✅ Email Verificata:</label>
+            <div id="modal-verified" class="verified-status no">⏳ Non verificata</div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn-verify" style="width: 100%;" onclick="verificaEmailModal()">✉️ Verifica Email Ora</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MODIFICA PRODOTTO -->
+<div id="modifica-prodotto-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModalProdotto()">&times;</span>
+        <h2>✏️ Modifica Prodotto</h2>
+        
+        <div class="modal-field">
+            <label>Codice *</label>
+            <input type="text" id="mod-codice">
+        </div>
+
+        <div class="modal-field">
+            <label>Nome *</label>
+            <input type="text" id="mod-nome">
+        </div>
+
+        <div class="modal-field">
+            <label>Categoria *</label>
+            <select id="mod-categoria">
+                <option value="dolce">Dolce</option>
+                <option value="salato">Salato</option>
             </select>
         </div>
 
-        <div class="punto-info">
-            <strong>ℹ️ Nota:</strong> Seleziona il punto vendita dove lavori. Gli operatori vedranno solo i dati del loro punto.
+        <div class="modal-field">
+            <label>Punto Vendita *</label>
+            <select id="mod-punto">
+                <option value="pisa">Pisa</option>
+                <option value="sesto">Sesto Fiorentino</option>
+                <option value="cosenza">Cosenza</option>
+            </select>
         </div>
 
-        <button type="submit" class="login-btn" id="loginBtn">
-            🚀 Accedi
-        </button>
-    </form>
-
-    <div class="divider"></div>
-
-    <div class="footer">
-        <p>Mage Italia v5.0.6</p>
-        <p style="margin-top: 8px; color: #aaa;">© 2025</p>
+        <div style="margin-top: 20px;">
+            <button class="btn-primary" style="width: 100%;" onclick="salvaProdottoModificato()">💾 Salva Modifiche</button>
+        </div>
     </div>
 </div>
 
 <script>
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
+    const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDYwNzI0MCwiZXhwIjoyMDgwMTgzMjQwfQ.HPgjfA-Y-YOa95_f3MqBqBJ0fm5Gx7YZnYUskLsTe88';
     
     let supabase = null;
+    let currentUserEmail = null;
+    let currentUserId = null;
+    let currentProdottoId = null;
+    let allProdotti = [];
 
-    function initSupabase() {
-        if (window.supabase && !supabase) {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    async function initApp() {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const user = session.user;
+        const role = user.user_metadata?.role;
+        
+        if (role !== 'admin') {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        await loadDipendenti();
+    }
+
+    function showMsg(elementId, text, type) {
+        const el = document.getElementById(elementId);
+        el.className = 'message ' + type;
+        el.textContent = text;
+        setTimeout(() => { el.className = 'message'; }, 4000);
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+        if (tabName === 'prodotti') loadProdotti();
+    }
+
+    function openModal(email, password, userId) {
+        currentUserEmail = email;
+        currentUserId = userId;
+        document.getElementById('modal-email').value = email;
+        document.getElementById('modal-password').value = password;
+        document.getElementById('credenziali-modal').classList.add('active');
+        checkEmailVerified();
+    }
+
+    function closeModal() {
+        document.getElementById('credenziali-modal').classList.remove('active');
+    }
+
+    function closeModalProdotto() {
+        document.getElementById('modifica-prodotto-modal').classList.remove('active');
+    }
+
+    function copyText(elementId) {
+        const el = document.getElementById(elementId);
+        el.select();
+        document.execCommand('copy');
+        showMsg('dipMsg', '📋 Copiato!', 'success');
+    }
+
+    async function checkEmailVerified() {
+        try {
+            const { data: users } = await supabase.auth.admin.listUsers();
+            const user = users?.users.find(u => u.email === currentUserEmail);
+            
+            if (user && user.email_confirmed_at) {
+                document.getElementById('modal-verified').innerHTML = '✅ Email verificata il ' + new Date(user.email_confirmed_at).toLocaleDateString('it-IT');
+                document.getElementById('modal-verified').className = 'verified-status yes';
+            }
+        } catch (err) {
+            console.error('Errore:', err);
         }
     }
 
-    function showMessage(message, type) {
-        const div = document.getElementById('loginMessage');
-        div.className = 'message ' + type;
-        div.textContent = message;
-        div.style.display = 'block';
-    }
+    async function verificaEmailModal() {
+        try {
+            const { error } = await supabase.auth.admin.updateUserById(currentUserId, {
+                email_confirm: true
+            });
 
-    function loadLogo() {
-        const savedLogo = localStorage.getItem('mageitaliaLogo');
-        if (savedLogo) {
-            document.getElementById('appLogo').src = savedLogo;
+            if (error) throw error;
+
+            showMsg('dipMsg', '✅ Email verificata!', 'success');
+            await checkEmailVerified();
+        } catch (err) {
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    window.addEventListener('load', () => {
-        initSupabase();
-        loadLogo();
-    });
+    async function logout() {
+        await supabase.auth.signOut();
+        window.location.href = 'index.html';
+    }
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+    // ========== DIPENDENTI ==========
+    async function loadDipendenti() {
+        try {
+            document.getElementById('dipTable').innerHTML = '<div class="loading">⏳ Caricamento...</div>';
 
-        const username = document.getElementById('username').value.trim().toLowerCase();
-        const password = document.getElementById('password').value;
-        const punto = document.getElementById('punto').value;
-        const loginBtn = document.getElementById('loginBtn');
+            const { data, error } = await supabase
+                .from('dipendenti')
+                .select('*')
+                .eq('attivo', true)
+                .order('punto_vendita_id')
+                .order('nome');
 
-        if (!username || !password || !punto) {
-            showMessage('⚠️ Compila tutti i campi', 'error');
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                document.getElementById('dipTable').innerHTML = '<p class="loading">Nessun dipendente attivo</p>';
+                return;
+            }
+
+            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto</th><th>Username</th><th>Password</th><th>Azioni</th></tr></thead><tbody>';
+
+            for (const d of data) {
+                const username = `${d.nome.toLowerCase()}.${d.cognome.toLowerCase()}`;
+                const email = `${username}@mageitalita.local`;
+                
+                // Cerca userId in Supabase Auth
+                let userId = null;
+                try {
+                    const { data: users } = await supabase.auth.admin.listUsers();
+                    const authUser = users?.users.find(u => u.email === email);
+                    if (authUser) userId = authUser.id;
+                } catch (err) {
+                    console.error('Errore ricerca user:', err);
+                }
+
+                let puntoClass = '';
+                let puntoLabel = d.punto_vendita_id || '—';
+                
+                if (d.punto_vendita_id === 'pisa') {
+                    puntoClass = 'highlight-pisa';
+                    puntoLabel = '<span class="punto-pisa">🔷 Pisa</span>';
+                } else if (d.punto_vendita_id === 'sesto') {
+                    puntoClass = 'highlight-sesto';
+                    puntoLabel = '<span class="punto-sesto">🟣 Sesto Fiorentino</span>';
+                } else if (d.punto_vendita_id === 'cosenza') {
+                    puntoClass = 'highlight-cosenza';
+                    puntoLabel = '<span class="punto-cosenza">🟠 Cosenza</span>';
+                }
+
+                html += `<tr class="${puntoClass}">
+                    <td><strong>${d.nome}</strong></td>
+                    <td>${d.cognome}</td>
+                    <td>${puntoLabel}</td>
+                    <td><span class="code">${username}</span></td>
+                    <td><span class="code">${username}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-copy" onclick="openModal('${email}', '${username}', '${userId}')">🔑 Credenziali</button>
+                            <button class="btn-delete" onclick="deleteDipendente(${d.id})">🗑️ Elimina</button>
+                        </div>
+                    </td>
+                </tr>`;
+            }
+
+            document.getElementById('dipTable').innerHTML = html + '</tbody></table></div>';
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function addDipendente() {
+        const nome = document.getElementById('dipNome').value.trim();
+        const cognome = document.getElementById('dipCognome').value.trim();
+        const punto = document.getElementById('dipPunto').value;
+        const creaLogin = document.getElementById('dipLogin').value;
+
+        if (!nome || !cognome || !punto) {
+            showMsg('dipMsg', '⚠️ Compila tutti i campi', 'error');
             return;
         }
 
-        loginBtn.disabled = true;
-        loginBtn.classList.add('loading');
-        loginBtn.textContent = '⏳ Accesso in corso...';
-
         try {
-            console.log('🔐 Tentativo login:', { username, punto });
+            // 1. Aggiungi dipendente
+            const { error: errDip } = await supabase
+                .from('dipendenti')
+                .insert([{
+                    nome,
+                    cognome,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }]);
 
-            // Costruisci l'email fittizia per il login
+            if (errDip) throw errDip;
+
+            const username = `${nome.toLowerCase()}.${cognome.toLowerCase()}`;
             const email = `${username}@mageitalita.local`;
 
-            // Login su Supabase Auth
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+            let userId = null;
 
-            if (error) {
-                console.error('❌ Errore login:', error);
-                showMessage('❌ Username o password errati', 'error');
-                loginBtn.disabled = false;
-                loginBtn.classList.remove('loading');
-                loginBtn.textContent = '🚀 Accedi';
-                return;
-            }
+            if (creaLogin === 'si') {
+                // 2. Crea login
+                try {
+                    const { data: userData, error: errAuth } = await supabase.auth.admin.createUser({
+                        email: email,
+                        password: username,
+                        email_confirm: true,
+                        user_metadata: {
+                            nome: nome,
+                            cognome: cognome,
+                            punto_vendita: punto,
+                            role: 'operatore'
+                        }
+                    });
 
-            console.log('✅ Login riuscito:', data.user);
+                    if (errAuth && !errAuth.message.includes('already exists')) {
+                        throw errAuth;
+                    }
 
-            // Verifica il metadata dell'utente
-            const userMetadata = data.user.user_metadata || {};
-            const puntoUtente = userMetadata.punto_vendita || null;
-            const ruoloUtente = userMetadata.role || 'operatore';
+                    if (userData) userId = userData.user.id;
 
-            console.log('📋 Metadata utente:', { puntoUtente, ruoloUtente });
-
-            // Verifica che il punto selezionato corrisponda al metadata
-            if (punto !== 'admin' && punto !== puntoUtente) {
-                console.error('❌ Punto vendita non corrisponde. Selezionato:', punto, 'Metadata:', puntoUtente);
-                await supabase.auth.signOut();
-                showMessage(`❌ Accesso negato. Il tuo account è associato a ${puntoUtente}, non a ${punto}`, 'error');
-                loginBtn.disabled = false;
-                loginBtn.classList.remove('loading');
-                loginBtn.textContent = '🚀 Accedi';
-                return;
-            }
-
-            // Verifica il ruolo per admin
-            if (punto === 'admin' && ruoloUtente !== 'admin') {
-                console.error('❌ Accesso admin negato. Ruolo:', ruoloUtente);
-                await supabase.auth.signOut();
-                showMessage('❌ Accesso admin negato. Solo gli amministratori possono accedere qui', 'error');
-                loginBtn.disabled = false;
-                loginBtn.classList.remove('loading');
-                loginBtn.textContent = '🚀 Accedi';
-                return;
-            }
-
-            // ✅ Login riuscito - salva dati locali e reindirizza
-            localStorage.setItem('mageitaliaUser', JSON.stringify({
-                username: username,
-                nome: userMetadata.nome || username.split('.')[0],
-                punto_vendita: puntoUtente,
-                role: ruoloUtente,
-                uid: data.user.id  // ⭐ UID Supabase per query
-            }));
-
-            showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
-            console.log('✅ Redirect a:', punto);
-
-            // ⭐ TUTTI gli operatori → operatore-form.html?punto=X
-            setTimeout(() => {
-                if (punto === 'admin') {
-                    window.location.href = 'admin.html';
-                } else {
-                    // pisa, sesto, cosenza → TUTTI a operatore-form.html
-                    window.location.href = `operatore-form.html?punto=${punto}`;
+                    showMsg('dipMsg', `✅ Dipendente aggiunto! Email: ${email}`, 'success');
+                } catch (err) {
+                    console.error('Errore auth:', err);
+                    showMsg('dipMsg', `⚠️ Dipendente aggiunto ma errore login: ${err.message}`, 'error');
                 }
-            }, 1500);
+            } else {
+                showMsg('dipMsg', '✅ Dipendente aggiunto!', 'success');
+            }
+
+            document.getElementById('dipNome').value = '';
+            document.getElementById('dipCognome').value = '';
+            document.getElementById('dipPunto').value = '';
+            document.getElementById('dipLogin').value = 'no';
+
+            await loadDipendenti();
 
         } catch (err) {
-            console.error('❌ Errore login:', err);
-            showMessage('❌ Errore: ' + err.message, 'error');
-            loginBtn.disabled = false;
-            loginBtn.classList.remove('loading');
-            loginBtn.textContent = '🚀 Accedi';
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
         }
-    });
+    }
+
+    async function deleteDipendente(id) {
+        if (!confirm('Eliminare questo dipendente?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMsg('dipMsg', '✅ Dipendente eliminato', 'success');
+            await loadDipendenti();
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ========== PRODOTTI ==========
+    async function loadProdotti() {
+        try {
+            document.getElementById('prodTable').innerHTML = '<div class="loading">⏳ Caricamento...</div>';
+
+            const { data, error } = await supabase
+                .from('prodotti')
+                .select('*')
+                .eq('attivo', true)
+                .order('nome');
+
+            if (error) throw error;
+
+            allProdotti = data || [];
+
+            if (!allProdotti || allProdotti.length === 0) {
+                document.getElementById('prodTable').innerHTML = '<p class="loading">Nessun prodotto</p>';
+                return;
+            }
+
+            renderProdotti(allProdotti);
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    function filterProdotti() {
+        const search = document.getElementById('prodRicerca').value.toLowerCase();
+        
+        const filtered = allProdotti.filter(p => 
+            p.nome.toLowerCase().includes(search) || 
+            p.codice_prodotto.toLowerCase().includes(search)
+        );
+
+        renderProdotti(filtered);
+    }
+
+    function renderProdotti(prodotti) {
+        let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Azioni</th></tr></thead><tbody>';
+
+        prodotti.forEach(p => {
+            html += `<tr>
+                <td><span class="code">${p.codice_prodotto}</span></td>
+                <td><strong>${p.nome}</strong></td>
+                <td>${p.categoria === 'dolce' ? '🍰 Dolce' : '🥒 Salato'}</td>
+                <td>${p.punto_vendita_id || '—'}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-secondary" onclick="openModificaProdotto(${p.id}, '${p.codice_prodotto}', '${p.nome}', '${p.categoria}', '${p.punto_vendita_id}')" style="padding: 6px 12px; font-size: 11px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Modifica</button>
+                        <button class="btn-delete" onclick="deleteProdotto(${p.id})">🗑️ Elimina</button>
+                    </div>
+                </td>
+            </tr>`;
+        });
+
+        document.getElementById('prodTable').innerHTML = html + '</tbody></table></div>';
+    }
+
+    function openModificaProdotto(id, codice, nome, categoria, punto) {
+        currentProdottoId = id;
+        document.getElementById('mod-codice').value = codice;
+        document.getElementById('mod-nome').value = nome;
+        document.getElementById('mod-categoria').value = categoria;
+        document.getElementById('mod-punto').value = punto;
+        document.getElementById('modifica-prodotto-modal').classList.add('active');
+    }
+
+    async function salvaProdottoModificato() {
+        const codice = document.getElementById('mod-codice').value.trim();
+        const nome = document.getElementById('mod-nome').value.trim();
+        const categoria = document.getElementById('mod-categoria').value;
+        const punto = document.getElementById('mod-punto').value;
+
+        if (!codice || !nome || !categoria || !punto) {
+            showMsg('prodMsg', '⚠️ Compila tutti i campi', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({
+                    codice_prodotto: codice,
+                    nome,
+                    categoria,
+                    punto_vendita_id: punto
+                })
+                .eq('id', currentProdottoId);
+
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto modificato!', 'success');
+            closeModalProdotto();
+            await loadProdotti();
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function addProdotto() {
+        const codice = document.getElementById('prodCodice').value.trim();
+        const nome = document.getElementById('prodNome').value.trim();
+        const categoria = document.getElementById('prodCategoria').value;
+        const punto = document.getElementById('prodPunto').value;
+
+        if (!codice || !nome || !categoria || !punto) {
+            showMsg('prodMsg', '⚠️ Compila tutti i campi', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .insert([{
+                    codice_prodotto: codice,
+                    nome,
+                    categoria,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }]);
+
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto aggiunto!', 'success');
+
+            document.getElementById('prodCodice').value = '';
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodPunto').value = '';
+
+            await loadProdotti();
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function deleteProdotto(id) {
+        if (!confirm('Eliminare questo prodotto?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto eliminato', 'success');
+            await loadProdotti();
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    // ========== REPORT ==========
+    async function downloadExcel() {
+        try {
+            const inizio = document.getElementById('repInizio').value;
+            const fine = document.getElementById('repFine').value;
+            const punto = document.getElementById('repPunto').value;
+            const categoria = document.getElementById('repCategoria').value;
+
+            if (!inizio || !fine) {
+                showMsg('repMsg', '⚠️ Seleziona date', 'error');
+                return;
+            }
+
+            showMsg('repMsg', '⏳ Generazione...', 'success');
+
+            let query = supabase
+                .from('registrazioni_giornaliere')
+                .select('data_registrazione, produzione, recuperati, buttati, prodotti(codice_prodotto, nome, categoria, punto_vendita_id)')
+                .gte('data_registrazione', inizio)
+                .lte('data_registrazione', fine);
+
+            const { data, error } = await query;
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato', 'error');
+                return;
+            }
+
+            let filtered = data;
+            if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
+            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
+
+            if (filtered.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato con questi filtri', 'error');
+                return;
+            }
+
+            const excel = filtered.map(r => ({
+                'Data': r.data_registrazione,
+                'Codice': r.prodotti?.codice_prodotto || '—',
+                'Prodotto': r.prodotti?.nome || '—',
+                'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
+                'Produzione': r.produzione || 0,
+                'Recuperati': r.recuperati || 0,
+                'Scartati': r.buttati || 0,
+                'Totale': (r.produzione || 0) + (r.recuperati || 0) + (r.buttati || 0)
+            }));
+
+            if (XLSX && XLSX.utils && XLSX.writeFile) {
+                const ws = XLSX.utils.json_to_sheet(excel);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Report');
+                XLSX.writeFile(wb, `Mage-Report-${inizio}-to-${fine}.xlsx`);
+                showMsg('repMsg', '✅ Report scaricato!', 'success');
+            }
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('repMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    async function showCharts() {
+        try {
+            const inizio = document.getElementById('repInizio').value;
+            const fine = document.getElementById('repFine').value;
+
+            if (!inizio || !fine) {
+                showMsg('repMsg', '⚠️ Seleziona date', 'error');
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from('registrazioni_giornaliere')
+                .select('id, produzione, recuperati, buttati, prodotti(nome, categoria, punto_vendita_id)')
+                .gte('data_registrazione', inizio)
+                .lte('data_registrazione', fine);
+
+            if (error || !data || data.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato', 'error');
+                return;
+            }
+
+            const prodotti = {};
+            data.forEach(r => {
+                const nome = r.prodotti?.nome || '?';
+                if (!prodotti[nome]) prodotti[nome] = { prod: 0, rec: 0, scar: 0 };
+                prodotti[nome].prod += r.produzione || 0;
+                prodotti[nome].rec += r.recuperati || 0;
+                prodotti[nome].scar += r.buttati || 0;
+            });
+
+            const punti = {};
+            data.forEach(r => {
+                const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                             r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto' : 'Cosenza';
+                if (!punti[punto]) punti[punto] = 0;
+                punti[punto] += r.buttati || 0;
+            });
+
+            document.getElementById('chartsContainer').style.display = 'block';
+
+            const ctx1 = document.getElementById('chartProdotti').getContext('2d');
+            if (window.chart1) window.chart1.destroy();
+            window.chart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(prodotti).slice(0, 10),
+                    datasets: [
+                        { label: 'Produzione', data: Object.values(prodotti).slice(0, 10).map(p => p.prod), backgroundColor: '#4169E1' },
+                        { label: 'Recuperati', data: Object.values(prodotti).slice(0, 10).map(p => p.rec), backgroundColor: '#28a745' },
+                        { label: 'Scartati', data: Object.values(prodotti).slice(0, 10).map(p => p.scar), backgroundColor: '#dc3545' }
+                    ]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+
+            const ctx2 = document.getElementById('chartPunti').getContext('2d');
+            if (window.chart2) window.chart2.destroy();
+            window.chart2 = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(punti),
+                    datasets: [{ data: Object.values(punti), backgroundColor: ['#A01E4E', '#FF6B9D', '#FF69B4'] }]
+                },
+                options: { responsive: true }
+            });
+
+            // Nuovo grafico: Prodotti scartati per punto vendita
+            const prodottiPerPunto = {};
+            data.forEach(r => {
+                const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                             r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto' : 'Cosenza';
+                const prodotto = r.prodotti?.nome || '?';
+                const key = `${prodotto} (${punto})`;
+                
+                if (!prodottiPerPunto[key]) prodottiPerPunto[key] = 0;
+                prodottiPerPunto[key] += r.buttati || 0;
+            });
+
+            // Ordina e prendi i top 12
+            const topProdotti = Object.entries(prodottiPerPunto)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 12);
+
+            const ctx2b = document.getElementById('chartProdottiScartati').getContext('2d');
+            if (window.chart2b) window.chart2b.destroy();
+            window.chart2b = new Chart(ctx2b, {
+                type: 'bar',
+                data: {
+                    labels: topProdotti.map(p => p[0]),
+                    datasets: [{
+                        label: 'Pezzi Scartati',
+                        data: topProdotti.map(p => p[1]),
+                        backgroundColor: [
+                            '#dc3545', '#c82333', '#bd2130', '#a02622',
+                            '#d32f2f', '#c62828', '#b71c1c', '#ad1457',
+                            '#880e4f', '#6a1b9a', '#7b1fa2', '#8e24aa'
+                        ]
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: { x: { beginAtZero: true } },
+                    plugins: {
+                        legend: { display: true },
+                        title: { display: false }
+                    }
+                }
+            });
+
+            const totProd = Object.values(prodotti).reduce((s, p) => s + p.prod, 0);
+            const totRec = Object.values(prodotti).reduce((s, p) => s + p.rec, 0);
+            const totScar = Object.values(prodotti).reduce((s, p) => s + p.scar, 0);
+
+            const ctx3 = document.getElementById('chartTotali').getContext('2d');
+            if (window.chart3) window.chart3.destroy();
+            window.chart3 = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: ['Produzione', 'Recuperati', 'Scartati'],
+                    datasets: [{ label: 'Totali', data: [totProd, totRec, totScar], backgroundColor: ['#4169E1', '#28a745', '#dc3545'] }]
+                },
+                options: { responsive: true, indexAxis: 'y', scales: { x: { beginAtZero: true } } }
+            });
+
+            showMsg('repMsg', '✅ Grafici creati!', 'success');
+
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('repMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    window.addEventListener('load', initApp);
 </script>
 
 </body>
