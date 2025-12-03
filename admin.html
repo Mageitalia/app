@@ -174,6 +174,14 @@
 
         <div class="section">
             <h2>📦 Lista Prodotti</h2>
+            
+            <div class="form-row">
+                <div class="form-group" style="grid-column: 1;">
+                    <label>🔍 Cerca Prodotto</label>
+                    <input type="text" id="prodRicerca" placeholder="Nome, codice..." onkeyup="filterProdotti()">
+                </div>
+            </div>
+
             <div id="prodTable" class="loading">⏳ Caricamento...</div>
         </div>
     </div>
@@ -271,6 +279,45 @@
     </div>
 </div>
 
+<!-- MODAL MODIFICA PRODOTTO -->
+<div id="modifica-prodotto-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModalProdotto()">&times;</span>
+        <h2>✏️ Modifica Prodotto</h2>
+        
+        <div class="modal-field">
+            <label>Codice *</label>
+            <input type="text" id="mod-codice">
+        </div>
+
+        <div class="modal-field">
+            <label>Nome *</label>
+            <input type="text" id="mod-nome">
+        </div>
+
+        <div class="modal-field">
+            <label>Categoria *</label>
+            <select id="mod-categoria">
+                <option value="dolce">Dolce</option>
+                <option value="salato">Salato</option>
+            </select>
+        </div>
+
+        <div class="modal-field">
+            <label>Punto Vendita *</label>
+            <select id="mod-punto">
+                <option value="pisa">Pisa</option>
+                <option value="sesto">Sesto Fiorentino</option>
+                <option value="cosenza">Cosenza</option>
+            </select>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn-primary" style="width: 100%;" onclick="salvaProdottoModificato()">💾 Salva Modifiche</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
     const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDYwNzI0MCwiZXhwIjoyMDgwMTgzMjQwfQ.HPgjfA-Y-YOa95_f3MqBqBJ0fm5Gx7YZnYUskLsTe88';
@@ -278,6 +325,8 @@
     let supabase = null;
     let currentUserEmail = null;
     let currentUserId = null;
+    let currentProdottoId = null;
+    let allProdotti = [];
 
     async function initApp() {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
@@ -327,6 +376,10 @@
 
     function closeModal() {
         document.getElementById('credenziali-modal').classList.remove('active');
+    }
+
+    function closeModalProdotto() {
+        document.getElementById('modifica-prodotto-modal').classList.remove('active');
     }
 
     function copyText(elementId) {
@@ -531,24 +584,87 @@
 
             if (error) throw error;
 
-            if (!data || data.length === 0) {
+            allProdotti = data || [];
+
+            if (!allProdotti || allProdotti.length === 0) {
                 document.getElementById('prodTable').innerHTML = '<p class="loading">Nessun prodotto</p>';
                 return;
             }
 
-            let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Azione</th></tr></thead><tbody>';
+            renderProdotti(allProdotti);
 
-            data.forEach(p => {
-                html += `<tr>
-                    <td><span class="code">${p.codice_prodotto}</span></td>
-                    <td>${p.nome}</td>
-                    <td>${p.categoria}</td>
-                    <td>${p.punto_vendita_id || '—'}</td>
-                    <td><button class="btn-delete" onclick="deleteProdotto(${p.id})">🗑️ Elimina</button></td>
-                </tr>`;
-            });
+        } catch (err) {
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
+        }
+    }
 
-            document.getElementById('prodTable').innerHTML = html + '</tbody></table></div>';
+    function filterProdotti() {
+        const search = document.getElementById('prodRicerca').value.toLowerCase();
+        
+        const filtered = allProdotti.filter(p => 
+            p.nome.toLowerCase().includes(search) || 
+            p.codice_prodotto.toLowerCase().includes(search)
+        );
+
+        renderProdotti(filtered);
+    }
+
+    function renderProdotti(prodotti) {
+        let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Azioni</th></tr></thead><tbody>';
+
+        prodotti.forEach(p => {
+            html += `<tr>
+                <td><span class="code">${p.codice_prodotto}</span></td>
+                <td>${p.nome}</td>
+                <td>${p.categoria}</td>
+                <td>${p.punto_vendita_id || '—'}</td>
+                <td>
+                    <button class="btn-secondary" onclick="openModificaProdotto(${p.id}, '${p.codice_prodotto}', '${p.nome}', '${p.categoria}', '${p.punto_vendita_id}')" style="padding: 6px 12px; font-size: 11px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">✏️ Modifica</button>
+                    <button class="btn-delete" onclick="deleteProdotto(${p.id})">🗑️ Elimina</button>
+                </td>
+            </tr>`;
+        });
+
+        document.getElementById('prodTable').innerHTML = html + '</tbody></table></div>';
+    }
+
+    function openModificaProdotto(id, codice, nome, categoria, punto) {
+        currentProdottoId = id;
+        document.getElementById('mod-codice').value = codice;
+        document.getElementById('mod-nome').value = nome;
+        document.getElementById('mod-categoria').value = categoria;
+        document.getElementById('mod-punto').value = punto;
+        document.getElementById('modifica-prodotto-modal').classList.add('active');
+    }
+
+    async function salvaProdottoModificato() {
+        const codice = document.getElementById('mod-codice').value.trim();
+        const nome = document.getElementById('mod-nome').value.trim();
+        const categoria = document.getElementById('mod-categoria').value;
+        const punto = document.getElementById('mod-punto').value;
+
+        if (!codice || !nome || !categoria || !punto) {
+            showMsg('prodMsg', '⚠️ Compila tutti i campi', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('prodotti')
+                .update({
+                    codice_prodotto: codice,
+                    nome,
+                    categoria,
+                    punto_vendita_id: punto
+                })
+                .eq('id', currentProdottoId);
+
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto modificato!', 'success');
+            closeModalProdotto();
+            await loadProdotti();
 
         } catch (err) {
             console.error('Errore:', err);
