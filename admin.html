@@ -504,6 +504,65 @@
             font-size: 13px;
             color: #555;
         }
+
+        /* Codifica colori per punto vendita */
+        .punto-pisa {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .punto-sesto {
+            background: linear-gradient(135deg, #5b21b6 0%, #6d28d9 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .punto-cosenza {
+            background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Highlight riga basato sul punto */
+        table tr.highlight-pisa {
+            background: #eff6ff;
+        }
+
+        table tr.highlight-pisa:hover {
+            background: #dbeafe;
+        }
+
+        table tr.highlight-sesto {
+            background: #f5f3ff;
+        }
+
+        table tr.highlight-sesto:hover {
+            background: #ede9fe;
+        }
+
+        table tr.highlight-cosenza {
+            background: #fef3f2;
+        }
+
+        table tr.highlight-cosenza:hover {
+            background: #fde2df;
+        }
         
         @media (max-width: 768px) {
             .header { 
@@ -921,10 +980,24 @@
                     console.error('Errore ricerca user:', err);
                 }
 
-                html += `<tr>
+                let puntoClass = '';
+                let puntoLabel = d.punto_vendita_id || '—';
+                
+                if (d.punto_vendita_id === 'pisa') {
+                    puntoClass = 'highlight-pisa';
+                    puntoLabel = '<span class="punto-pisa">🔷 Pisa</span>';
+                } else if (d.punto_vendita_id === 'sesto') {
+                    puntoClass = 'highlight-sesto';
+                    puntoLabel = '<span class="punto-sesto">🟣 Sesto Fiorentino</span>';
+                } else if (d.punto_vendita_id === 'cosenza') {
+                    puntoClass = 'highlight-cosenza';
+                    puntoLabel = '<span class="punto-cosenza">🟠 Cosenza</span>';
+                }
+
+                html += `<tr class="${puntoClass}">
                     <td><strong>${d.nome}</strong></td>
                     <td>${d.cognome}</td>
-                    <td>${d.punto_vendita_id || '—'}</td>
+                    <td>${puntoLabel}</td>
                     <td><span class="code">${username}</span></td>
                     <td><span class="code">${username}</span></td>
                     <td>
