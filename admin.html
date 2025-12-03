@@ -3,143 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Italia - Admin</title>
+    <title>Admin - Mage Italia</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { color: #A01E4E; margin-bottom: 20px; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 10px 20px; background: white; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .tab.active { background: #A01E4E; color: white; }
-        .content { background: white; padding: 20px; border-radius: 8px; display: none; }
-        .content.active { display: block; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 100%; }
-        button { padding: 10px 20px; background: #A01E4E; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #6B1B47; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f5f5f5; font-weight: bold; }
-        .msg { padding: 10px; margin: 10px 0; border-radius: 4px; display: none; }
-        .msg.success { background: #d4edda; color: #155724; display: block; }
-        .msg.error { background: #f8d7da; color: #721c24; display: block; }
-        .logout { float: right; background: #dc3545; }
-        .logout:hover { background: #c82333; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 { color: #A01E4E; font-size: 24px; }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover { background: #c82333; }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #A01E4E;
+            color: white;
+            border-color: #A01E4E;
+        }
+        
+        .tab-btn:hover { border-color: #A01E4E; }
+        
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #A01E4E;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 12px;
+        }
+        
+        input, select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #A01E4E;
+            background: #f9f9f9;
+        }
+        
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #A01E4E;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #6B1B47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(160,30,78,0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+        
+        .btn-secondary:hover { background: #e0e0e0; }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        
+        .btn-delete:hover { background: #c82333; }
+        
+        .message {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 3px solid #dc3545;
+            display: block;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        table thead {
+            background: #f9f9f9;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        table tr:hover { background: #f9f9f9; }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #A01E4E;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .form-row { grid-template-columns: 1fr; }
+            table { font-size: 11px; }
+            table th, table td { padding: 8px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>⚙️ Admin - Mage Italia</h1>
-        <button class="logout" onclick="logout()">🚪 Logout</button>
+    <div class="header">
+        <h1>⚙️ Admin Panel - Mage Italia</h1>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </div>
 
     <div class="tabs">
-        <div class="tab active" onclick="switchTab('dipendenti')">👥 Dipendenti</div>
-        <div class="tab" onclick="switchTab('prodotti')">📦 Prodotti</div>
-        <div class="tab" onclick="switchTab('report')">📊 Report</div>
+        <button class="tab-btn active" onclick="switchTab('dipendenti')">👥 Dipendenti</button>
+        <button class="tab-btn" onclick="switchTab('prodotti')">📦 Prodotti</button>
+        <button class="tab-btn" onclick="switchTab('report')">📊 Report</button>
     </div>
 
-    <!-- TAB DIPENDENTI -->
-    <div id="dipendenti" class="content active">
-        <h2>Dipendenti</h2>
-        
-        <div class="form-row">
-            <div><label>Nome</label><input type="text" id="dipNome"></div>
-            <div><label>Cognome</label><input type="text" id="dipCognome"></div>
-            <div><label>Punto</label><select id="dipPunto"><option value="pisa">Pisa</option><option value="sesto">Sesto</option><option value="cosenza">Cosenza</option></select></div>
-            <div><label>Crea Login</label><select id="dipLogin"><option value="no">No</option><option value="si">Si</option></select></div>
+    <!-- ========== TAB: DIPENDENTI ========== -->
+    <div id="dipendenti" class="tab-panel active">
+        <div class="section">
+            <h2>➕ Nuovo Dipendente</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome *</label>
+                    <input type="text" id="dipNome" placeholder="Antonio">
+                </div>
+                <div class="form-group">
+                    <label>Cognome *</label>
+                    <input type="text" id="dipCognome" placeholder="Rossi">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita *</label>
+                    <select id="dipPunto">
+                        <option value="">-- Seleziona --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Crea Login? *</label>
+                    <select id="dipLogin">
+                        <option value="no">No</option>
+                        <option value="si">Sì</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="addDipendente()">➕ Aggiungi</button>
+                <button class="btn-secondary" onclick="loadDipendenti()">🔄 Ricarica</button>
+            </div>
+
+            <div id="dipMsg" class="message"></div>
         </div>
 
-        <button onclick="aggiungiDipendente()">➕ Aggiungi</button>
-        <button onclick="caricaDipendenti()">🔄 Ricarica</button>
-
-        <div id="dipMsg" class="msg"></div>
-        <div id="dipTable"></div>
+        <div class="section">
+            <h2>📋 Lista Dipendenti</h2>
+            <div id="dipTable" class="loading">⏳ Caricamento...</div>
+        </div>
     </div>
 
-    <!-- TAB PRODOTTI -->
-    <div id="prodotti" class="content">
-        <h2>Prodotti</h2>
-        
-        <div class="form-row">
-            <div><label>Codice</label><input type="text" id="prodCodice"></div>
-            <div><label>Nome</label><input type="text" id="prodNome"></div>
-            <div><label>Categoria</label><select id="prodCat"><option value="dolce">Dolce</option><option value="salato">Salato</option></select></div>
-            <div><label>Punto</label><select id="prodPunto"><option value="pisa">Pisa</option><option value="sesto">Sesto</option><option value="cosenza">Cosenza</option></select></div>
+    <!-- ========== TAB: PRODOTTI ========== -->
+    <div id="prodotti" class="tab-panel">
+        <div class="section">
+            <h2>➕ Nuovo Prodotto</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Codice *</label>
+                    <input type="text" id="prodCodice" placeholder="6387">
+                </div>
+                <div class="form-group">
+                    <label>Nome *</label>
+                    <input type="text" id="prodNome" placeholder="Pane Bianco">
+                </div>
+                <div class="form-group">
+                    <label>Categoria *</label>
+                    <select id="prodCategoria">
+                        <option value="">-- Seleziona --</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita *</label>
+                    <select id="prodPunto">
+                        <option value="">-- Seleziona --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="addProdotto()">➕ Aggiungi</button>
+                <button class="btn-secondary" onclick="loadProdotti()">🔄 Ricarica</button>
+            </div>
+
+            <div id="prodMsg" class="message"></div>
         </div>
 
-        <button onclick="aggiungiProdotto()">➕ Aggiungi</button>
-        <button onclick="caricaProdotti()">🔄 Ricarica</button>
-
-        <div id="prodMsg" class="msg"></div>
-        <div id="prodTable"></div>
+        <div class="section">
+            <h2>📦 Lista Prodotti</h2>
+            <div id="prodTable" class="loading">⏳ Caricamento...</div>
+        </div>
     </div>
 
-    <!-- TAB REPORT -->
-    <div id="report" class="content">
-        <h2>Report</h2>
-        
-        <div class="form-row">
-            <div><label>Data Inizio</label><input type="date" id="repInizio"></div>
-            <div><label>Data Fine</label><input type="date" id="repFine"></div>
-            <div><label>Punto</label><select id="repPunto"><option value="">Tutti</option><option value="pisa">Pisa</option><option value="sesto">Sesto</option><option value="cosenza">Cosenza</option></select></div>
-            <div><label>Categoria</label><select id="repCat"><option value="">Tutte</option><option value="dolce">Dolce</option><option value="salato">Salato</option></select></div>
+    <!-- ========== TAB: REPORT ========== -->
+    <div id="report" class="tab-panel">
+        <div class="section">
+            <h2>📊 Genera Report</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data Inizio *</label>
+                    <input type="date" id="repInizio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fine *</label>
+                    <input type="date" id="repFine">
+                </div>
+                <div class="form-group">
+                    <label>Punto Vendita</label>
+                    <select id="repPunto">
+                        <option value="">-- Tutti --</option>
+                        <option value="pisa">Pisa</option>
+                        <option value="sesto">Sesto Fiorentino</option>
+                        <option value="cosenza">Cosenza</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="repCategoria">
+                        <option value="">-- Tutte --</option>
+                        <option value="dolce">Dolce</option>
+                        <option value="salato">Salato</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-primary" onclick="downloadExcel()">📥 Scarica Excel</button>
+                <button class="btn-secondary" onclick="showCharts()">📊 Mostra Grafici</button>
+            </div>
+
+            <div id="repMsg" class="message"></div>
         </div>
 
-        <button onclick="generaExcel()">📥 Excel</button>
-        <button onclick="mostraGrafici()">📊 Grafici</button>
+        <div id="chartsContainer" style="display: none;">
+            <div class="section">
+                <h2>📈 Andamento Prodotti</h2>
+                <canvas id="chartProdotti"></canvas>
+            </div>
 
-        <div id="repMsg" class="msg"></div>
-        <div id="grafici" style="display: none;">
-            <canvas id="chart1" style="max-height: 300px;"></canvas>
-            <canvas id="chart2" style="max-height: 300px;"></canvas>
-            <canvas id="chart3" style="max-height: 300px;"></canvas>
+            <div class="section">
+                <h2>📍 Scarto per Punto</h2>
+                <canvas id="chartPunti"></canvas>
+            </div>
+
+            <div class="section">
+                <h2>📊 Totali</h2>
+                <canvas id="chartTotali"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    // ========== CONFIG ==========
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
     
-    let sb = null;
+    let supabase = null;
 
-    async function init() {
-        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ========== INIT ==========
+    async function initApp() {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        const { data: { session } } = await sb.auth.getSession();
-        if (!session || session.user.user_metadata.role !== 'admin') {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
             window.location.href = 'index.html';
+            return;
         }
+        
+        const user = session.user;
+        const role = user.user_metadata?.role;
+        
+        if (role !== 'admin') {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        console.log('✅ Admin loggato:', user.email);
+        await loadDipendenti();
     }
 
-    function msg(id, text, type) {
-        const el = document.getElementById(id);
-        el.className = 'msg ' + type;
+    // ========== UTILITY ==========
+    function showMsg(elementId, text, type) {
+        const el = document.getElementById(elementId);
+        el.className = 'message ' + type;
         el.textContent = text;
-        setTimeout(() => el.className = 'msg', 3000);
+        setTimeout(() => { el.className = 'message'; }, 4000);
     }
 
-    function switchTab(name) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(name).classList.add('active');
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabName).classList.add('active');
         event.target.classList.add('active');
         
-        if (name === 'dipendenti') caricaDipendenti();
-        else if (name === 'prodotti') caricaProdotti();
+        if (tabName === 'prodotti') loadProdotti();
     }
 
-    // ===== DIPENDENTI =====
-    async function caricaDipendenti() {
+    async function logout() {
+        await supabase.auth.signOut();
+        window.location.href = 'index.html';
+    }
+
+    // ========== DIPENDENTI ==========
+    async function loadDipendenti() {
         try {
-            const { data, error } = await sb
+            document.getElementById('dipTable').innerHTML = '<div class="loading">⏳ Caricamento...</div>';
+
+            const { data, error } = await supabase
                 .from('dipendenti')
                 .select('*')
                 .order('nome');
@@ -147,81 +475,94 @@
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                document.getElementById('dipTable').innerHTML = '<p>Nessun dipendente</p>';
+                document.getElementById('dipTable').innerHTML = '<p class="loading">Nessun dipendente</p>';
                 return;
             }
 
-            let html = '<table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto</th><th>Attivo</th><th>Azione</th></tr></thead><tbody>';
-            
+            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto</th><th>Attivo</th><th>Azione</th></tr></thead><tbody>';
+
             data.forEach(d => {
                 html += `<tr>
                     <td>${d.nome}</td>
                     <td>${d.cognome}</td>
-                    <td>${d.punto_vendita_id}</td>
+                    <td>${d.punto_vendita_id || '—'}</td>
                     <td>${d.attivo ? '✅' : '❌'}</td>
-                    <td><button onclick="elimDip(${d.id})" style="background: #dc3545;">🗑️</button></td>
+                    <td><button class="btn-delete" onclick="deleteDipendente(${d.id})">🗑️ Elimina</button></td>
                 </tr>`;
             });
 
-            document.getElementById('dipTable').innerHTML = html + '</tbody></table>';
+            document.getElementById('dipTable').innerHTML = html + '</tbody></table></div>';
 
         } catch (err) {
-            msg('dipMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function aggiungiDipendente() {
-        const nome = document.getElementById('dipNome').value;
-        const cognome = document.getElementById('dipCognome').value;
+    async function addDipendente() {
+        const nome = document.getElementById('dipNome').value.trim();
+        const cognome = document.getElementById('dipCognome').value.trim();
         const punto = document.getElementById('dipPunto').value;
         const creaLogin = document.getElementById('dipLogin').value;
 
-        if (!nome || !cognome) {
-            msg('dipMsg', '⚠️ Compila nome e cognome', 'error');
+        if (!nome || !cognome || !punto) {
+            showMsg('dipMsg', '⚠️ Compila tutti i campi', 'error');
             return;
         }
 
         try {
-            const { error } = await sb.from('dipendenti').insert([{
-                nome,
-                cognome,
-                punto_vendita_id: punto,
-                attivo: true
-            }]);
+            const { error } = await supabase
+                .from('dipendenti')
+                .insert([{
+                    nome,
+                    cognome,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }]);
 
             if (error) throw error;
 
-            if (creaLogin === 'si') {
-                const user = `${nome.toLowerCase()}.${cognome.toLowerCase()}`;
-                msg('dipMsg', `✅ Aggiunto!\n👤 ${user}`, 'success');
-            } else {
-                msg('dipMsg', '✅ Aggiunto!', 'success');
-            }
+            showMsg('dipMsg', `✅ Dipendente aggiunto!`, 'success');
 
             document.getElementById('dipNome').value = '';
             document.getElementById('dipCognome').value = '';
-            await caricaDipendenti();
+            document.getElementById('dipPunto').value = '';
+            document.getElementById('dipLogin').value = 'no';
+
+            await loadDipendenti();
 
         } catch (err) {
-            msg('dipMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function elimDip(id) {
-        if (!confirm('Eliminare?')) return;
+    async function deleteDipendente(id) {
+        if (!confirm('Eliminare questo dipendente?')) return;
+
         try {
-            await sb.from('dipendenti').update({ attivo: false }).eq('id', id);
-            msg('dipMsg', '✅ Eliminato', 'success');
-            await caricaDipendenti();
+            const { error } = await supabase
+                .from('dipendenti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMsg('dipMsg', '✅ Dipendente eliminato', 'success');
+            await loadDipendenti();
+
         } catch (err) {
-            msg('dipMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    // ===== PRODOTTI =====
-    async function caricaProdotti() {
+    // ========== PRODOTTI ==========
+    async function loadProdotti() {
         try {
-            const { data, error } = await sb
+            document.getElementById('prodTable').innerHTML = '<div class="loading">⏳ Caricamento...</div>';
+
+            const { data, error } = await supabase
                 .from('prodotti')
                 .select('*')
                 .order('nome');
@@ -229,86 +570,106 @@
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                document.getElementById('prodTable').innerHTML = '<p>Nessun prodotto</p>';
+                document.getElementById('prodTable').innerHTML = '<p class="loading">Nessun prodotto</p>';
                 return;
             }
 
-            let html = '<table><thead><tr><th>Codice</th><th>Nome</th><th>Cat</th><th>Punto</th><th>Azione</th></tr></thead><tbody>';
-            
+            let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Attivo</th><th>Azione</th></tr></thead><tbody>';
+
             data.forEach(p => {
                 html += `<tr>
-                    <td>${p.codice_prodotto}</td>
+                    <td><span class="code">${p.codice_prodotto}</span></td>
                     <td>${p.nome}</td>
                     <td>${p.categoria}</td>
-                    <td>${p.punto_vendita_id}</td>
-                    <td><button onclick="elimProd(${p.id})" style="background: #dc3545;">🗑️</button></td>
+                    <td>${p.punto_vendita_id || '—'}</td>
+                    <td>${p.attivo ? '✅' : '❌'}</td>
+                    <td><button class="btn-delete" onclick="deleteProdotto(${p.id})">🗑️ Elimina</button></td>
                 </tr>`;
             });
 
-            document.getElementById('prodTable').innerHTML = html + '</tbody></table>';
+            document.getElementById('prodTable').innerHTML = html + '</tbody></table></div>';
 
         } catch (err) {
-            msg('prodMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function aggiungiProdotto() {
-        const codice = document.getElementById('prodCodice').value;
-        const nome = document.getElementById('prodNome').value;
-        const cat = document.getElementById('prodCat').value;
+    async function addProdotto() {
+        const codice = document.getElementById('prodCodice').value.trim();
+        const nome = document.getElementById('prodNome').value.trim();
+        const categoria = document.getElementById('prodCategoria').value;
         const punto = document.getElementById('prodPunto').value;
 
-        if (!codice || !nome) {
-            msg('prodMsg', '⚠️ Compila codice e nome', 'error');
+        if (!codice || !nome || !categoria || !punto) {
+            showMsg('prodMsg', '⚠️ Compila tutti i campi', 'error');
             return;
         }
 
         try {
-            await sb.from('prodotti').insert([{
-                codice_prodotto: codice,
-                nome,
-                categoria: cat,
-                punto_vendita_id: punto,
-                attivo: true
-            }]);
+            const { error } = await supabase
+                .from('prodotti')
+                .insert([{
+                    codice_prodotto: codice,
+                    nome,
+                    categoria,
+                    punto_vendita_id: punto,
+                    attivo: true
+                }]);
 
-            msg('prodMsg', '✅ Aggiunto!', 'success');
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto aggiunto!', 'success');
+
             document.getElementById('prodCodice').value = '';
             document.getElementById('prodNome').value = '';
-            await caricaProdotti();
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodPunto').value = '';
+
+            await loadProdotti();
 
         } catch (err) {
-            msg('prodMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function elimProd(id) {
-        if (!confirm('Eliminare?')) return;
+    async function deleteProdotto(id) {
+        if (!confirm('Eliminare questo prodotto?')) return;
+
         try {
-            await sb.from('prodotti').update({ attivo: false }).eq('id', id);
-            msg('prodMsg', '✅ Eliminato', 'success');
-            await caricaProdotti();
+            const { error } = await supabase
+                .from('prodotti')
+                .update({ attivo: false })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMsg('prodMsg', '✅ Prodotto eliminato', 'success');
+            await loadProdotti();
+
         } catch (err) {
-            msg('prodMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('prodMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    // ===== REPORT =====
-    async function generaExcel() {
+    // ========== REPORT ==========
+    async function downloadExcel() {
         try {
             const inizio = document.getElementById('repInizio').value;
             const fine = document.getElementById('repFine').value;
             const punto = document.getElementById('repPunto').value;
-            const cat = document.getElementById('repCat').value;
+            const categoria = document.getElementById('repCategoria').value;
 
             if (!inizio || !fine) {
-                msg('repMsg', '⚠️ Seleziona date', 'error');
+                showMsg('repMsg', '⚠️ Seleziona date valide', 'error');
                 return;
             }
 
-            msg('repMsg', '⏳ Generazione...', 'success');
+            showMsg('repMsg', '⏳ Generazione report...', 'success');
 
-            let query = sb
+            let query = supabase
                 .from('registrazioni_giornaliere')
                 .select('data_registrazione, produzione, recuperati, buttati, prodotti(codice_prodotto, nome, categoria, punto_vendita_id)')
                 .gte('data_registrazione', inizio)
@@ -318,12 +679,17 @@
 
             if (error) throw error;
 
-            let filtered = data || [];
+            if (!data || data.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato per questo periodo', 'error');
+                return;
+            }
+
+            let filtered = data;
             if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
-            if (cat) filtered = filtered.filter(r => r.prodotti?.categoria === cat);
+            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
 
             if (filtered.length === 0) {
-                msg('repMsg', '⚠️ Nessun dato', 'error');
+                showMsg('repMsg', '⚠️ Nessun dato con questi filtri', 'error');
                 return;
             }
 
@@ -331,48 +697,68 @@
                 'Data': r.data_registrazione,
                 'Codice': r.prodotti?.codice_prodotto || '—',
                 'Prodotto': r.prodotti?.nome || '—',
-                'Categoria': r.prodotti?.categoria || '—',
+                'Categoria': r.prodotti?.categoria === 'dolce' ? 'Dolce' : 'Salato',
                 'Produzione': r.produzione || 0,
                 'Recuperati': r.recuperati || 0,
                 'Scartati': r.buttati || 0,
                 'Totale': (r.produzione || 0) + (r.recuperati || 0) + (r.buttati || 0)
             }));
 
-            const ws = XLSX.utils.json_to_sheet(excel);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Report');
-            XLSX.writeFile(wb, `Mage-${inizio}.xlsx`);
-
-            msg('repMsg', '✅ Scaricato!', 'success');
+            if (XLSX && XLSX.utils && XLSX.writeFile) {
+                const ws = XLSX.utils.json_to_sheet(excel);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Report');
+                XLSX.writeFile(wb, `Mage-Report-${inizio}-to-${fine}.xlsx`);
+                showMsg('repMsg', '✅ Report scaricato!', 'success');
+            } else {
+                throw new Error('XLSX non disponibile');
+            }
 
         } catch (err) {
-            msg('repMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('repMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function mostraGrafici() {
+    async function showCharts() {
         try {
             const inizio = document.getElementById('repInizio').value;
             const fine = document.getElementById('repFine').value;
+            const punto = document.getElementById('repPunto').value;
+            const categoria = document.getElementById('repCategoria').value;
 
             if (!inizio || !fine) {
-                msg('repMsg', '⚠️ Seleziona date', 'error');
+                showMsg('repMsg', '⚠️ Seleziona date valide', 'error');
                 return;
             }
 
-            const { data, error } = await sb
+            showMsg('repMsg', '⏳ Caricamento dati...', 'success');
+
+            const { data, error } = await supabase
                 .from('registrazioni_giornaliere')
                 .select('id, produzione, recuperati, buttati, prodotti(nome, categoria, punto_vendita_id)')
                 .gte('data_registrazione', inizio)
                 .lte('data_registrazione', fine);
 
-            if (error || !data || data.length === 0) {
-                msg('repMsg', '⚠️ Nessun dato', 'error');
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato', 'error');
                 return;
             }
 
+            let filtered = data;
+            if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
+            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
+
+            if (filtered.length === 0) {
+                showMsg('repMsg', '⚠️ Nessun dato con questi filtri', 'error');
+                return;
+            }
+
+            // Elabora dati
             const prodotti = {};
-            data.forEach(r => {
+            filtered.forEach(r => {
                 const nome = r.prodotti?.nome || '?';
                 if (!prodotti[nome]) prodotti[nome] = { prod: 0, rec: 0, scar: 0 };
                 prodotti[nome].prod += r.produzione || 0;
@@ -380,36 +766,71 @@
                 prodotti[nome].scar += r.buttati || 0;
             });
 
-            document.getElementById('grafici').style.display = 'block';
+            const punti = {};
+            filtered.forEach(r => {
+                const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                             r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto' : 'Cosenza';
+                if (!punti[punto]) punti[punto] = 0;
+                punti[punto] += r.buttati || 0;
+            });
 
-            const ctx1 = document.getElementById('chart1').getContext('2d');
-            if (window.c1) window.c1.destroy();
-            window.c1 = new Chart(ctx1, {
+            // Mostra container
+            document.getElementById('chartsContainer').style.display = 'block';
+
+            // Grafico 1: Prodotti
+            const ctx1 = document.getElementById('chartProdotti').getContext('2d');
+            if (window.chart1) window.chart1.destroy();
+            window.chart1 = new Chart(ctx1, {
                 type: 'bar',
                 data: {
                     labels: Object.keys(prodotti).slice(0, 10),
                     datasets: [
-                        { label: 'Prod', data: Object.values(prodotti).slice(0, 10).map(p => p.prod), backgroundColor: '#4169E1' },
-                        { label: 'Rec', data: Object.values(prodotti).slice(0, 10).map(p => p.rec), backgroundColor: '#28a745' },
-                        { label: 'Scar', data: Object.values(prodotti).slice(0, 10).map(p => p.scar), backgroundColor: '#dc3545' }
+                        { label: 'Produzione', data: Object.values(prodotti).slice(0, 10).map(p => p.prod), backgroundColor: '#4169E1' },
+                        { label: 'Recuperati', data: Object.values(prodotti).slice(0, 10).map(p => p.rec), backgroundColor: '#28a745' },
+                        { label: 'Scartati', data: Object.values(prodotti).slice(0, 10).map(p => p.scar), backgroundColor: '#dc3545' }
                     ]
+                },
+                options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true } } }
+            });
+
+            // Grafico 2: Punti
+            const ctx2 = document.getElementById('chartPunti').getContext('2d');
+            if (window.chart2) window.chart2.destroy();
+            window.chart2 = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(punti),
+                    datasets: [{ data: Object.values(punti), backgroundColor: ['#A01E4E', '#FF6B9D', '#FF69B4'] }]
                 },
                 options: { responsive: true }
             });
 
-            msg('repMsg', '✅ Grafici creati!', 'success');
+            // Grafico 3: Totali
+            const totProd = Object.values(prodotti).reduce((s, p) => s + p.prod, 0);
+            const totRec = Object.values(prodotti).reduce((s, p) => s + p.rec, 0);
+            const totScar = Object.values(prodotti).reduce((s, p) => s + p.scar, 0);
+
+            const ctx3 = document.getElementById('chartTotali').getContext('2d');
+            if (window.chart3) window.chart3.destroy();
+            window.chart3 = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: ['Produzione', 'Recuperati', 'Scartati'],
+                    datasets: [{ label: 'Totali', data: [totProd, totRec, totScar], backgroundColor: ['#4169E1', '#28a745', '#dc3545'] }]
+                },
+                options: { responsive: true, indexAxis: 'y', scales: { x: { beginAtZero: true } } }
+            });
+
+            showMsg('repMsg', '✅ Grafici creati!', 'success');
 
         } catch (err) {
-            msg('repMsg', '❌ ' + err.message, 'error');
+            console.error('Errore:', err);
+            showMsg('repMsg', '❌ Errore: ' + err.message, 'error');
         }
     }
 
-    async function logout() {
-        await sb.auth.signOut();
-        window.location.href = 'index.html';
-    }
-
-    window.addEventListener('load', init);
+    // ========== START ==========
+    window.addEventListener('load', initApp);
 </script>
 
 </body>
