@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,25 +25,26 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            background: linear-gradient(135deg, #003D82 0%, #001a3d 100%);
             color: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         }
 
         .header-left h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
+            font-size: 36px;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .header-left p {
-            font-size: 14px;
-            opacity: 0.9;
+            font-size: 16px;
+            opacity: 0.95;
         }
 
         .header-right {
@@ -72,16 +73,17 @@
         }
 
         .btn-save {
-            background: #28a745;
+            background: #003D82;
             color: white;
-            padding: 12px 30px;
-            font-size: 15px;
+            padding: 14px 35px;
+            font-size: 16px;
+            font-weight: 700;
         }
 
         .btn-save:hover {
-            background: #218838;
+            background: #002550;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 61, 130, 0.3);
         }
 
         .btn-save:disabled {
@@ -129,40 +131,43 @@
 
         .date-section {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             display: flex;
-            gap: 20px;
+            gap: 25px;
             align-items: flex-end;
         }
 
         .date-group {
             flex: 1;
-            max-width: 300px;
+            max-width: 350px;
         }
 
         .date-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 13px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #003D82;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .date-group input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .date-group input:focus {
             outline: none;
-            border-color: #A01E4E;
-            box-shadow: 0 0 0 3px rgba(160, 30, 78, 0.1);
+            border-color: #003D82;
+            box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
         }
 
         .tabelle-container {
@@ -174,98 +179,109 @@
         .tabella-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
         .tabella-card h2 {
-            color: #A01E4E;
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #A01E4E;
-            padding-bottom: 10px;
+            color: #003D82;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+            border-bottom: 3px solid #003D82;
+            padding-bottom: 12px;
         }
 
         .table-container {
             overflow-x: auto;
-            max-height: 600px;
+            max-height: 700px;
             overflow-y: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 15px;
         }
 
         table thead {
             position: sticky;
             top: 0;
-            background: linear-gradient(135deg, #A01E4E 0%, #6B1B47 100%);
+            background: linear-gradient(135deg, #003D82 0%, #001a3d 100%);
             color: white;
             z-index: 10;
         }
 
         table th {
-            padding: 12px;
+            padding: 16px;
             text-align: left;
-            font-weight: 600;
-            border-bottom: 2px solid #A01E4E;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #003D82;
         }
 
         table td {
-            padding: 10px 12px;
+            padding: 14px 16px;
             border-bottom: 1px solid #e0e0e0;
+            font-size: 15px;
         }
 
         table tbody tr:hover {
-            background: #f9f9f9;
+            background: #f0f4f8;
         }
 
         .codice {
-            font-weight: 600;
-            color: #A01E4E;
-            font-family: monospace;
-            font-size: 11px;
+            font-weight: 700;
+            color: #003D82;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .prodotto {
-            font-weight: 500;
-            color: #333;
+            font-weight: 600;
+            color: #222;
+            font-size: 14px;
         }
 
         .input-number {
-            width: 60px;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            width: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
             text-align: center;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
+            background: white;
         }
 
         .input-number:focus {
             outline: none;
-            border-color: #A01E4E;
-            box-shadow: 0 0 0 2px rgba(160, 30, 78, 0.1);
+            border-color: #003D82;
+            box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
+            background: #f0f4f8;
         }
 
         .stats-row {
-            background: #f5f5f5;
-            padding: 12px;
+            background: #f0f4f8;
+            padding: 16px;
             border-radius: 8px;
-            margin-top: 15px;
+            margin-top: 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 15px;
+            border-left: 4px solid #003D82;
         }
 
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
         }
 
         .stat-item:last-child {
@@ -273,15 +289,17 @@
         }
 
         .stat-label {
-            font-size: 12px;
-            color: #666;
-            font-weight: 600;
+            font-size: 14px;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .stat-value {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 700;
-            color: #A01E4E;
+            color: #003D82;
         }
 
         @media (max-width: 1024px) {
@@ -580,16 +598,18 @@
 
         try {
             console.log('📅 Caricando dati per:', data);
+            console.log('🔑 UUID Operatore:', operatore.uid);
 
             const { data: registrazioni, error } = await supabase
                 .from('registrazioni_giornaliere')
                 .select('prodotto_id, recuperati, buttati')
-                .eq('dipendente_id', operatore.uid)
+                .eq('dipendente_id', operatore.uid.toString())
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
             if (error) {
                 console.error('❌ Errore caricamento dati:', error);
+                console.error('📋 Dettagli errore:', error.message);
                 return;
             }
 
@@ -713,7 +733,7 @@
             const { error: errDel } = await supabase
                 .from('registrazioni_giornaliere')
                 .delete()
-                .eq('dipendente_id', operatore.uid)
+                .eq('dipendente_id', operatore.uid.toString())
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
