@@ -728,8 +728,8 @@
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
-            const { error: errInsert } = await supabase.from('registrazioni_giornaliere').insert(datiDaSalvare);
-            if (errInsert) throw errInsert;
+            const { error: errInsert, data: dataInsert } = await supabase.from('registrazioni_giornaliere').insert(datiDaSalvare);
+            if (errInsert) { console.error("❌ ERRORE:", errInsert); throw errInsert; } console.log("✅ SALVATO:", dataInsert);
 
             showMessage(`✅ ${datiDaSalvare.length} registrazioni salvate!`, 'success');
             btn.disabled = false;
