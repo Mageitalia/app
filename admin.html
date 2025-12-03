@@ -762,6 +762,11 @@
             </div>
 
             <div class="section">
+                <h2>🗑️ Prodotti più Scartati per Punto Vendita</h2>
+                <canvas id="chartProdottiScartati"></canvas>
+            </div>
+
+            <div class="section">
                 <h2>📊 Totali</h2>
                 <canvas id="chartTotali"></canvas>
             </div>
@@ -955,6 +960,7 @@
                 .from('dipendenti')
                 .select('*')
                 .eq('attivo', true)
+                .order('punto_vendita_id')
                 .order('nome');
 
             if (error) throw error;
@@ -1399,6 +1405,50 @@
                     datasets: [{ data: Object.values(punti), backgroundColor: ['#A01E4E', '#FF6B9D', '#FF69B4'] }]
                 },
                 options: { responsive: true }
+            });
+
+            // Nuovo grafico: Prodotti scartati per punto vendita
+            const prodottiPerPunto = {};
+            data.forEach(r => {
+                const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
+                             r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto' : 'Cosenza';
+                const prodotto = r.prodotti?.nome || '?';
+                const key = `${prodotto} (${punto})`;
+                
+                if (!prodottiPerPunto[key]) prodottiPerPunto[key] = 0;
+                prodottiPerPunto[key] += r.buttati || 0;
+            });
+
+            // Ordina e prendi i top 12
+            const topProdotti = Object.entries(prodottiPerPunto)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 12);
+
+            const ctx2b = document.getElementById('chartProdottiScartati').getContext('2d');
+            if (window.chart2b) window.chart2b.destroy();
+            window.chart2b = new Chart(ctx2b, {
+                type: 'bar',
+                data: {
+                    labels: topProdotti.map(p => p[0]),
+                    datasets: [{
+                        label: 'Pezzi Scartati',
+                        data: topProdotti.map(p => p[1]),
+                        backgroundColor: [
+                            '#dc3545', '#c82333', '#bd2130', '#a02622',
+                            '#d32f2f', '#c62828', '#b71c1c', '#ad1457',
+                            '#880e4f', '#6a1b9a', '#7b1fa2', '#8e24aa'
+                        ]
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: { x: { beginAtZero: true } },
+                    plugins: {
+                        legend: { display: true },
+                        title: { display: false }
+                    }
+                }
             });
 
             const totProd = Object.values(prodotti).reduce((s, p) => s + p.prod, 0);
