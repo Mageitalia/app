@@ -563,13 +563,13 @@
                 <td><span class="codice">${p.codice_prodotto}</span></td>
                 <td><span class="prodotto">${p.nome}</span></td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="prod" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="rec" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="scar" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: center;">
                     <button class="btn-delete" onclick="segnaPerEliminazione(${p.id})">🗑️</button>
@@ -583,13 +583,13 @@
                 <td><span class="codice">${p.codice_prodotto}</span></td>
                 <td><span class="prodotto">${p.nome}</span></td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="prod" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="rec" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: right;">
-                    <input type="number" class="input-number" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
+                    <input type="number" class="input-number" data-field="scar" min="0" value="" onchange="aggiornaStats()">
                 </td>
                 <td style="text-align: center;">
                     <button class="btn-delete" onclick="segnaPerEliminazione(${p.id})">🗑️</button>
@@ -614,14 +614,14 @@
 
             if (error) return;
 
-            document.querySelectorAll('.input-number').forEach(input => input.value = '0');
+            document.querySelectorAll('.input-number').forEach(input => input.value = '');
 
             registrazioni.forEach(r => {
                 const row = document.querySelector(`[data-prodotto-id="${r.prodotto_id}"]`);
                 if (row) {
-                    row.querySelector('[data-field="prod"]').value = r.produzione || 0;
-                    row.querySelector('[data-field="rec"]').value = r.recuperati || 0;
-                    row.querySelector('[data-field="scar"]').value = r.buttati || 0;
+                    row.querySelector('[data-field="prod"]').value = r.produzione || '';
+                    row.querySelector('[data-field="rec"]').value = r.recuperati || '';
+                    row.querySelector('[data-field="scar"]').value = r.buttati || '';
                 }
             });
 
@@ -657,9 +657,9 @@
     function segnaPerEliminazione(prodottoId) {
         if (!confirm('Cancellare questa registrazione?')) return;
         const row = document.querySelector(`[data-prodotto-id="${prodottoId}"]`);
-        row.querySelector('[data-field="prod"]').value = '0';
-        row.querySelector('[data-field="rec"]').value = '0';
-        row.querySelector('[data-field="scar"]').value = '0';
+        row.querySelector('[data-field="prod"]').value = '';
+        row.querySelector('[data-field="rec"]').value = '';
+        row.querySelector('[data-field="scar"]').value = '';
         aggiornaStats();
     }
 
