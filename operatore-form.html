@@ -6,6 +6,12 @@
     <title>Mage Italia - Registrazione Pezzi</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            --color-primary: #003D82;
+            --color-dark: #001a3d;
+            --color-light: #f0f4f8;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +31,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #003D82 0%, #001a3d 100%);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
             color: white;
             padding: 30px;
             border-radius: 12px;
@@ -73,7 +79,7 @@
         }
 
         .btn-save {
-            background: #003D82;
+            background: var(--color-primary);
             color: white;
             padding: 14px 35px;
             font-size: 16px;
@@ -81,9 +87,9 @@
         }
 
         .btn-save:hover {
-            background: #002550;
+            background: var(--color-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 61, 130, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn-save:disabled {
@@ -149,7 +155,7 @@
             display: block;
             margin-bottom: 10px;
             font-weight: 700;
-            color: #003D82;
+            color: var(--color-primary);
             font-size: 15px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -166,8 +172,8 @@
 
         .date-group input:focus {
             outline: none;
-            border-color: #003D82;
-            box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(123, 45, 191, 0.1);
         }
 
         .tabelle-container {
@@ -184,11 +190,11 @@
         }
 
         .tabella-card h2 {
-            color: #003D82;
+            color: var(--color-primary);
             margin-bottom: 20px;
             font-size: 22px;
             font-weight: 700;
-            border-bottom: 3px solid #003D82;
+            border-bottom: 3px solid var(--color-primary);
             padding-bottom: 12px;
         }
 
@@ -207,7 +213,7 @@
         table thead {
             position: sticky;
             top: 0;
-            background: linear-gradient(135deg, #003D82 0%, #001a3d 100%);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
             color: white;
             z-index: 10;
         }
@@ -219,7 +225,7 @@
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 2px solid #003D82;
+            border-bottom: 2px solid var(--color-primary);
         }
 
         table td {
@@ -229,12 +235,12 @@
         }
 
         table tbody tr:hover {
-            background: #f0f4f8;
+            background: var(--color-light);
         }
 
         .codice {
             font-weight: 700;
-            color: #003D82;
+            color: var(--color-primary);
             font-family: 'Courier New', monospace;
             font-size: 13px;
             text-transform: uppercase;
@@ -260,20 +266,20 @@
 
         .input-number:focus {
             outline: none;
-            border-color: #003D82;
-            box-shadow: 0 0 0 3px rgba(0, 61, 130, 0.1);
-            background: #f0f4f8;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(123, 45, 191, 0.1);
+            background: var(--color-light);
         }
 
         .stats-row {
-            background: #f0f4f8;
+            background: var(--color-light);
             padding: 16px;
             border-radius: 8px;
             margin-top: 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            border-left: 4px solid #003D82;
+            border-left: 4px solid var(--color-primary);
         }
 
         .stat-item {
@@ -299,7 +305,7 @@
         .stat-value {
             font-size: 20px;
             font-weight: 700;
-            color: #003D82;
+            color: var(--color-primary);
         }
 
         @media (max-width: 1024px) {
@@ -484,6 +490,9 @@
 
         console.log('📍 Punto:', punto_vendita_id);
 
+        // Applica colori dinamici
+        applicaColoriPunto(punto_vendita_id);
+
         // Header
         document.getElementById('operatoreName').textContent = operatore.nome || 'Operatore';
         document.getElementById('operatorePunto').textContent = `📍 ${getPuntoLabel(punto_vendita_id)}`;
@@ -497,6 +506,39 @@
 
         // Event listener data
         document.getElementById('data').addEventListener('change', caricaDatiGiorno);
+    }
+
+    function applicaColoriPunto(punto) {
+        const colori = {
+            'pisa': {
+                primary: '#003D82',
+                dark: '#001a3d',
+                light: '#f0f4f8',
+                nome: 'Blu'
+            },
+            'sesto': {
+                primary: '#7B2DBF',
+                dark: '#4a1a80',
+                light: '#f3e8ff',
+                nome: 'Viola'
+            },
+            'cosenza': {
+                primary: '#DC2626',
+                dark: '#7f1d1d',
+                light: '#fef2f2',
+                nome: 'Rosso'
+            }
+        };
+
+        const tema = colori[punto] || colori['pisa'];
+        
+        console.log(`🎨 Tema ${tema.nome} applicato per ${punto}`);
+
+        // Applica CSS variabili
+        const root = document.documentElement;
+        root.style.setProperty('--color-primary', tema.primary);
+        root.style.setProperty('--color-dark', tema.dark);
+        root.style.setProperty('--color-light', tema.light);
     }
 
     function getPuntoLabel(punto) {
