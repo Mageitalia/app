@@ -386,27 +386,25 @@
                 return;
             }
 
-            // Login riuscito - salva dati locali e reindirizza
+            // ✅ Login riuscito - salva dati locali e reindirizza
             localStorage.setItem('mageitaliaUser', JSON.stringify({
                 username: username,
-                nome: userMetadata.nome,
+                nome: userMetadata.nome || username.split('.')[0],
                 punto_vendita: puntoUtente,
-                role: ruoloUtente
+                role: ruoloUtente,
+                uid: data.user.id  // ⭐ UID Supabase per query
             }));
 
             showMessage('✅ Login riuscito! Reindirizzamento...', 'success');
-            console.log('✅ Reindirizzamento a:', punto);
+            console.log('✅ Redirect a:', punto);
 
-            // Reindirizza in base al punto
+            // ⭐ TUTTI gli operatori → operatore-form.html?punto=X
             setTimeout(() => {
                 if (punto === 'admin') {
                     window.location.href = 'admin.html';
-                } else if (punto === 'pisa') {
-                    window.location.href = 'operatore-pisa.html';
-                } else if (punto === 'sesto') {
-                    window.location.href = 'operatore-sesto.html';
-                } else if (punto === 'cosenza') {
-                    window.location.href = 'operatore-cosenza.html';
+                } else {
+                    // pisa, sesto, cosenza → TUTTI a operatore-form.html
+                    window.location.href = `operatore-form.html?punto=${punto}`;
                 }
             }, 1500);
 
