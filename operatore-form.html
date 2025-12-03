@@ -700,9 +700,11 @@
                     if (!rec) {
                         rec = { 
                             prodotto_id: prodottoId, 
-                            produzione: 0, recuperati: 0, buttati: 0,
+                            produzione: 0, 
+                            recuperati: 0, 
+                            buttati: 0,
                             data_registrazione: data,
-                            dipendente_id: operatore.uid,
+                            dipendente_id: operatore.uid.toString(),
                             punto_vendita_id: punto_vendita_id,
                             categoria: prodottiDelci.find(p => p.id === prodottoId) ? 'dolce' : 'salato'
                         };
@@ -722,7 +724,7 @@
             }
 
             await supabase.from('registrazioni_giornaliere').delete()
-                .eq('dipendente_id', operatore.uid)
+                .eq('dipendente_id', operatore.uid.toString())
                 .eq('punto_vendita_id', punto_vendita_id)
                 .eq('data_registrazione', data);
 
