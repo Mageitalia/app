@@ -9,230 +9,60 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-            color: #333;
-        }
-        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; color: #333; }
         .container { max-width: 1400px; margin: 0 auto; }
-        
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .header h1 { color: #A01E4E; font-size: 24px; }
-        
-        .logout-btn {
-            padding: 10px 20px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
+        .logout-btn { padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .logout-btn:hover { background: #c82333; }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .tab-btn {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .tab-btn.active {
-            background: #A01E4E;
-            color: white;
-            border-color: #A01E4E;
-        }
-        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 20px; background: white; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .tab-btn.active { background: #A01E4E; color: white; border-color: #A01E4E; }
         .tab-btn:hover { border-color: #A01E4E; }
-        
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
-        
-        .section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .section h2 {
-            color: #A01E4E;
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-            font-size: 12px;
-        }
-        
-        input, select {
-            padding: 8px 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 13px;
-            font-family: inherit;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #A01E4E;
-            background: #f9f9f9;
-        }
-        
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #A01E4E;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #6B1B47;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(160,30,78,0.3);
-        }
-        
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            border: 2px solid #ddd;
-        }
-        
+        .section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { color: #A01E4E; margin-bottom: 15px; font-size: 18px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: 600; color: #333; font-size: 12px; }
+        input, select { padding: 8px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 13px; font-family: inherit; }
+        input:focus, select:focus { outline: none; border-color: #A01E4E; background: #f9f9f9; }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.3s; }
+        .btn-primary { background: #A01E4E; color: white; }
+        .btn-primary:hover { background: #6B1B47; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(160,30,78,0.3); }
+        .btn-secondary { background: #f0f0f0; color: #333; border: 2px solid #ddd; }
         .btn-secondary:hover { background: #e0e0e0; }
-        
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-            padding: 6px 12px;
-            font-size: 11px;
-        }
-        
+        .btn-delete { background: #dc3545; color: white; padding: 6px 12px; font-size: 11px; }
         .btn-delete:hover { background: #c82333; }
-        
-        .message {
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            display: none;
-        }
-        
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 3px solid #28a745;
-            display: block;
-        }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 3px solid #dc3545;
-            display: block;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin-top: 15px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-        
-        table thead {
-            background: #f9f9f9;
-            border-bottom: 2px solid #ddd;
-        }
-        
-        table th {
-            padding: 10px 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
+        .btn-verify { background: #28a745; color: white; padding: 6px 12px; font-size: 11px; }
+        .btn-verify:hover { background: #218838; }
+        .btn-copy { background: #007bff; color: white; padding: 6px 12px; font-size: 11px; }
+        .btn-copy:hover { background: #0056b3; }
+        .message { padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; display: none; }
+        .message.success { background: #d4edda; color: #155724; border-left: 3px solid #28a745; display: block; }
+        .message.error { background: #f8d7da; color: #721c24; border-left: 3px solid #dc3545; display: block; }
+        .table-container { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        table thead { background: #f9f9f9; border-bottom: 2px solid #ddd; }
+        table th { padding: 10px 12px; text-align: left; font-weight: 600; }
+        table td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; }
         table tr:hover { background: #f9f9f9; }
-        
-        .code {
-            background: #f5f5f5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #A01E4E;
-            font-weight: 600;
-        }
-        
+        .code { background: #f5f5f5; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; font-weight: 600; }
+        .loading { text-align: center; padding: 30px; color: #A01E4E; font-weight: 600; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #999; }
+        .modal-close:hover { color: #333; }
+        .modal h2 { color: #A01E4E; margin-bottom: 20px; }
+        .modal-field { margin-bottom: 15px; }
+        .modal-field label { display: block; font-weight: 600; margin-bottom: 5px; }
+        .modal-field input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-family: monospace; }
+        .modal-field input:focus { outline: none; border-color: #A01E4E; }
+        .copy-btn { float: right; background: #007bff; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .copy-btn:hover { background: #0056b3; }
         @media (max-width: 768px) {
             .header { flex-direction: column; gap: 15px; text-align: center; }
             .form-row { grid-template-columns: 1fr; }
@@ -255,7 +85,7 @@
         <button class="tab-btn" onclick="switchTab('report')">📊 Report</button>
     </div>
 
-    <!-- ========== TAB: DIPENDENTI ========== -->
+    <!-- TAB DIPENDENTI -->
     <div id="dipendenti" class="tab-panel active">
         <div class="section">
             <h2>➕ Nuovo Dipendente</h2>
@@ -288,7 +118,7 @@
             </div>
 
             <div class="btn-row">
-                <button class="btn-primary" onclick="addDipendente()">➕ Aggiungi</button>
+                <button class="btn-primary" onclick="addDipendente()">➕ Aggiungi Dipendente</button>
                 <button class="btn-secondary" onclick="loadDipendenti()">🔄 Ricarica</button>
             </div>
 
@@ -296,12 +126,12 @@
         </div>
 
         <div class="section">
-            <h2>📋 Lista Dipendenti</h2>
+            <h2>📋 Lista Dipendenti Attivi</h2>
             <div id="dipTable" class="loading">⏳ Caricamento...</div>
         </div>
     </div>
 
-    <!-- ========== TAB: PRODOTTI ========== -->
+    <!-- TAB PRODOTTI -->
     <div id="prodotti" class="tab-panel">
         <div class="section">
             <h2>➕ Nuovo Prodotto</h2>
@@ -335,7 +165,7 @@
             </div>
 
             <div class="btn-row">
-                <button class="btn-primary" onclick="addProdotto()">➕ Aggiungi</button>
+                <button class="btn-primary" onclick="addProdotto()">➕ Aggiungi Prodotto</button>
                 <button class="btn-secondary" onclick="loadProdotti()">🔄 Ricarica</button>
             </div>
 
@@ -348,7 +178,7 @@
         </div>
     </div>
 
-    <!-- ========== TAB: REPORT ========== -->
+    <!-- TAB REPORT -->
     <div id="report" class="tab-panel">
         <div class="section">
             <h2>📊 Genera Report</h2>
@@ -408,16 +238,52 @@
     </div>
 </div>
 
+<!-- MODAL CREDENZIALI -->
+<div id="credenziali-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2>👤 Credenziali Dipendente</h2>
+        
+        <div class="modal-field">
+            <label>📧 Email:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="modal-email" readonly>
+                <button class="copy-btn" onclick="copyText('modal-email')">📋 Copia</button>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>🔑 Password:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="modal-password" readonly>
+                <button class="copy-btn" onclick="copyText('modal-password')">📋 Copia</button>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>✅ Email Verificata:</label>
+            <div id="modal-verified" style="padding: 10px; background: #fff3cd; border-radius: 4px; color: #856404;">⏳ Non verificata</div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn-verify" style="width: 100%;" onclick="verificaEmailModal()">✉️ Verifica Email Ora</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // ========== CONFIG ==========
     const SUPABASE_URL = 'https://uoeprypjgybmpfstnrih.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2MDcyNDAsImV4cCI6MjA4MDE4MzI0MH0.dDlthk4idy21aWEldrqB1U9-5awh42rC9v6fa0_mFyI';
+    const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvZXByeXBqZ3libXBmc3RucmloIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDYwNzI0MCwiZXhwIjoyMDgwMTgzMjQwfQ.HPgjfA-Y-YOa95_f3MqBqBJ0fm5Gx7YZnYUskLsTe88';
     
     let supabase = null;
+    let supabaseAdmin = null;
+    let currentUserEmail = null;
+    let currentUserId = null;
 
-    // ========== INIT ==========
     async function initApp() {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
         
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -435,11 +301,9 @@
             return;
         }
         
-        console.log('✅ Admin loggato:', user.email);
         await loadDipendenti();
     }
 
-    // ========== UTILITY ==========
     function showMsg(elementId, text, type) {
         const el = document.getElementById(elementId);
         el.className = 'message ' + type;
@@ -450,11 +314,59 @@
     function switchTab(tabName) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
         document.getElementById(tabName).classList.add('active');
         event.target.classList.add('active');
-        
         if (tabName === 'prodotti') loadProdotti();
+    }
+
+    function openModal(email, password, userId) {
+        currentUserEmail = email;
+        currentUserId = userId;
+        document.getElementById('modal-email').value = email;
+        document.getElementById('modal-password').value = password;
+        document.getElementById('credenziali-modal').classList.add('active');
+        checkEmailVerified();
+    }
+
+    function closeModal() {
+        document.getElementById('credenziali-modal').classList.remove('active');
+    }
+
+    function copyText(elementId) {
+        const el = document.getElementById(elementId);
+        el.select();
+        document.execCommand('copy');
+        showMsg('dipMsg', '📋 Copiato!', 'success');
+    }
+
+    async function checkEmailVerified() {
+        try {
+            const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+            const user = users?.users.find(u => u.email === currentUserEmail);
+            
+            if (user && user.email_confirmed_at) {
+                document.getElementById('modal-verified').innerHTML = '✅ Email verificata il ' + new Date(user.email_confirmed_at).toLocaleDateString('it-IT');
+                document.getElementById('modal-verified').style.background = '#d4edda';
+                document.getElementById('modal-verified').style.color = '#155724';
+            }
+        } catch (err) {
+            console.error('Errore:', err);
+        }
+    }
+
+    async function verificaEmailModal() {
+        try {
+            const { error } = await supabaseAdmin.auth.admin.updateUserById(currentUserId, {
+                email_confirm: true
+            });
+
+            if (error) throw error;
+
+            showMsg('dipMsg', '✅ Email verificata!', 'success');
+            await checkEmailVerified();
+        } catch (err) {
+            showMsg('dipMsg', '❌ Errore: ' + err.message, 'error');
+        }
     }
 
     async function logout() {
@@ -470,26 +382,44 @@
             const { data, error } = await supabase
                 .from('dipendenti')
                 .select('*')
+                .eq('attivo', true)
                 .order('nome');
 
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                document.getElementById('dipTable').innerHTML = '<p class="loading">Nessun dipendente</p>';
+                document.getElementById('dipTable').innerHTML = '<p class="loading">Nessun dipendente attivo</p>';
                 return;
             }
 
-            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto</th><th>Attivo</th><th>Azione</th></tr></thead><tbody>';
+            let html = '<div class="table-container"><table><thead><tr><th>Nome</th><th>Cognome</th><th>Punto</th><th>Username</th><th>Password</th><th>Azioni</th></tr></thead><tbody>';
 
-            data.forEach(d => {
+            for (const d of data) {
+                const username = `${d.nome.toLowerCase()}.${d.cognome.toLowerCase()}`;
+                const email = `${username}@mageitalita.local`;
+                
+                // Cerca userId in Supabase Auth
+                let userId = null;
+                try {
+                    const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+                    const authUser = users?.users.find(u => u.email === email);
+                    if (authUser) userId = authUser.id;
+                } catch (err) {
+                    console.error('Errore ricerca user:', err);
+                }
+
                 html += `<tr>
                     <td>${d.nome}</td>
                     <td>${d.cognome}</td>
                     <td>${d.punto_vendita_id || '—'}</td>
-                    <td>${d.attivo ? '✅' : '❌'}</td>
-                    <td><button class="btn-delete" onclick="deleteDipendente(${d.id})">🗑️ Elimina</button></td>
+                    <td><span class="code">${username}</span></td>
+                    <td><span class="code">${username}</span></td>
+                    <td>
+                        <button class="btn-copy" onclick="openModal('${email}', '${username}', '${userId}')">🔑 Credenziali</button>
+                        <button class="btn-delete" onclick="deleteDipendente(${d.id})">🗑️ Elimina</button>
+                    </td>
                 </tr>`;
-            });
+            }
 
             document.getElementById('dipTable').innerHTML = html + '</tbody></table></div>';
 
@@ -511,7 +441,8 @@
         }
 
         try {
-            const { error } = await supabase
+            // 1. Aggiungi dipendente
+            const { error: errDip } = await supabase
                 .from('dipendenti')
                 .insert([{
                     nome,
@@ -520,9 +451,42 @@
                     attivo: true
                 }]);
 
-            if (error) throw error;
+            if (errDip) throw errDip;
 
-            showMsg('dipMsg', `✅ Dipendente aggiunto!`, 'success');
+            const username = `${nome.toLowerCase()}.${cognome.toLowerCase()}`;
+            const email = `${username}@mageitalita.local`;
+
+            let userId = null;
+
+            if (creaLogin === 'si') {
+                // 2. Crea login
+                try {
+                    const { data: userData, error: errAuth } = await supabaseAdmin.auth.admin.createUser({
+                        email: email,
+                        password: username,
+                        email_confirm: true,
+                        user_metadata: {
+                            nome: nome,
+                            cognome: cognome,
+                            punto_vendita: punto,
+                            role: 'operatore'
+                        }
+                    });
+
+                    if (errAuth && !errAuth.message.includes('already exists')) {
+                        throw errAuth;
+                    }
+
+                    if (userData) userId = userData.user.id;
+
+                    showMsg('dipMsg', `✅ Dipendente aggiunto! Email: ${email}`, 'success');
+                } catch (err) {
+                    console.error('Errore auth:', err);
+                    showMsg('dipMsg', `⚠️ Dipendente aggiunto ma errore login: ${err.message}`, 'error');
+                }
+            } else {
+                showMsg('dipMsg', '✅ Dipendente aggiunto!', 'success');
+            }
 
             document.getElementById('dipNome').value = '';
             document.getElementById('dipCognome').value = '';
@@ -565,6 +529,7 @@
             const { data, error } = await supabase
                 .from('prodotti')
                 .select('*')
+                .eq('attivo', true)
                 .order('nome');
 
             if (error) throw error;
@@ -574,7 +539,7 @@
                 return;
             }
 
-            let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Attivo</th><th>Azione</th></tr></thead><tbody>';
+            let html = '<div class="table-container"><table><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Punto</th><th>Azione</th></tr></thead><tbody>';
 
             data.forEach(p => {
                 html += `<tr>
@@ -582,7 +547,6 @@
                     <td>${p.nome}</td>
                     <td>${p.categoria}</td>
                     <td>${p.punto_vendita_id || '—'}</td>
-                    <td>${p.attivo ? '✅' : '❌'}</td>
                     <td><button class="btn-delete" onclick="deleteProdotto(${p.id})">🗑️ Elimina</button></td>
                 </tr>`;
             });
@@ -663,11 +627,11 @@
             const categoria = document.getElementById('repCategoria').value;
 
             if (!inizio || !fine) {
-                showMsg('repMsg', '⚠️ Seleziona date valide', 'error');
+                showMsg('repMsg', '⚠️ Seleziona date', 'error');
                 return;
             }
 
-            showMsg('repMsg', '⏳ Generazione report...', 'success');
+            showMsg('repMsg', '⏳ Generazione...', 'success');
 
             let query = supabase
                 .from('registrazioni_giornaliere')
@@ -680,7 +644,7 @@
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                showMsg('repMsg', '⚠️ Nessun dato per questo periodo', 'error');
+                showMsg('repMsg', '⚠️ Nessun dato', 'error');
                 return;
             }
 
@@ -710,8 +674,6 @@
                 XLSX.utils.book_append_sheet(wb, ws, 'Report');
                 XLSX.writeFile(wb, `Mage-Report-${inizio}-to-${fine}.xlsx`);
                 showMsg('repMsg', '✅ Report scaricato!', 'success');
-            } else {
-                throw new Error('XLSX non disponibile');
             }
 
         } catch (err) {
@@ -724,15 +686,11 @@
         try {
             const inizio = document.getElementById('repInizio').value;
             const fine = document.getElementById('repFine').value;
-            const punto = document.getElementById('repPunto').value;
-            const categoria = document.getElementById('repCategoria').value;
 
             if (!inizio || !fine) {
-                showMsg('repMsg', '⚠️ Seleziona date valide', 'error');
+                showMsg('repMsg', '⚠️ Seleziona date', 'error');
                 return;
             }
-
-            showMsg('repMsg', '⏳ Caricamento dati...', 'success');
 
             const { data, error } = await supabase
                 .from('registrazioni_giornaliere')
@@ -740,25 +698,13 @@
                 .gte('data_registrazione', inizio)
                 .lte('data_registrazione', fine);
 
-            if (error) throw error;
-
-            if (!data || data.length === 0) {
+            if (error || !data || data.length === 0) {
                 showMsg('repMsg', '⚠️ Nessun dato', 'error');
                 return;
             }
 
-            let filtered = data;
-            if (punto) filtered = filtered.filter(r => r.prodotti?.punto_vendita_id === punto);
-            if (categoria) filtered = filtered.filter(r => r.prodotti?.categoria === categoria);
-
-            if (filtered.length === 0) {
-                showMsg('repMsg', '⚠️ Nessun dato con questi filtri', 'error');
-                return;
-            }
-
-            // Elabora dati
             const prodotti = {};
-            filtered.forEach(r => {
+            data.forEach(r => {
                 const nome = r.prodotti?.nome || '?';
                 if (!prodotti[nome]) prodotti[nome] = { prod: 0, rec: 0, scar: 0 };
                 prodotti[nome].prod += r.produzione || 0;
@@ -767,17 +713,15 @@
             });
 
             const punti = {};
-            filtered.forEach(r => {
+            data.forEach(r => {
                 const punto = r.prodotti?.punto_vendita_id === 'pisa' ? 'Pisa' :
                              r.prodotti?.punto_vendita_id === 'sesto' ? 'Sesto' : 'Cosenza';
                 if (!punti[punto]) punti[punto] = 0;
                 punti[punto] += r.buttati || 0;
             });
 
-            // Mostra container
             document.getElementById('chartsContainer').style.display = 'block';
 
-            // Grafico 1: Prodotti
             const ctx1 = document.getElementById('chartProdotti').getContext('2d');
             if (window.chart1) window.chart1.destroy();
             window.chart1 = new Chart(ctx1, {
@@ -790,10 +734,9 @@
                         { label: 'Scartati', data: Object.values(prodotti).slice(0, 10).map(p => p.scar), backgroundColor: '#dc3545' }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true } } }
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
 
-            // Grafico 2: Punti
             const ctx2 = document.getElementById('chartPunti').getContext('2d');
             if (window.chart2) window.chart2.destroy();
             window.chart2 = new Chart(ctx2, {
@@ -805,7 +748,6 @@
                 options: { responsive: true }
             });
 
-            // Grafico 3: Totali
             const totProd = Object.values(prodotti).reduce((s, p) => s + p.prod, 0);
             const totRec = Object.values(prodotti).reduce((s, p) => s + p.rec, 0);
             const totScar = Object.values(prodotti).reduce((s, p) => s + p.scar, 0);
@@ -829,7 +771,6 @@
         }
     }
 
-    // ========== START ==========
     window.addEventListener('load', initApp);
 </script>
 
