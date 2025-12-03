@@ -15,7 +15,9 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px; 
-            color: #333; 
+            color: #2c3e50;
+            line-height: 1.6;
+            font-size: 14px;
         }
         
         .container { max-width: 1400px; margin: 0 auto; }
@@ -46,7 +48,7 @@
         
         .header h1 { 
             color: white;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             position: relative;
             z-index: 1;
@@ -154,22 +156,24 @@
         .form-group { display: flex; flex-direction: column; }
         
         .form-group label { 
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #333;
-            font-size: 13px;
+            color: #2c3e50;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: block;
         }
         
         input, select { 
-            padding: 10px 14px;
+            padding: 12px 15px;
             border: 2px solid #ddd;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 14px;
             font-family: inherit;
             transition: all 0.3s;
             background: #f9f9f9;
+            line-height: 1.5;
         }
         
         input:focus, select:focus { 
@@ -191,16 +195,17 @@
         }
         
         button { 
-            padding: 11px 22px;
+            padding: 12px 24px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            line-height: 1.4;
         }
         
         .btn-primary { 
@@ -265,13 +270,14 @@
         }
         
         .message { 
-            padding: 15px 18px;
+            padding: 16px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            font-size: 13px;
+            font-size: 14px;
             display: none;
             border-left: 4px solid;
             animation: slideDown 0.3s ease;
+            font-weight: 500;
         }
         
         @keyframes slideDown {
@@ -303,7 +309,8 @@
         table { 
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 14px;
+            line-height: 1.6;
         }
         
         table thead { 
@@ -312,17 +319,17 @@
         }
         
         table th { 
-            padding: 14px 12px;
+            padding: 16px 14px;
             text-align: left;
             font-weight: 700;
-            color: #333;
+            color: #2c3e50;
             text-transform: uppercase;
-            font-size: 11px;
+            font-size: 12px;
             letter-spacing: 0.5px;
         }
         
         table td { 
-            padding: 12px 12px;
+            padding: 14px 14px;
             border-bottom: 1px solid #e0e0e0;
         }
         
@@ -411,18 +418,20 @@
         .modal-field label { 
             display: block;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 13px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 14px;
         }
         
         .modal-field input, .modal-field select { 
             width: 100%;
-            padding: 11px 14px;
+            padding: 12px 15px;
             border: 2px solid #ddd;
             border-radius: 6px;
             font-family: 'Courier New', monospace;
+            font-size: 14px;
             transition: all 0.3s;
+            line-height: 1.5;
         }
         
         .modal-field input:focus, .modal-field select:focus { 
