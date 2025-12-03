@@ -483,8 +483,14 @@
     
     let supabase = null;
     let supabaseAdmin = null;
+    let initialized = false;
 
     function init() {
+        if (initialized || !window.supabase) return;
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
+        initialized = true;
+    }
         if (window.supabase) {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             supabaseAdmin = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
