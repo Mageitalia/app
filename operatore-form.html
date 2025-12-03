@@ -18,106 +18,75 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
             min-height: 100vh;
-            padding: 15px;
+            width: 100%;
+        }
+
+        body {
+            padding: clamp(10px, 2vw, 20px);
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .header {
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
             color: white;
-            padding: clamp(20px, 5vw, 30px);
+            padding: clamp(15px, 3vw, 25px);
             border-radius: 12px;
-            margin-bottom: clamp(20px, 5vw, 30px);
+            margin-bottom: clamp(15px, 3vw, 25px);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .header-left h1 {
-            font-size: clamp(24px, 6vw, 36px);
-            margin-bottom: 5px;
+            font-size: clamp(20px, 5vw, 32px);
             font-weight: 700;
+            margin-bottom: 4px;
         }
 
         .header-left p {
-            font-size: clamp(13px, 3vw, 16px);
-            opacity: 0.95;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: clamp(8px, 2vw, 14px) clamp(15px, 3vw, 30px);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
             font-size: clamp(12px, 2vw, 14px);
+            opacity: 0.9;
         }
 
         .btn-logout {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid white;
+            padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 20px);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(11px, 2vw, 13px);
+            transition: all 0.3s;
         }
 
         .btn-logout:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
-        .btn-save {
-            background: var(--color-primary);
-            color: white;
-            padding: clamp(10px, 2vw, 14px) clamp(20px, 4vw, 35px);
-            font-size: clamp(13px, 2.5vw, 16px);
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .btn-save:hover {
-            background: var(--color-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-save:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
         .message {
-            padding: 15px;
+            padding: clamp(10px, 2vw, 15px);
             border-radius: 8px;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: clamp(12px, 2vw, 14px);
             display: none;
             animation: slideDown 0.3s ease;
         }
 
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.success {
@@ -132,106 +101,130 @@
             border-left: 4px solid #dc3545;
         }
 
-        .date-section {
+        .form-section {
             background: white;
-            padding: clamp(15px, 4vw, 25px);
+            padding: clamp(15px, 3vw, 25px);
             border-radius: 12px;
-            margin-bottom: clamp(20px, 5vw, 30px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: clamp(15px, 3vw, 25px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: clamp(12px, 2vw, 20px);
+            margin-bottom: clamp(12px, 2vw, 20px);
+        }
+
+        .form-group {
             display: flex;
-            gap: clamp(15px, 3vw, 25px);
-            align-items: flex-end;
-            flex-wrap: wrap;
+            flex-direction: column;
         }
 
-        .date-group {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .date-group label {
-            display: block;
-            margin-bottom: 8px;
+        label {
             font-weight: 700;
             color: var(--color-primary);
-            font-size: clamp(12px, 2vw, 15px);
+            font-size: clamp(12px, 2vw, 14px);
+            margin-bottom: clamp(6px, 1.5vw, 10px);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
-        .date-group input {
-            width: 100%;
-            padding: clamp(10px, 2vw, 15px);
+        input, select {
+            padding: clamp(10px, 2vw, 12px);
             border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: clamp(13px, 2vw, 16px);
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: clamp(13px, 2vw, 15px);
+            font-weight: 500;
+            font-family: inherit;
         }
 
-        .date-group input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(123, 45, 191, 0.1);
+            background: var(--color-light);
         }
 
-        .tabelle-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: clamp(15px, 4vw, 25px);
-            margin-bottom: 30px;
+        input[type="number"] {
+            text-align: center;
         }
 
-        .tabella-card {
-            background: white;
-            border-radius: 12px;
-            padding: clamp(15px, 3vw, 25px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        .btn-group {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            margin-top: clamp(15px, 3vw, 20px);
         }
 
-        .tabella-card h2 {
-            color: var(--color-primary);
-            margin-bottom: clamp(12px, 3vw, 20px);
-            font-size: clamp(18px, 4vw, 22px);
+        .btn {
+            flex: 1;
+            padding: clamp(12px, 2vw, 14px);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: 700;
-            border-bottom: 3px solid var(--color-primary);
-            padding-bottom: 10px;
+            font-size: clamp(12px, 2vw, 14px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
         }
 
-        .table-container {
+        .btn-save {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: var(--color-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+
+        .tabella-container {
             overflow-x: auto;
-            max-height: 70vh;
-            overflow-y: auto;
             border-radius: 8px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: clamp(12px, 2vw, 15px);
+            font-size: clamp(12px, 1.8vw, 14px);
         }
 
         table thead {
-            position: sticky;
-            top: 0;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
             color: white;
+            position: sticky;
+            top: 0;
             z-index: 10;
         }
 
         table th {
-            padding: clamp(10px, 2vw, 16px);
+            padding: clamp(10px, 2vw, 14px);
             text-align: left;
             font-weight: 700;
-            font-size: clamp(11px, 1.8vw, 14px);
+            font-size: clamp(11px, 1.8vw, 13px);
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            white-space: nowrap;
         }
 
         table td {
-            padding: clamp(8px, 2vw, 14px);
+            padding: clamp(10px, 2vw, 14px);
             border-bottom: 1px solid #e0e0e0;
-            font-size: clamp(12px, 1.8vw, 15px);
         }
 
         table tbody tr:hover {
@@ -242,155 +235,123 @@
             font-weight: 700;
             color: var(--color-primary);
             font-family: 'Courier New', monospace;
-            font-size: clamp(10px, 1.5vw, 13px);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            font-size: clamp(10px, 1.5vw, 12px);
         }
 
         .prodotto {
             font-weight: 600;
             color: #222;
-            font-size: clamp(12px, 1.8vw, 14px);
         }
 
-        .input-number {
-            width: clamp(50px, 10vw, 80px);
-            padding: clamp(6px, 1.5vw, 10px);
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            text-align: center;
-            font-size: clamp(12px, 2vw, 16px);
+        .categoria-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 700;
-            background: white;
+            text-align: center;
+            min-width: 60px;
         }
 
-        .input-number:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(123, 45, 191, 0.1);
-            background: var(--color-light);
+        .categoria-dolce {
+            background: #fff3cd;
+            color: #856404;
         }
 
-        .stats-row {
-            background: var(--color-light);
-            padding: clamp(12px, 2vw, 16px);
-            border-radius: 8px;
-            margin-top: clamp(15px, 3vw, 20px);
+        .categoria-salato {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: clamp(10px, 2vw, 15px);
+            margin-top: clamp(15px, 3vw, 20px);
+        }
+
+        .stat-card {
+            background: var(--color-light);
+            padding: clamp(12px, 2vw, 16px);
+            border-radius: 8px;
             border-left: 4px solid var(--color-primary);
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: clamp(6px, 1.5vw, 10px) 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .stat-item:last-child {
-            border-bottom: none;
+            text-align: center;
         }
 
         .stat-label {
-            font-size: clamp(11px, 1.8vw, 14px);
-            color: #555;
+            font-size: clamp(11px, 1.8vw, 12px);
+            color: #666;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.2px;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: clamp(16px, 4vw, 20px);
+            font-size: clamp(18px, 4vw, 24px);
             font-weight: 700;
             color: var(--color-primary);
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .header {
-                padding: 15px;
-            }
-
-            .tabelle-container {
+            .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .table-container {
-                max-height: 60vh;
-            }
-
-            .date-section {
+            .btn-group {
                 flex-direction: column;
-                align-items: stretch;
-            }
-
-            .date-group {
-                min-width: 100%;
-            }
-
-            .btn-save {
-                width: 100%;
-            }
-
-            .stats-row {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 8px;
-            }
-
-            .header {
-                padding: 12px;
-                gap: 15px;
-            }
-
-            .header-left h1 {
-                font-size: 20px;
             }
 
             table {
                 font-size: 11px;
             }
 
-            table th {
-                padding: 6px;
-                font-size: 10px;
+            table th, table td {
+                padding: 8px;
             }
 
-            table td {
-                padding: 6px;
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px;
+                gap: 12px;
             }
 
-            .codice {
-                font-size: 9px;
+            .header-left h1 {
+                font-size: 18px;
             }
 
-            .input-number {
-                width: 50px;
-                padding: 4px;
-                font-size: 12px;
+            .container {
+                padding: 0;
             }
 
-            .stats-row {
+            .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 8px;
             }
 
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .stat-value {
-                font-size: 16px;
+            .tabella-container {
+                max-height: 50vh;
+                overflow-y: auto;
             }
         }
     </style>
@@ -404,110 +365,101 @@
             <h1 id="operatoreName">Caricamento...</h1>
             <p id="operatorePunto">📍 Punto vendita</p>
         </div>
-        <div class="header-right">
-            <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
-        </div>
+        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
 
     <!-- MESSAGGIO -->
     <div id="message" class="message"></div>
 
-    <!-- SELEZIONE DATA -->
-    <div class="date-section">
-        <div class="date-group">
-            <label>📅 Data Registrazione</label>
-            <input type="date" id="data" required>
+    <!-- FORM INSERIMENTO -->
+    <div class="form-section">
+        <h2 style="color: var(--color-primary); margin-bottom: 20px; font-size: clamp(18px, 4vw, 22px);">📝 Registra Prodotti</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>📅 Data</label>
+                <input type="date" id="data" required>
+            </div>
+            <div class="form-group">
+                <label>🍰 Categoria</label>
+                <select id="categoria" onchange="caricaProdottiByCategoria()">
+                    <option value="">-- Seleziona --</option>
+                    <option value="dolce">🍰 Dolce</option>
+                    <option value="salato">🥖 Salato</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📦 Prodotto</label>
+                <select id="prodotto">
+                    <option value="">-- Seleziona categoria prima --</option>
+                </select>
+            </div>
         </div>
-        <button class="btn btn-save" onclick="salvaRegistrazioni()">
-            💾 SALVA TUTTE LE REGISTRAZIONI
-        </button>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>📦 Produzione</label>
+                <input type="number" id="produzione" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>✅ Recuperati</label>
+                <input type="number" id="recuperati" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label>❌ Scartati</label>
+                <input type="number" id="scartati" min="0" value="0">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-save" onclick="salvaRegistrazione()">💾 REGISTRA</button>
+            <button class="btn btn-reset" onclick="resetForm()">🔄 RESET</button>
+        </div>
     </div>
 
-    <!-- TABELLE PEZZI -->
-    <div class="tabelle-container">
-        <!-- TABELLA DOLCI -->
-        <div class="tabella-card">
-            <h2>🍰 DOLCI</h2>
-            <div class="table-container">
-                <table id="tabellaDelci">
-                    <thead>
-                        <tr>
-                            <th>Codice</th>
-                            <th>Prodotto</th>
-                            <th style="text-align: right;">📦 Prod</th>
-                            <th style="text-align: right;">✅ Rec</th>
-                            <th style="text-align: right;">❌ Scar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bodyDelci">
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
-                                ⏳ Caricamento prodotti...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="stats-row">
-                <div class="stat-item">
-                    <span class="stat-label">📦 Prod</span>
-                    <span class="stat-value" id="statProdDelci">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">✅ Rec</span>
-                    <span class="stat-value" id="statRecDelci">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">❌ Scar</span>
-                    <span class="stat-value" id="statScarDelci">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">% Rec</span>
-                    <span class="stat-value" id="statPercDelci">0%</span>
-                </div>
-            </div>
+    <!-- TABELLA REGISTRAZIONI GIORNALIERE -->
+    <div class="form-section">
+        <h2 style="color: var(--color-primary); margin-bottom: 20px; font-size: clamp(18px, 4vw, 22px);">📊 Registrazioni di Oggi</h2>
+        
+        <div class="tabella-container">
+            <table id="tabellaRegistrazioni">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Codice</th>
+                        <th>Prodotto</th>
+                        <th style="text-align: right;">📦</th>
+                        <th style="text-align: right;">✅</th>
+                        <th style="text-align: right;">❌</th>
+                        <th style="text-align: center;">Azione</th>
+                    </tr>
+                </thead>
+                <tbody id="bodyRegistrazioni">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px; color: #999;">
+                            ⏳ Caricamento in corso...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- TABELLA SALATI -->
-        <div class="tabella-card">
-            <h2>🥖 SALATI</h2>
-            <div class="table-container">
-                <table id="tabellaSalati">
-                    <thead>
-                        <tr>
-                            <th>Codice</th>
-                            <th>Prodotto</th>
-                            <th style="text-align: right;">📦 Prod</th>
-                            <th style="text-align: right;">✅ Rec</th>
-                            <th style="text-align: right;">❌ Scar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bodySalati">
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
-                                ⏳ Caricamento prodotti...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">📦 Prod Totali</div>
+                <div class="stat-value" id="statProd">0</div>
             </div>
-            <div class="stats-row">
-                <div class="stat-item">
-                    <span class="stat-label">📦 Prod</span>
-                    <span class="stat-value" id="statProdSalati">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">✅ Rec</span>
-                    <span class="stat-value" id="statRecSalati">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">❌ Scar</span>
-                    <span class="stat-value" id="statScarSalati">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">% Rec</span>
-                    <span class="stat-value" id="statPercSalati">0%</span>
-                </div>
+            <div class="stat-card">
+                <div class="stat-label">✅ Rec Totali</div>
+                <div class="stat-value" id="statRec">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">❌ Scar Totali</div>
+                <div class="stat-value" id="statScar">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">% Recupero</div>
+                <div class="stat-value" id="statPerc">0%</div>
             </div>
         </div>
     </div>
@@ -520,8 +472,7 @@
     let supabase = null;
     let operatore = null;
     let punto_vendita_id = null;
-    let prodottiDelci = [];
-    let prodottiSalati = [];
+    let prodotti = {};
 
     async function init() {
         if (window.supabase) {
@@ -539,7 +490,6 @@
         punto_vendita_id = params.get('punto') || operatore.punto_vendita;
 
         applicaColoriPunto(punto_vendita_id);
-
         document.getElementById('operatoreName').textContent = operatore.nome || 'Operatore';
         document.getElementById('operatorePunto').textContent = `📍 ${getPuntoLabel(punto_vendita_id)}`;
 
@@ -547,7 +497,8 @@
         document.getElementById('data').value = today;
 
         await caricaProdotti();
-        document.getElementById('data').addEventListener('change', caricaDatiGiorno);
+        await caricaRegistrazioniGiorno();
+        document.getElementById('data').addEventListener('change', caricaRegistrazioniGiorno);
     }
 
     function applicaColoriPunto(punto) {
@@ -570,7 +521,7 @@
 
     async function caricaProdotti() {
         try {
-            const { data: prodotti, error } = await supabase
+            const { data, error } = await supabase
                 .from('prodotti')
                 .select('id, codice_prodotto, nome, categoria')
                 .eq('punto_vendita_id', punto_vendita_id)
@@ -583,163 +534,175 @@
                 return;
             }
 
-            prodottiDelci = prodotti.filter(p => p.categoria === 'dolce');
-            prodottiSalati = prodotti.filter(p => p.categoria === 'salato');
+            prodotti = {};
+            data.forEach(p => {
+                if (!prodotti[p.categoria]) prodotti[p.categoria] = [];
+                prodotti[p.categoria].push(p);
+            });
 
-            mostraTabelle();
-            await caricaDatiGiorno();
-
+            console.log('✅ Prodotti caricati:', prodotti);
         } catch (err) {
             showMessage('❌ Errore: ' + err.message, 'error');
         }
     }
 
-    function mostraTabelle() {
-        const bodyDelci = document.getElementById('bodyDelci');
-        bodyDelci.innerHTML = prodottiDelci.map(p => `
-            <tr>
-                <td><span class="codice">${p.codice_prodotto}</span></td>
-                <td><span class="prodotto">${p.nome}</span></td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-            </tr>
-        `).join('');
+    function caricaProdottiByCategoria() {
+        const categoria = document.getElementById('categoria').value;
+        const select = document.getElementById('prodotto');
+        select.innerHTML = '<option value="">-- Seleziona prodotto --</option>';
 
-        const bodySalati = document.getElementById('bodySalati');
-        bodySalati.innerHTML = prodottiSalati.map(p => `
-            <tr>
-                <td><span class="codice">${p.codice_prodotto}</span></td>
-                <td><span class="prodotto">${p.nome}</span></td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="prod" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="rec" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-                <td style="text-align: right;">
-                    <input type="number" class="input-number" data-id="${p.id}" data-field="scar" min="0" value="0" onchange="aggiornaStats()">
-                </td>
-            </tr>
-        `).join('');
+        if (!categoria || !prodotti[categoria]) {
+            return;
+        }
 
-        aggiornaStats();
+        prodotti[categoria].forEach(p => {
+            const option = document.createElement('option');
+            option.value = p.id;
+            option.textContent = `${p.codice_prodotto} - ${p.nome}`;
+            select.appendChild(option);
+        });
     }
 
-    async function caricaDatiGiorno() {
+    async function salvaRegistrazione() {
         const data = document.getElementById('data').value;
+        const categoria = document.getElementById('categoria').value;
+        const prodottoId = document.getElementById('prodotto').value;
+        const produzione = parseInt(document.getElementById('produzione').value) || 0;
+        const recuperati = parseInt(document.getElementById('recuperati').value) || 0;
+        const scartati = parseInt(document.getElementById('scartati').value) || 0;
+
+        if (!data || !categoria || !prodottoId) {
+            showMessage('⚠️ Compila data, categoria e prodotto', 'error');
+            return;
+        }
+
+        if (produzione === 0 && recuperati === 0 && scartati === 0) {
+            showMessage('⚠️ Inserisci almeno un valore', 'error');
+            return;
+        }
+
+        try {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Salvataggio...';
+
+            const { error } = await supabase.from('registrazioni_giornaliere').insert({
+                data_registrazione: data,
+                categoria: categoria,
+                prodotto_id: parseInt(prodottoId),
+                produzione: produzione,
+                recuperati: recuperati,
+                buttati: scartati,
+                dipendente_id: operatore.uid,
+                punto_vendita_id: punto_vendita_id
+            });
+
+            if (error) {
+                console.error('❌ Errore:', error);
+                throw error;
+            }
+
+            showMessage('✅ Registrazione salvata!', 'success');
+            resetForm();
+            await caricaRegistrazioniGiorno();
+
+            btn.disabled = false;
+            btn.textContent = '💾 REGISTRA';
+
+        } catch (err) {
+            showMessage('❌ Errore: ' + err.message, 'error');
+            event.target.disabled = false;
+            event.target.textContent = '💾 REGISTRA';
+        }
+    }
+
+    async function caricaRegistrazioniGiorno() {
+        const data = document.getElementById('data').value;
+        if (!data) return;
+
         try {
             const { data: registrazioni, error } = await supabase
                 .from('registrazioni_giornaliere')
-                .select('prodotto_id, produzione, recuperati, buttati')
+                .select(`
+                    id, categoria, prodotto_id, produzione, recuperati, buttati,
+                    prodotti(codice_prodotto, nome)
+                `)
                 .eq('dipendente_id', operatore.uid)
                 .eq('punto_vendita_id', punto_vendita_id)
-                .eq('data_registrazione', data);
+                .eq('data_registrazione', data)
+                .order('created_at', { ascending: false });
 
-            if (error) return;
-
-            document.querySelectorAll('.input-number').forEach(input => input.value = '0');
-
-            registrazioni.forEach(r => {
-                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="prod"]`).forEach(el => el.value = r.produzione || 0);
-                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="rec"]`).forEach(el => el.value = r.recuperati || 0);
-                document.querySelectorAll(`[data-id="${r.prodotto_id}"][data-field="scar"]`).forEach(el => el.value = r.buttati || 0);
-            });
-
-            aggiornaStats();
-        } catch (err) {}
-    }
-
-    function aggiornaStats() {
-        let prodDelci = 0, recDelci = 0, scarDelci = 0;
-        document.querySelectorAll('#tabellaDelci [data-field="prod"]').forEach(el => prodDelci += parseInt(el.value) || 0);
-        document.querySelectorAll('#tabellaDelci [data-field="rec"]').forEach(el => recDelci += parseInt(el.value) || 0);
-        document.querySelectorAll('#tabellaDelci [data-field="scar"]').forEach(el => scarDelci += parseInt(el.value) || 0);
-        const percDelci = (prodDelci + recDelci + scarDelci) > 0 ? ((recDelci / (prodDelci + recDelci + scarDelci)) * 100).toFixed(0) : 0;
-
-        document.getElementById('statProdDelci').textContent = prodDelci;
-        document.getElementById('statRecDelci').textContent = recDelci;
-        document.getElementById('statScarDelci').textContent = scarDelci;
-        document.getElementById('statPercDelci').textContent = percDelci + '%';
-
-        let prodSalati = 0, recSalati = 0, scarSalati = 0;
-        document.querySelectorAll('#tabellaSalati [data-field="prod"]').forEach(el => prodSalati += parseInt(el.value) || 0);
-        document.querySelectorAll('#tabellaSalati [data-field="rec"]').forEach(el => recSalati += parseInt(el.value) || 0);
-        document.querySelectorAll('#tabellaSalati [data-field="scar"]').forEach(el => scarSalati += parseInt(el.value) || 0);
-        const percSalati = (prodSalati + recSalati + scarSalati) > 0 ? ((recSalati / (prodSalati + recSalati + scarSalati)) * 100).toFixed(0) : 0;
-
-        document.getElementById('statProdSalati').textContent = prodSalati;
-        document.getElementById('statRecSalati').textContent = recSalati;
-        document.getElementById('statScarSalati').textContent = scarSalati;
-        document.getElementById('statPercSalati').textContent = percSalati + '%';
-    }
-
-    async function salvaRegistrazioni() {
-        const data = document.getElementById('data').value;
-        if (!data) { showMessage('⚠️ Seleziona una data', 'error'); return; }
-
-        const btn = event.target;
-        btn.disabled = true;
-        btn.textContent = '⏳ Salvataggio...';
-
-        try {
-            const datiDaSalvare = [];
-            document.querySelectorAll('.input-number').forEach(input => {
-                const prodottoId = parseInt(input.dataset.id);
-                const field = input.dataset.field;
-                const valore = parseInt(input.value) || 0;
-
-                if (valore > 0) {
-                    let rec = datiDaSalvare.find(d => d.prodotto_id === prodottoId);
-                    if (!rec) {
-                        rec = { 
-                            prodotto_id: prodottoId, 
-                            produzione: 0, 
-                            recuperati: 0, 
-                            buttati: 0,
-                            data_registrazione: data,
-                            dipendente_id: operatore.uid.toString(),
-                            punto_vendita_id: punto_vendita_id,
-                            categoria: prodottiDelci.find(p => p.id === prodottoId) ? 'dolce' : 'salato'
-                        };
-                        datiDaSalvare.push(rec);
-                    }
-                    if (field === 'prod') rec.produzione = valore;
-                    if (field === 'rec') rec.recuperati = valore;
-                    if (field === 'scar') rec.buttati = valore;
-                }
-            });
-
-            if (datiDaSalvare.length === 0) {
-                showMessage('⚠️ Nessun dato da salvare', 'error');
-                btn.disabled = false;
-                btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+            if (error) {
+                console.error('Errore caricamento:', error);
                 return;
             }
 
-            await supabase.from('registrazioni_giornaliere').delete()
-                .eq('dipendente_id', operatore.uid.toString())
-                .eq('punto_vendita_id', punto_vendita_id)
-                .eq('data_registrazione', data);
+            const tbody = document.getElementById('bodyRegistrazioni');
+            if (registrazioni.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: #999;">Nessuna registrazione per oggi</td></tr>';
+                aggiornaStats([]);
+                return;
+            }
 
-            const { error: errInsert, data: dataInsert } = await supabase.from('registrazioni_giornaliere').insert(datiDaSalvare);
-            if (errInsert) { console.error("❌ ERRORE:", errInsert); throw errInsert; } console.log("✅ SALVATO:", dataInsert);
+            tbody.innerHTML = registrazioni.map(r => `
+                <tr>
+                    <td><span class="categoria-badge categoria-${r.categoria}">${r.categoria === 'dolce' ? '🍰' : '🥖'}</span></td>
+                    <td><span class="codice">${r.prodotti.codice_prodotto}</span></td>
+                    <td><span class="prodotto">${r.prodotti.nome}</span></td>
+                    <td style="text-align: right; font-weight: 700;">${r.produzione || 0}</td>
+                    <td style="text-align: right; font-weight: 700; color: green;">${r.recuperati || 0}</td>
+                    <td style="text-align: right; font-weight: 700; color: red;">${r.buttati || 0}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-delete" onclick="eliminaRegistrazione(${r.id})">🗑️ Cancella</button>
+                    </td>
+                </tr>
+            `).join('');
 
-            showMessage(`✅ ${datiDaSalvare.length} registrazioni salvate!`, 'success');
-            btn.disabled = false;
-            btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+            aggiornaStats(registrazioni);
 
         } catch (err) {
-            showMessage('❌ Errore: ' + err.message, 'error');
-            btn.disabled = false;
-            btn.textContent = '💾 SALVA TUTTE LE REGISTRAZIONI';
+            console.error('Errore:', err);
         }
+    }
+
+    function aggiornaStats(registrazioni) {
+        let totalProd = 0, totalRec = 0, totalScar = 0;
+
+        registrazioni.forEach(r => {
+            totalProd += r.produzione || 0;
+            totalRec += r.recuperati || 0;
+            totalScar += r.buttati || 0;
+        });
+
+        const totale = totalProd + totalRec + totalScar;
+        const perc = totale > 0 ? ((totalRec / totale) * 100).toFixed(0) : 0;
+
+        document.getElementById('statProd').textContent = totalProd;
+        document.getElementById('statRec').textContent = totalRec;
+        document.getElementById('statScar').textContent = totalScar;
+        document.getElementById('statPerc').textContent = perc + '%';
+    }
+
+    async function eliminaRegistrazione(id) {
+        if (!confirm('Sei sicuro di voler eliminare?')) return;
+
+        try {
+            const { error } = await supabase.from('registrazioni_giornaliere').delete().eq('id', id);
+            if (error) throw error;
+
+            showMessage('✅ Registrazione eliminata!', 'success');
+            await caricaRegistrazioniGiorno();
+        } catch (err) {
+            showMessage('❌ Errore: ' + err.message, 'error');
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('categoria').value = '';
+        document.getElementById('prodotto').innerHTML = '<option value="">-- Seleziona categoria prima --</option>';
+        document.getElementById('produzione').value = '0';
+        document.getElementById('recuperati').value = '0';
+        document.getElementById('scartati').value = '0';
     }
 
     function showMessage(message, type) {
