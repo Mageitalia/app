@@ -627,6 +627,13 @@
             margin-bottom: 10px;
         }
 
+        .report-card-ora {
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
         .report-card-punto {
             font-size: 16px;
             font-weight: 600;
@@ -988,8 +995,9 @@
         try {
             const { data, error } = await supabase
                 .from('registrazioni_giornaliere')
-                .select('data_registrazione, punto_vendita_id')
-                .order('data_registrazione', { ascending: false });
+                .select('data_registrazione, ora_registrazione, punto_vendita_id')
+                .order('data_registrazione', { ascending: false })
+                .order('ora_registrazione', { ascending: false });
 
             if (error) throw error;
 
@@ -998,22 +1006,25 @@
                 return;
             }
 
-            // Raggruppa per data e punto vendita
+            // Raggruppa per data, ora e punto vendita (unici)
             const reportMap = {};
             data.forEach(r => {
-                const key = `${r.data_registrazione}|${r.punto_vendita_id}`;
+                const key = `${r.data_registrazione}|${r.ora_registrazione}|${r.punto_vendita_id}`;
                 if (!reportMap[key]) {
                     reportMap[key] = {
                         data: r.data_registrazione,
+                        ora: r.ora_registrazione,
                         punto: r.punto_vendita_id
                     };
                 }
             });
 
-            // Ordina per data (più recente primo)
-            const reportArray = Object.values(reportMap).sort((a, b) => 
-                new Date(b.data) - new Date(a.data)
-            );
+            // Ordina per data e ora (più recente primo)
+            const reportArray = Object.values(reportMap).sort((a, b) => {
+                const dateA = new Date(`${a.data}T${a.ora}`);
+                const dateB = new Date(`${b.data}T${b.ora}`);
+                return dateB - dateA;
+            });
 
             // Oggi
             const oggi = new Date().toISOString().split('T')[0];
@@ -1021,27 +1032,28 @@
             let html = '<div class="report-grid">';
 
             reportArray.forEach(r => {
-                const data = new Date(r.data).toLocaleDateString('it-IT');
+                const dataFormattata = new Date(r.data).toLocaleDateString('it-IT');
                 const isToday = r.data === oggi;
                 let classPunto = '';
                 let nomePunto = '';
 
                 if (r.punto === 'pisa') {
                     classPunto = 'pisa';
-                    nomePunto = '🔷 Pisa';
+                    nomePunto = 'Pisa';
                 } else if (r.punto === 'sesto') {
                     classPunto = 'sesto';
-                    nomePunto = '🟣 Sesto Fiorentino';
+                    nomePunto = 'Sesto Fiorentino';
                 } else if (r.punto === 'cosenza') {
                     classPunto = 'cosenza';
-                    nomePunto = '🟠 Cosenza';
+                    nomePunto = 'Cosenza';
                 }
 
                 const todayClass = isToday ? 'today' : '';
 
                 html += `
                     <div class="report-card ${classPunto} ${todayClass}">
-                        <div class="report-card-date">${data}</div>
+                        <div class="report-card-date">${dataFormattata}</div>
+                        <div class="report-card-ora">${r.ora}</div>
                         <div class="report-card-punto">${nomePunto}</div>
                         <div class="report-card-status">✅ Inviato</div>
                     </div>
@@ -1482,15 +1494,20 @@
             const excel = filtered.map(r => {
                 let puntoPunto = '';
                 if (r.prodotti?.punto_vendita_id === 'pisa') {
-                    puntoPunto = '🔷 Pisa';
+                    puntoPunto = 'Pisa';
                 } else if (r.prodotti?.punto_vendita_id === 'sesto') {
-                    puntoPunto = '🟣 Sesto Fiorentino';
+                    puntoPunto = 'Sesto Fiorentino';
                 } else if (r.prodotti?.punto_vendita_id === 'cosenza') {
-                    puntoPunto = '🟠 Cosenza';
+                    puntoPunto = 'Cosenza';
                 }
 
+                // Formatta data in gg/mm/aaaa
+                const dateParts = r.data_registrazione.split('-');
+                const dataFormattata = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
                 return {
-                    'Data': r.data_registrazione,
+                    'Data': dataFormattata,
+                    'Ora': r.ora_registrazione || '—',
                     'Punto Vendita': puntoPunto,
                     'Codice': r.prodotti?.codice_prodotto || '—',
                     'Prodotto': r.prodotti?.nome || '—',
@@ -1506,12 +1523,12 @@
                 
                 // Colora le colonne per punto vendita
                 excel.forEach((row, idx) => {
-                    const cellKey = `B${idx + 2}`; // Colonna B = Punto Vendita
+                    const cellKey = `C${idx + 2}`; // Colonna C = Punto Vendita
                     if (ws[cellKey]) {
-                        if (row['Punto Vendita'].includes('Pisa')) {
+                        if (row['Punto Vendita'] === 'Pisa') {
                             ws[cellKey].fill = { fgColor: { rgb: 'FF1E40AF' } };
                             ws[cellKey].font = { color: { rgb: 'FFFFFFFF' }, bold: true };
-                        } else if (row['Punto Vendita'].includes('Sesto')) {
+                        } else if (row['Punto Vendita'] === 'Sesto Fiorentino') {
                             ws[cellKey].fill = { fgColor: { rgb: 'FF6D28D9' } };
                             ws[cellKey].font = { color: { rgb: 'FFFFFFFF' }, bold: true };
                         }
@@ -1520,7 +1537,7 @@
 
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Report');
-                XLSX.writeFile(wb, `Mage-Report-${inizio}-to-${fine}.xlsx`);
+                XLSX.writeFile(wb, `Mage-Report-${new Date().toLocaleDateString('it-IT').replace(/\//g, '-')}.xlsx`);
                 showMsg('repMsg', '✅ Report scaricato!', 'success');
             }
 
