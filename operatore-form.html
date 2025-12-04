@@ -703,6 +703,11 @@
         btn.disabled = true;
         btn.textContent = '⏳ Salvataggio...';
 
+        // Cattura l'ora di salvataggio
+        const now = new Date();
+        const ora = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const dataFormattata = now.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
         try {
             const { error: errDel } = await supabase
                 .from('registrazioni_giornaliere')
@@ -722,6 +727,7 @@
                 if (prod > 0 || rec > 0 || scar > 0) {
                     datiDaSalvare.push({
                         data_registrazione: data,
+                        ora_registrazione: ora,
                         categoria: p.categoria,
                         prodotto_id: p.id,
                         produzione: prod,
@@ -746,7 +752,7 @@
 
             if (errInsert) throw errInsert;
 
-            showMessage(`✅ ${datiDaSalvare.length} registrazioni salvate!`, 'success');
+            showMessage(`✅ Salvataggio completato alle ${ora} del ${dataFormattata}`, 'success');
             await caricaRegistrazioniGiorno();
 
             btn.disabled = false;
