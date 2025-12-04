@@ -1469,7 +1469,7 @@
 
             let query = supabase
                 .from('registrazioni_giornaliere')
-                .select('data_registrazione, produzione, recuperati, buttati, prodotti(codice_prodotto, nome, categoria, punto_vendita_id)')
+                .select('data_registrazione, ora_registrazione, produzione, recuperati, buttati, prodotti(codice_prodotto, nome, categoria, punto_vendita_id)')
                 .gte('data_registrazione', inizio)
                 .lte('data_registrazione', fine);
 
